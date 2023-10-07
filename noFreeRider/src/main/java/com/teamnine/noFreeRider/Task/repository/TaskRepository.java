@@ -1,6 +1,6 @@
-package com.teamnine.noFreeRider.repository;
+package com.teamnine.noFreeRider.Task.repository;
 
-import com.teamnine.noFreeRider.domain.Task;
+import com.teamnine.noFreeRider.Task.domain.Task;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;

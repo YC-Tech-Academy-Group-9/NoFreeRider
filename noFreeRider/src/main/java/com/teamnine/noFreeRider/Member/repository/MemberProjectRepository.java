@@ -1,6 +1,6 @@
-package com.teamnine.noFreeRider.repository;
+package com.teamnine.noFreeRider.Member.repository;
 
-import com.teamnine.noFreeRider.domain.MemberProject;
+import com.teamnine.noFreeRider.Member.domain.MemberProject;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MemberProjectRepository extends JpaRepository<MemberProject,Long> {
