@@ -36,14 +36,16 @@ public class SecSecurityConfig {
         http.csrf()
                 .disable()
                 .authorizeRequests()
-                .antMatchers("/admin/**")
-                .hasRole("ADMIN")
-                .antMatchers("/anonymous*")
-                .anonymous()
-                .antMatchers("/login*")
-                .permitAll()
-                .anyRequest()
-                .authenticated()
+                    .antMatchers("/h2-console/**")
+                        .permitAll()
+                    .antMatchers("/admin/**")
+                        .hasRole("ADMIN")
+                    .antMatchers("/anonymous*")
+                        .anonymous()
+                    .antMatchers("/login*")
+                        .permitAll()
+                    .anyRequest()
+                        .authenticated()
                 .and()
                 .formLogin()
                 .loginPage("/login")
@@ -56,6 +58,7 @@ public class SecSecurityConfig {
                 .logoutUrl("/perform_logout")
                 .deleteCookies("JSESSIONID");
 //                .logoutSuccessHandler(logoutSuccessHandler());
+        http.headers().frameOptions().disable();
         return http.build();
     }
 

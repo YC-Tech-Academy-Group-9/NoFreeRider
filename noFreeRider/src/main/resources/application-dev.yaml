@@ -1,13 +1,14 @@
 spring:
+
   jpa:
     hibernate:
-      dialect: org.hibernate.dialect.H2Dialect
       ddl-auto: update
     show-sql: true
-    format-sql: true
     properties:
       hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
         id.new_generator_mappings: false
+        format_sql: true
 
   h2:
     console:
