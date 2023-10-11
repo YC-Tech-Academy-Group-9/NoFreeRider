@@ -1,6 +1,6 @@
-package com.teamnine.noFreeRider.Task.domain;
+package com.teamnine.noFreeRider.task.domain;
 
-import com.teamnine.noFreeRider.Project.domain.Project;
+import com.teamnine.noFreeRider.project.domain.Project;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

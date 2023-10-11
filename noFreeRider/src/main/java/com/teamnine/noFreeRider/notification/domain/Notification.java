@@ -1,7 +1,7 @@
-package com.teamnine.noFreeRider.Notification.domain;
+package com.teamnine.noFreeRider.notification.domain;
 
-import com.teamnine.noFreeRider.Member.domain.Member;
-import com.teamnine.noFreeRider.Project.domain.Project;
+import com.teamnine.noFreeRider.member.domain.Member;
+import com.teamnine.noFreeRider.project.domain.Project;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
