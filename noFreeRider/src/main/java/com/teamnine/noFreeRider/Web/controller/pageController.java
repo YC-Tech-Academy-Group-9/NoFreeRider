@@ -1,21 +1,25 @@
 package com.teamnine.noFreeRider.Web.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
+@RequiredArgsConstructor
 public class pageController {
-    @GetMapping("/login")
+    @RequestMapping("/login")
     public String login() {
         return "login";
     }
 
-    @GetMapping("/signup")
+    @RequestMapping("/signup")
     public String signup() {
         return "signup";
     }
 
-    @GetMapping("/homepage")
+    @RequestMapping("/homepage")
     public String index() {
         return "home";
     }

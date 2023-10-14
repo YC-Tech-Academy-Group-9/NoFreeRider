@@ -1,5 +1,4 @@
 spring:
-
   jpa:
     hibernate:
       ddl-auto: update
@@ -16,11 +15,11 @@ spring:
 
 springdoc:
   packages-to-scan:
-    - com.example.sns.controller
+    - com.teamnine.noFreeRider.Web.controller
   default-consumes-media-type: application/json;charset=UTF-8
   default-produces-media-type: application/json;charset=UTF-8
   swagger-ui:
-    path: /
+    path: /swagger
     disable-swagger-default-url: true
     display-request-duration: true
     operations-sorter: alpha
