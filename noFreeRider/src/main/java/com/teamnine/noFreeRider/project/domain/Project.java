@@ -21,8 +21,8 @@ public class Project {
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(name = "project_no", updatable = false)
-    private UUID project_no;
+    @Column(name = "projectId", updatable = false)
+    private UUID projectId;
 
     @Column(name = "project_name")
     private String project_name;
@@ -50,5 +50,9 @@ public class Project {
         this.project_summary = project_summary;
         this.status_code = 0;
         this.leader = leader;
+    }
+
+    public void updateLeader_no(Member nLeader) {
+        this.leader = nLeader;
     }
 }
