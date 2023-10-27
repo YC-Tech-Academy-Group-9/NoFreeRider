@@ -2,6 +2,7 @@ package com.teamnine.noFreeRider.project.domain;
 
 import com.teamnine.noFreeRider.member.domain.Member;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
@@ -26,12 +27,15 @@ public class Project {
     @Column(name = "project_name")
     private String project_name;
 
+    @Column(name = "project_summary")
+    private String project_summary;
+
     @Column(name = "status_code")
     private byte status_code; // 0 : 시작, 1 : 진행, 2 : 중단, 3: 완료
 
     @ManyToOne
     @JoinColumn(name = "leader_no", referencedColumnName = "member_no", updatable = false)
-    private Member member;
+    private Member leader;
 
     @CreatedDate
     @Column(name = "created_at")
@@ -40,9 +44,11 @@ public class Project {
     @Column(name = "ended_at")
     private LocalDateTime ended_at;
 
-    public Project(String project_name, Member member) {
+    @Builder
+    public Project(String project_name, String project_summary,Member leader) {
         this.project_name = project_name;
+        this.project_summary = project_summary;
         this.status_code = 0;
-        this.member = member;
+        this.leader = leader;
     }
 }
