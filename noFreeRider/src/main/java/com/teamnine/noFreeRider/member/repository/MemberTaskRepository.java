@@ -1,6 +1,6 @@
 package com.teamnine.noFreeRider.member.repository;
 
-import com.teamnine.noFreeRider.member.domain.MemberTask;
+import com.teamnine.noFreeRider.Member.domain.MemberTask;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

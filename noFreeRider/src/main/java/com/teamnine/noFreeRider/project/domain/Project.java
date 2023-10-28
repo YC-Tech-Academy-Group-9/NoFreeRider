@@ -1,6 +1,6 @@
 package com.teamnine.noFreeRider.project.domain;
 
-import com.teamnine.noFreeRider.member.domain.Member;
+import com.teamnine.noFreeRider.Member.domain.Member;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;

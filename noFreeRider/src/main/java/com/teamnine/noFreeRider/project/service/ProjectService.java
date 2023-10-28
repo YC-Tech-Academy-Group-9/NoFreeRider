@@ -1,7 +1,7 @@
 package com.teamnine.noFreeRider.project.service;
 
-import com.teamnine.noFreeRider.member.domain.Member;
-import com.teamnine.noFreeRider.member.repository.MemberRepository;
+import com.teamnine.noFreeRider.Member.domain.Member;
+import com.teamnine.noFreeRider.Member.repository.MemberRepository;
 import com.teamnine.noFreeRider.project.domain.Project;
 import com.teamnine.noFreeRider.project.dto.AddProjectDto;
 import com.teamnine.noFreeRider.project.dto.ChangeProjectLeaderDto;
@@ -28,7 +28,7 @@ public class ProjectService {
         Project project = projectRepository.findById(projectID)
                 .orElseThrow(() -> new IllegalArgumentException());
 
-        if (!project.getLeader().getMember_no().equals(dto.exLeaderID())) {
+        if (!project.getLeader().getMemberNo().equals(dto.exLeaderID())) {
             throw new IllegalArgumentException();
         }
 
