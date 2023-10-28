@@ -50,6 +50,12 @@ public class ProjectApiController {
             ) {
         try {
             Project updateLeaderProject = projectService.changeLeader(dto, id);
+            return ResponseEntity.ok()
+                    .body(new ResultDto<>(
+                            200,
+                            "",
+                            updateLeaderProject
+                    ));
         } catch (Exception e) {
             return ResponseEntity.badRequest()
                     .body(new ResultDto<>(
@@ -59,11 +65,5 @@ public class ProjectApiController {
                     ));
         }
 
-        return ResponseEntity.ok()
-                .body(new ResultDto<>(
-                        200,
-                        "",
-                        updateProjectLeader()
-                ));
     }
 }
