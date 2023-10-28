@@ -1,4 +1,4 @@
-package com.teamnine.noFreeRider.member.domain;
+package com.teamnine.noFreeRider.Member.domain;
 
 import com.teamnine.noFreeRider.task.domain.Task;
 import lombok.AccessLevel;

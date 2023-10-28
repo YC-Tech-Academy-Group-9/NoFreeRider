@@ -1,4 +1,4 @@
-package com.teamnine.noFreeRider.member.domain;
+package com.teamnine.noFreeRider.Member.domain;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -25,25 +25,29 @@ public class Member implements UserDetails {
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(name = "member_no", updatable = false)
-    private UUID member_no;
+    private UUID memberNo;
 
     @Column(name = "member_id", nullable = false, updatable = false, unique = true)
-    private String member_id;
+    private String memberId;
+
+    @Column(name = "member_email", nullable = false, updatable = true, unique = true)
+    private String memberEmail;
 
     @Column(name = "member_password", nullable = false)
-    private String member_password;
+    private String memberPassword;
 
     @CreatedDate
     @Column(name = "created_at")
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
     @Column(name = "member_temperature")
-    private short member_temperature;
+    private short memberTemperature;
 
-    public Member(String member_id, String member_password) {
-        this.member_id = member_id;
-        this.member_password = member_password;
-        this.member_temperature = 36;
+    public Member(String memberId, String member_email, String memberPassword) {
+        this.memberId = memberId;
+        this.memberEmail = member_email;
+        this.memberPassword = memberPassword;
+        this.memberTemperature = 36;
     }
 
     @Override
@@ -53,12 +57,12 @@ public class Member implements UserDetails {
 
     @Override
     public String getUsername() {
-        return member_id;
+        return memberId;
     }
 
     @Override
     public String getPassword() {
-        return member_password;
+        return memberPassword;
     }
 
     @Override
@@ -80,4 +84,5 @@ public class Member implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 }

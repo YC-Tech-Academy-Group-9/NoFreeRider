@@ -13,7 +13,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import org.springframework.stereotype.Component;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -30,7 +29,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class JwtTokenProvider {
-
     private final Key key;
 
     public JwtTokenProvider(@Value("${jwt.secret}") String secretKey) {
@@ -107,8 +105,8 @@ public class JwtTokenProvider {
         }
     }
 
-    public javax.servlet.http.Cookie generateCookie(String from, String token) {
-        javax.servlet.http.Cookie cookie = new Cookie(from, token);
+    public Cookie generateCookie(String from, String token) {
+        Cookie cookie = new Cookie(from, token);
 
         cookie.setPath("/");
         cookie.setHttpOnly(true); // XSS 공격을 막기 위한 설정
@@ -116,5 +114,4 @@ public class JwtTokenProvider {
 
         return cookie;
     }
-
 }

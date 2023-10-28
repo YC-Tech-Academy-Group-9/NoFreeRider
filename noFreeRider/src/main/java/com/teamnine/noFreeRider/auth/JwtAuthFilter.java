@@ -1,10 +1,13 @@
 package com.teamnine.noFreeRider.auth;
 
+import com.teamnine.noFreeRider.Member.domain.RefreshToken;
+import com.teamnine.noFreeRider.Member.repository.RefreshTokenRepository;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -17,6 +20,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 @Slf4j
+@Component
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
 
@@ -44,12 +48,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
                 Claims claims = jwtTokenProvider.parseClaims(accessToken.get());
 
-                if (savedToken.isPresent() && claims.get("email").equals(savedToken.get().getMember().getEmail())) {
+                if (savedToken.isPresent() && claims.get("email").equals(savedToken.get().getMember().getMemberEmail())) {
+
                     // accessToken 으로 부터 Authentication 객체 추출
                     Authentication authentication = jwtTokenProvider.getAuthentication(accessToken.get());
 
                     // email 을 추출하여 accessToken, refreshToken 생성
-                    TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication, savedToken.get().getMember().getEmail());
+                    TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication, savedToken.get().getMember().getMemberEmail());
 
                     // 인증 객체 설정
                     SecurityContextHolder.getContext().setAuthentication(authentication);
