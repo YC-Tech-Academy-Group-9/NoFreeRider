@@ -1,8 +1,11 @@
 package com.teamnine.noFreeRider.project.service;
 
-import com.teamnine.noFreeRider.Member.domain.Member;
-import com.teamnine.noFreeRider.Member.repository.MemberRepository;
+import com.teamnine.noFreeRider.member.domain.Member;
+import com.teamnine.noFreeRider.member.repository.MemberRepository;
+import com.teamnine.noFreeRider.member.domain.MemberProject;
+import com.teamnine.noFreeRider.member.repository.MemberProjectRepository;
 import com.teamnine.noFreeRider.project.domain.Project;
+import com.teamnine.noFreeRider.project.dto.AddMemberDto;
 import com.teamnine.noFreeRider.project.dto.AddProjectDto;
 import com.teamnine.noFreeRider.project.dto.ChangeProjectLeaderDto;
 import com.teamnine.noFreeRider.project.repository.ProjectRepository;
@@ -18,6 +21,7 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
     private final MemberRepository memberRepository;
+    private final MemberProjectRepository memberProjectRepository;
 
     public Project save(AddProjectDto addProjectDto) {
         return projectRepository.save(addProjectDto.toEntity());
@@ -28,11 +32,11 @@ public class ProjectService {
         Project project = projectRepository.findById(projectID)
                 .orElseThrow(() -> new IllegalArgumentException());
 
-        if (!project.getLeader().getMemberNo().equals(dto.exLeaderID())) {
+        if (!project.getLeader().getMemberNo().equals(dto.exLeaderId())) {
             throw new IllegalArgumentException();
         }
 
-        Member nLeader = memberRepository.findById(dto.newLeaderID())
+        Member nLeader = memberRepository.findById(dto.newLeaderId())
                 .orElseThrow(() -> new IllegalArgumentException());
 
         project.updateLeader_no(nLeader);
@@ -40,4 +44,20 @@ public class ProjectService {
         return project;
     }
 
+    public Project addMember(AddMemberDto dto) {
+        Project project = projectRepository.findById(dto.projectId())
+                .orElseThrow(() -> new IllegalArgumentException());
+
+        if (memberProjectRepository.existsByMember_noAndProject_no(dto.memberId(), dto.projectId())) {
+            throw new IllegalArgumentException();
+        }
+
+        memberProjectRepository.save(MemberProject.builder()
+                .member(memberRepository.findById(dto.memberId())
+                        .orElseThrow(() -> new IllegalArgumentException()))
+                .project(project)
+                .build());
+
+        return project;
+    }
 }

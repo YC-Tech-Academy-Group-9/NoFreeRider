@@ -1,12 +1,9 @@
 package com.teamnine.noFreeRider.project.controller;
 
-import com.teamnine.noFreeRider.Member.domain.Member;
-import com.teamnine.noFreeRider.Member.service.MemberDetailService;
+import com.teamnine.noFreeRider.member.domain.Member;
+import com.teamnine.noFreeRider.member.service.MemberDetailService;
 import com.teamnine.noFreeRider.project.domain.Project;
-import com.teamnine.noFreeRider.project.dto.AddProjectDto;
-import com.teamnine.noFreeRider.project.dto.ChangeProjectLeaderDto;
-import com.teamnine.noFreeRider.project.dto.ProjectDto;
-import com.teamnine.noFreeRider.project.dto.ResultDto;
+import com.teamnine.noFreeRider.project.dto.*;
 import com.teamnine.noFreeRider.project.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -65,5 +62,30 @@ public class ProjectApiController {
                     ));
         }
 
+    }
+
+    @PostMapping("/{id}")
+    public ResponseEntity<ResultDto<Project>> addPartiMember(
+            @PathVariable UUID id,
+            Principal principal
+    ) {
+        try {
+            String userName = principal.getName();
+            Member member = memberDetailService.loadUserByUsername(userName);
+            AddMemberDto dto = new AddMemberDto(member.getMemberNo(), id);
+            return ResponseEntity.ok()
+                    .body(new ResultDto<>(
+                            200,
+                            "",
+                            projectService.addMember(dto)
+                    ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(new ResultDto<>(
+                            400,
+                            "Bad Request",
+                            null
+                    ));
+        }
     }
 }
