@@ -1,6 +1,6 @@
-package com.teamnine.noFreeRider.Member.repository;
+package com.teamnine.noFreeRider.member.repository;
 
-import com.teamnine.noFreeRider.Member.domain.Member;
+import com.teamnine.noFreeRider.member.domain.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

@@ -1,4 +1,4 @@
-package com.teamnine.noFreeRider.Member.domain;
+package com.teamnine.noFreeRider.member.domain;
 
 import lombok.Getter;
 import lombok.Setter;

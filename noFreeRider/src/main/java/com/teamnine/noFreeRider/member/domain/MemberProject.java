@@ -1,7 +1,8 @@
-package com.teamnine.noFreeRider.Member.domain;
+package com.teamnine.noFreeRider.member.domain;
 
 import com.teamnine.noFreeRider.project.domain.Project;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -30,6 +31,7 @@ public class MemberProject {
     @Column(name = "score", nullable = true)
     private Integer score;
 
+    @Builder
     public MemberProject(Member member, Project project) {
         this.member = member;
         this.project = project;
