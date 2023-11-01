@@ -10,4 +10,6 @@ import java.util.UUID;
 public interface MemberProjectRepository extends JpaRepository<MemberProject,Long> {
 
     public boolean existsByMember_noAndProject_no(UUID member_no, UUID project_no);
+
+    public Long findIdByMember_noAndProject_no(UUID member_no, UUID project_no);
 }

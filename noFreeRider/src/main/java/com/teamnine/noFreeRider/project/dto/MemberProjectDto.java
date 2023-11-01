@@ -2,7 +2,7 @@ package com.teamnine.noFreeRider.project.dto;
 
 import java.util.UUID;
 
-public record AddMemberDto(
+public record MemberProjectDto(
         UUID memberId,
         UUID projectId
 ) {

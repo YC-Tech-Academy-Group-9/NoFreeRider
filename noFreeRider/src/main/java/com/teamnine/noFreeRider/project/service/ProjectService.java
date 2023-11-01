@@ -5,7 +5,7 @@ import com.teamnine.noFreeRider.member.repository.MemberRepository;
 import com.teamnine.noFreeRider.member.domain.MemberProject;
 import com.teamnine.noFreeRider.member.repository.MemberProjectRepository;
 import com.teamnine.noFreeRider.project.domain.Project;
-import com.teamnine.noFreeRider.project.dto.AddMemberDto;
+import com.teamnine.noFreeRider.project.dto.MemberProjectDto;
 import com.teamnine.noFreeRider.project.dto.AddProjectDto;
 import com.teamnine.noFreeRider.project.dto.ChangeProjectLeaderDto;
 import com.teamnine.noFreeRider.project.repository.ProjectRepository;
@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -44,7 +45,7 @@ public class ProjectService {
         return project;
     }
 
-    public Project addMember(AddMemberDto dto) {
+    public Project addMember(MemberProjectDto dto) {
         Project project = projectRepository.findById(dto.projectId())
                 .orElseThrow(() -> new IllegalArgumentException());
 
@@ -59,5 +60,17 @@ public class ProjectService {
                 .build());
 
         return project;
+    }
+
+
+    public boolean isProjectLeader(MemberProjectDto dto) {
+        Optional<UUID> leaderUUID = projectRepository.findLeader_noByProjectId(dto.projectId());
+        if (leaderUUID.isEmpty()) {
+            return false;
+        }
+        if (leaderUUID.get().equals(dto.memberId())) {
+            return true;
+        }
+        return false;
     }
 }

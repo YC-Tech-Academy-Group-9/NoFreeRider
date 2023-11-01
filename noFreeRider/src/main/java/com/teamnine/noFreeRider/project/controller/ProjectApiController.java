@@ -4,6 +4,7 @@ import com.teamnine.noFreeRider.member.domain.Member;
 import com.teamnine.noFreeRider.member.service.MemberDetailService;
 import com.teamnine.noFreeRider.project.domain.Project;
 import com.teamnine.noFreeRider.project.dto.*;
+import com.teamnine.noFreeRider.project.service.MemberProjectService;
 import com.teamnine.noFreeRider.project.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import java.util.UUID;
 public class ProjectApiController {
 
     private final ProjectService projectService;
+    private final MemberProjectService memberProjectService;
     private final MemberDetailService memberDetailService;
 
     @PostMapping("")
@@ -39,8 +41,8 @@ public class ProjectApiController {
                         "",
                         projectService.save(addProjectDto)));
     }
-
-    @PutMapping("/{projectId}")
+    
+    @PutMapping("/{projectId}/leader")
     public ResponseEntity<ResultDto<Project>> updateProjectLeader(
             @PathVariable UUID projectId,
             @RequestBody ChangeProjectLeaderDto dto
@@ -70,9 +72,7 @@ public class ProjectApiController {
             Principal principal
     ) {
         try {
-            String userName = principal.getName();
-            Member member = memberDetailService.loadUserByUsername(userName);
-            AddMemberDto dto = new AddMemberDto(member.getMemberNo(), projectId);
+            MemberProjectDto dto = new MemberProjectDto(getMemberUUID(principal.getName()), projectId);
             return ResponseEntity.ok()
                     .body(new ResultDto<>(
                             200,
@@ -87,5 +87,44 @@ public class ProjectApiController {
                             null
                     ));
         }
+    }
+
+    @DeleteMapping("/{projectId}/{memberId}")
+    public ResponseEntity<ResultDto<Long>> deletePartiMember(
+            @PathVariable UUID projectId,
+            @PathVariable UUID memberId,
+            Principal principal
+    ) {
+        if (!projectService.isProjectLeader(new MemberProjectDto(getMemberUUID(principal.getName()), projectId))) {
+            return ResponseEntity.badRequest()
+                    .body(new ResultDto<>(
+                            403,
+                            "access only project leader",
+                            null
+                    ));
+        }
+
+        MemberProjectDto dto = new MemberProjectDto(memberId, projectId);
+
+        if (!memberProjectService.isMemberPartInProject(dto)) {
+            return ResponseEntity.badRequest()
+                    .body(new ResultDto<>(
+                            400,
+                            "member not in the project",
+                            null
+                    ));
+        }
+
+        return ResponseEntity.ok()
+                .body(new ResultDto<>(
+                        200,
+                        "",
+                        memberProjectService.deleteMemberProject(dto)
+                ));
+    }
+
+    private UUID getMemberUUID(String userName) {
+        Member member = memberDetailService.loadUserByUsername(userName);
+        return member.getMemberNo();
     }
 }
