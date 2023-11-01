@@ -40,13 +40,13 @@ public class ProjectApiController {
                         projectService.save(addProjectDto)));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{projectId}")
     public ResponseEntity<ResultDto<Project>> updateProjectLeader(
-            @PathVariable UUID id,
+            @PathVariable UUID projectId,
             @RequestBody ChangeProjectLeaderDto dto
             ) {
         try {
-            Project updateLeaderProject = projectService.changeLeader(dto, id);
+            Project updateLeaderProject = projectService.changeLeader(dto, projectId);
             return ResponseEntity.ok()
                     .body(new ResultDto<>(
                             200,
@@ -64,15 +64,15 @@ public class ProjectApiController {
 
     }
 
-    @PostMapping("/{id}")
+    @PostMapping("/{projectId}")
     public ResponseEntity<ResultDto<Project>> addPartiMember(
-            @PathVariable UUID id,
+            @PathVariable UUID projectId,
             Principal principal
     ) {
         try {
             String userName = principal.getName();
             Member member = memberDetailService.loadUserByUsername(userName);
-            AddMemberDto dto = new AddMemberDto(member.getMemberNo(), id);
+            AddMemberDto dto = new AddMemberDto(member.getMemberNo(), projectId);
             return ResponseEntity.ok()
                     .body(new ResultDto<>(
                             200,
