@@ -5,8 +5,6 @@ import com.teamnine.noFreeRider.project.dto.MemberProjectDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-
 @RequiredArgsConstructor
 @Service
 public class MemberProjectService {
