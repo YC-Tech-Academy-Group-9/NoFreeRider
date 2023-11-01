@@ -5,7 +5,9 @@ import com.teamnine.noFreeRider.member.repository.MemberRepository;
 import com.teamnine.noFreeRider.member.domain.MemberProject;
 import com.teamnine.noFreeRider.member.repository.MemberProjectRepository;
 import com.teamnine.noFreeRider.project.domain.Project;
-import com.teamnine.noFreeRider.project.dto.*;
+import com.teamnine.noFreeRider.project.dto.MemberProjectDto;
+import com.teamnine.noFreeRider.project.dto.AddProjectDto;
+import com.teamnine.noFreeRider.project.dto.ChangeProjectLeaderDto;
 import com.teamnine.noFreeRider.project.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -70,12 +72,5 @@ public class ProjectService {
             return true;
         }
         return false;
-    }
-
-    public Project update(UpdateProjectDto dto) {
-        Project project = projectRepository.findById(dto.projectId())
-                .orElseThrow(() -> new IllegalArgumentException());
-        project.updateNameAndSummary(dto);
-        return project;
     }
 }
