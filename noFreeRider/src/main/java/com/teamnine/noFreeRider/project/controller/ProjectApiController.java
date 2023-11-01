@@ -41,7 +41,31 @@ public class ProjectApiController {
                         "",
                         projectService.save(addProjectDto)));
     }
-    
+
+    @PutMapping("/{projectId}")
+    public ResponseEntity<ResultDto<Project>> updateProject(
+            @PathVariable UUID projectId,
+            @RequestBody ProjectDto dto,
+            Principal principal
+            ) {
+        if (!projectService.isProjectLeader(new MemberProjectDto(getMemberUUID(principal.getName()), projectId))) {
+            return ResponseEntity.badRequest()
+                    .body(new ResultDto<>(
+                            403,
+                            "access only project leader",
+                            null
+                    ));
+        }
+
+        return ResponseEntity.ok()
+                .body(new ResultDto<>(
+                        200,
+                        "",
+                        projectService.update(new UpdateProjectDto(projectId, dto.name(), dto.summary()))
+                ));
+
+    }
+
     @PutMapping("/{projectId}/leader")
     public ResponseEntity<ResultDto<Project>> updateProjectLeader(
             @PathVariable UUID projectId,
