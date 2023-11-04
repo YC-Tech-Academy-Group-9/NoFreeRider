@@ -48,7 +48,7 @@ public class ProjectApiController {
             @RequestBody ProjectDto dto,
             Principal principal
             ) {
-        if (!projectService.isProjectLeader(new MemberProjectDto(getMemberUUID(principal.getName()), projectId))) {
+        if (!isProjectLeader(principal.getName(), projectId)) {
             return ResponseEntity.badRequest()
                     .body(new ResultDto<>(
                             403,
@@ -72,6 +72,15 @@ public class ProjectApiController {
             @RequestBody ChangeProjectLeaderDto dto
             ) {
         try {
+            if (!isProjectLeader(principal.getName(), projectId)) {
+                return ResponseEntity.badRequest()
+                        .body(new ResultDto<>(
+                                403,
+                                "access only project leader",
+                                null
+                        ));
+            }
+
             Project updateLeaderProject = projectService.changeLeader(dto, projectId);
             return ResponseEntity.ok()
                     .body(new ResultDto<>(
@@ -119,7 +128,7 @@ public class ProjectApiController {
             @PathVariable UUID memberId,
             Principal principal
     ) {
-        if (!projectService.isProjectLeader(new MemberProjectDto(getMemberUUID(principal.getName()), projectId))) {
+        if (!isProjectLeader(principal.getName(), projectId)) {
             return ResponseEntity.badRequest()
                     .body(new ResultDto<>(
                             403,
@@ -150,5 +159,9 @@ public class ProjectApiController {
     private UUID getMemberUUID(String userName) {
         Member member = memberDetailService.loadUserByUsername(userName);
         return member.getMemberNo();
+    }
+
+    private boolean isProjectLeader(String userName, UUID projectId) {
+        return projectService.isProjectLeader(new MemberProjectDto(getMemberUUID(userName), projectId));
     }
 }
