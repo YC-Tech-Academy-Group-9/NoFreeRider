@@ -1,10 +1,12 @@
 package com.teamnine.noFreeRider.project.controller;
 
-import com.teamnine.noFreeRider.member.domain.Member;
-import com.teamnine.noFreeRider.member.service.MemberDetailService;
+import com.teamnine.noFreeRider.Member.domain.Member;
+import com.teamnine.noFreeRider.Member.service.MemberDetailService;
 import com.teamnine.noFreeRider.project.domain.Project;
-import com.teamnine.noFreeRider.project.dto.*;
-import com.teamnine.noFreeRider.project.service.MemberProjectService;
+import com.teamnine.noFreeRider.project.dto.AddProjectDto;
+import com.teamnine.noFreeRider.project.dto.ChangeProjectLeaderDto;
+import com.teamnine.noFreeRider.project.dto.ProjectDto;
+import com.teamnine.noFreeRider.project.dto.ResultDto;
 import com.teamnine.noFreeRider.project.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +22,6 @@ import java.util.UUID;
 public class ProjectApiController {
 
     private final ProjectService projectService;
-    private final MemberProjectService memberProjectService;
     private final MemberDetailService memberDetailService;
 
     @PostMapping("")

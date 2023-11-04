@@ -1,6 +1,6 @@
-package com.teamnine.noFreeRider.member.service;
+package com.teamnine.noFreeRider.Member.service;
 
-import com.teamnine.noFreeRider.member.repository.MemberRepository;
+import com.teamnine.noFreeRider.Member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;

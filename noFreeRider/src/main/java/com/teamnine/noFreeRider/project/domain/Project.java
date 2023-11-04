@@ -1,7 +1,6 @@
 package com.teamnine.noFreeRider.project.domain;
 
-import com.teamnine.noFreeRider.member.domain.Member;
-import com.teamnine.noFreeRider.project.dto.UpdateProjectDto;
+import com.teamnine.noFreeRider.Member.domain.Member;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -56,7 +55,6 @@ public class Project {
     public void updateLeaderNo(Member nLeader) {
         this.leader = nLeader;
     }
-
     public void updateNameAndSummary(UpdateProjectDto dto) {
         this.projectName = dto.name();
         this.projectSummary = dto.summary();

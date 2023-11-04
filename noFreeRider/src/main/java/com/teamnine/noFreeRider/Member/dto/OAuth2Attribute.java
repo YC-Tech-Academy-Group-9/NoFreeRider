@@ -1,4 +1,4 @@
-package com.teamnine.noFreeRider.member.dto;
+package com.teamnine.noFreeRider.Member.dto;
 
 import lombok.AccessLevel;
 import lombok.Builder;

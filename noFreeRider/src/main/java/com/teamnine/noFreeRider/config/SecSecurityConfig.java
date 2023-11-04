@@ -1,7 +1,7 @@
 package com.teamnine.noFreeRider.config;
 
-import com.teamnine.noFreeRider.member.repository.RefreshTokenRepository;
-import com.teamnine.noFreeRider.member.service.CustomOAuth2UserService;
+import com.teamnine.noFreeRider.Member.repository.RefreshTokenRepository;
+import com.teamnine.noFreeRider.Member.service.CustomOAuth2UserService;
 import com.teamnine.noFreeRider.auth.AuthSuccessHandler;
 import com.teamnine.noFreeRider.auth.JwtAuthFilter;
 import com.teamnine.noFreeRider.auth.JwtTokenProvider;
