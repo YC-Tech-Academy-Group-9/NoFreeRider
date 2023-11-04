@@ -24,28 +24,28 @@ public class Member implements UserDetails {
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(name = "member_no", updatable = false)
-    private UUID memberNo;
+    @Column(name = "memberId", updatable = false)
+    private UUID memberId;
 
-    @Column(name = "member_id", nullable = false, updatable = false, unique = true)
-    private String memberId;
+    @Column(name = "memberName", nullable = false, updatable = false, unique = true)
+    private String memberName;
 
-    @Column(name = "member_email", nullable = false, updatable = true, unique = true)
+    @Column(name = "memberEmail", nullable = false, updatable = true, unique = true)
     private String memberEmail;
 
-    @Column(name = "member_password", nullable = false)
+    @Column(name = "memberPassword", nullable = false)
     private String memberPassword;
 
     @CreatedDate
-    @Column(name = "created_at")
+    @Column(name = "createdAt")
     private LocalDateTime createdAt;
 
-    @Column(name = "member_temperature")
+    @Column(name = "memberTemperature")
     private short memberTemperature;
 
-    public Member(String memberId, String member_email, String memberPassword) {
-        this.memberId = memberId;
-        this.memberEmail = member_email;
+    public Member(String memberName, String memberEmail, String memberPassword) {
+        this.memberName = memberName;
+        this.memberEmail = memberEmail;
         this.memberPassword = memberPassword;
         this.memberTemperature = 36;
     }
@@ -57,7 +57,7 @@ public class Member implements UserDetails {
 
     @Override
     public String getUsername() {
-        return memberId;
+        return memberName;
     }
 
     @Override

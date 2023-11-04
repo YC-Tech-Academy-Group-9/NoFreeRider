@@ -38,7 +38,7 @@ public class ProjectService {
         Member nLeader = memberRepository.findById(dto.newLeaderId())
                 .orElseThrow(() -> new IllegalArgumentException());
 
-        project.updateLeader_no(nLeader);
+        project.updateLeaderNo(nLeader);
 
         return project;
     }

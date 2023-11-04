@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-@Table(name = "members_projects")
+@Table(name = "membersProjects")
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -21,11 +21,11 @@ public class MemberProject {
 
 
     @ManyToOne
-    @JoinColumn(name = "member_no", referencedColumnName = "member_no", updatable = false)
+    @JoinColumn(name = "memberNo", referencedColumnName = "memberNo", updatable = false)
     private Member member;
 
     @ManyToOne
-    @JoinColumn(name = "project_no", referencedColumnName = "project_no", updatable = false)
+    @JoinColumn(name = "projectNo", referencedColumnName = "projectNo", updatable = false)
     private Project project;
 
     @Column(name = "score", nullable = true)

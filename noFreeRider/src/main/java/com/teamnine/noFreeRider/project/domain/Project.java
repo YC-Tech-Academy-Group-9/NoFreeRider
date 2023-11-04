@@ -25,40 +25,40 @@ public class Project {
     @Column(name = "projectId", updatable = false)
     private UUID projectId;
 
-    @Column(name = "project_name")
-    private String project_name;
+    @Column(name = "projectName")
+    private String projectName;
 
-    @Column(name = "project_summary")
-    private String project_summary;
+    @Column(name = "projectSummary")
+    private String projectSummary;
 
-    @Column(name = "status_code")
-    private byte status_code; // 0 : 시작, 1 : 진행, 2 : 중단, 3: 완료
+    @Column(name = "statusCode")
+    private byte statusCode; // 0 : 시작, 1 : 진행, 2 : 중단, 3: 완료
 
     @ManyToOne
-    @JoinColumn(name = "leader_no", referencedColumnName = "member_no", updatable = false)
+    @JoinColumn(name = "leaderNo", referencedColumnName = "memberNo", updatable = false)
     private Member leader;
 
     @CreatedDate
-    @Column(name = "created_at")
-    private LocalDateTime created_at;
+    @Column(name = "createdAt")
+    private LocalDateTime createdAt;
 
-    @Column(name = "ended_at")
-    private LocalDateTime ended_at;
+    @Column(name = "endedAt")
+    private LocalDateTime endedAt;
 
     @Builder
-    public Project(String project_name, String project_summary,Member leader) {
-        this.project_name = project_name;
-        this.project_summary = project_summary;
-        this.status_code = 0;
+    public Project(String projectName, String projectSummary,Member leader) {
+        this.projectName = projectName;
+        this.projectSummary = projectSummary;
+        this.statusCode = 0;
         this.leader = leader;
     }
 
-    public void updateLeader_no(Member nLeader) {
+    public void updateLeaderNo(Member nLeader) {
         this.leader = nLeader;
     }
 
     public void updateNameAndSummary(UpdateProjectDto dto) {
-        this.project_name = dto.name();
-        this.project_summary = dto.summary();
+        this.projectName = dto.name();
+        this.projectSummary = dto.summary();
     }
 }
