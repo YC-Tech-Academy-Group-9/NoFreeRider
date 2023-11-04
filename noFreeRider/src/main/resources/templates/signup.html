@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>Spring Security Example</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- fonts-->
+    <<link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Jua&family=Nanum+Gothic+Coding:wght@400;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'text': '#10181e',
+                        'background': '#ffffff',
+                        'primary': '#18517b',
+                        'secondary': '#aad1ee',
+                        'tertiary': '#226faa',
+                        'accent': '#4e4ea2',
+                    },
+                    fontFamily: {
+                        'sans': ['Open Sans', 'sans-serif'],
+                        'inter': ['Inter', 'sans-serif'],
+                        'jua': ['Jua', 'sans-serif'],
+                        'nanum': ['Nanum Gothic Coding', 'sans-serif'],
+                    },
+                    fontSize: {
+                        'base': '16px',
+                        'lg': '25.8px',
+                        'xl': '41.8px',
+                        '2xl': '67.8px',
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        @tailwind base;
+        @tailwind components;
+        @tailwind utilities;
+
+        :root {
+            font-family: 'nanum', sans-serif;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #10181e;
+            background-color: #ffffff;
+        }
+
+        @layer base {
+
+            h1 {
+                @apply text-2xl;
+            }
+            h2 {
+                @apply text-xl;
+            }
+            h3 {
+                @apply text-lg;
+            }
+        }
+
+        nav .title {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-weight: bold;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .signup-box {
+            /*box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.25);*/
+        }
+
+    </style>
+</head>
+<body>
+<nav class="bg-primary h-[10vh]">
+    <div class="w-[434px] mx-auto text-2xl title">
+        <h1>NoFreeRider</h1>
+    </div>
+</nav>
+<div class="main h-[90vh] flex flex-col justify-center">
+    <div class="signup-box bg-primary rounded-[50px] w-[1067px] h-[711px] m-auto p-[43px] flex flex-col justify-between items-center">
+        <h2 class="text-2xl text-white font-bold">회원가입</h2>
+        <form class="w-full px-[84px]">
+            <div class="first-page mb-4">
+                <label for="username" class="text-xl font-bold text-white">아이디</label>
+                <input type="text" name="username" id="username" placeholder="gildong_hong" class="bg-gray-100 border-2 w-full p-4 rounded-lg h-[106px] text-xl" required>
+            </div>
+            <div class="first-page mb-4">
+                <label for="realname" class="text-xl font-bold text-white">실명 (등록 이름)</label>
+                <input type="text" name="realname" id="realname" placeholder="홍길동" class="bg-gray-100 border-2 w-full p-4 rounded-lg h-[106px] text-xl" required>
+            </div>
+            <div class="second-page mb-4">
+                <label for="student_id" class="text-xl font-bold text-white">학번 (20xxxxxxxx)</label>
+                <input type="text" name="username" id="student_id" placeholder="2000111001" class="bg-gray-100 border-2 w-full p-4 rounded-lg h-[106px] text-xl" required>
+            </div>
+            <div class="second-page mb-4">
+                <label for="major" class="text-xl font-bold text-white">학과</label>
+                <input type="text" name="realname" id="major" placeholder="사회학과" class="bg-gray-100 border-2 w-full p-4 rounded-lg h-[106px] text-xl" required>
+            </div>
+        </form>
+        <div class="flex flex-row justify-center items-center">
+            <button class="button bg-secondary text-xl w-[179px] h-[110px] rounded-[30.8px] mx-[11px]">이전</button>
+            <button class="button bg-secondary text-xl w-[179px] h-[110px] rounded-[30.8px] mx-[11px]">다음</button>
+            <button class="button bg-secondary text-xl w-[179px] h-[110px] rounded-[30.8px] mx-[11px]" type="submit">완료</button>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    const buttons = document.querySelectorAll('.button');
+    buttons[0].classList.add('hidden');
+    buttons[2].classList.add('hidden');
+
+    const firstPage = document.querySelectorAll('.first-page');
+    const secondPage = document.querySelectorAll('.second-page');
+
+    secondPage.forEach((element) => {
+        element.classList.add('hidden');
+    });
+
+    buttons[0].addEventListener('click', () => {
+        buttons[0].classList.add('hidden');
+        buttons[1].classList.remove('hidden');
+        buttons[2].classList.add('hidden');
+        firstPage.forEach((element) => {
+            element.classList.remove('hidden');
+        });
+        secondPage.forEach((element) => {
+            element.classList.add('hidden');
+        });
+    });
+    buttons[1].addEventListener('click', () => {
+        buttons[0].classList.remove('hidden');
+        buttons[1].classList.add('hidden');
+        buttons[2].classList.remove('hidden');
+        firstPage.forEach((element) => {
+            element.classList.add('hidden');
+        });
+        secondPage.forEach((element) => {
+            element.classList.remove('hidden');
+        });
+    });
+    buttons[2].addEventListener('click', () => {
+        // sign up logic
+        alert("Sign up done")
+    });
+</script>
+</html>
