@@ -5,7 +5,7 @@ import com.teamnine.noFreeRider.auth.TokenInfo;
 import com.teamnine.noFreeRider.member.domain.Member;
 import com.teamnine.noFreeRider.member.domain.RefreshToken;
 import com.teamnine.noFreeRider.member.repository.MemberRepository;
-import com.teamnine.noFreeRider.Member.repository.RefreshTokenRepository;
+import com.teamnine.noFreeRider.member.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor

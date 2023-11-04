@@ -31,7 +31,7 @@ public class ProjectService {
         Project project = projectRepository.findById(projectID)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (!project.getLeader().getMember_id().equals(dto.exLeader_id())) {
+        if (!project.getLeader().getMemberId().equals(dto.exLeader_id())) {
             throw new IllegalArgumentException();
         }
 
@@ -47,7 +47,7 @@ public class ProjectService {
         Project project = projectRepository.findById(dto.project_id())
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (memberProjectRepository.existsByMember_idAndProject_id(dto.member_id(), dto.project_id())) {
+        if (memberProjectRepository.existsByMemberIdAndProjectId(dto.member_id(), dto.project_id())) {
             throw new IllegalArgumentException();
         }
 
@@ -61,12 +61,12 @@ public class ProjectService {
     }
 
     public Project changeStatusCode() {
-
+        return null;
     }
 
 
     public boolean isProjectLeader(MemberProjectDto dto) {
-        Optional<UUID> leaderUUID = projectRepository.findLeader_idByProject_id(dto.project_id());
+        Optional<UUID> leaderUUID = projectRepository.findLeaderIdByProjectId(dto.project_id());
         if (leaderUUID.isEmpty()) {
             return false;
         }

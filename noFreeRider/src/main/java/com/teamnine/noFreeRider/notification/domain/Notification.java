@@ -29,7 +29,7 @@ public class Notification {
     private Project project;
 
     @ManyToOne
-    @JoinColumn(name = "notifier_id", referencedColumnName = "member_id", updatable = false)
+    @JoinColumn(name = "notifier_id", updatable = false)
     private Member member;
 
     @Column(name = "notice_title", nullable = false)

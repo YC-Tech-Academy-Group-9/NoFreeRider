@@ -14,12 +14,12 @@ public class MemberProjectService {
     private final MemberProjectRepository memberProjectRepository;
 
     public boolean isMemberPartInProject(MemberProjectDto dto) {
-        return memberProjectRepository.existsByMember_idAndProject_id(dto.member_id(), dto.project_id());
+        return memberProjectRepository.existsByMemberIdAndProjectId(dto.member_id(), dto.project_id());
     }
 
     @Transactional
     public Long deleteMemberProject(MemberProjectDto dto) {
-        Long delete_id = memberProjectRepository.findIdByMember_idAndProject_id(dto.member_id(), dto.project_id());
+        Long delete_id = memberProjectRepository.findIdByMemberIdAndProjectId(dto.member_id(), dto.project_id());
         memberProjectRepository.deleteById(delete_id);
         return delete_id;
     }

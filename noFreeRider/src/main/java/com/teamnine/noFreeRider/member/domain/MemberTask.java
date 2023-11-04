@@ -17,10 +17,10 @@ public class MemberTask {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "member_id", referencedColumnName = "member_id", updatable = false)
+    @JoinColumn(name = "member_id", updatable = false)
     private Member member;
 
     @ManyToOne
-    @JoinColumn(name = "task_id", referencedColumnName = "task_id", updatable = false)
+    @JoinColumn(name = "task_id", updatable = false)
     private Task task;
 }

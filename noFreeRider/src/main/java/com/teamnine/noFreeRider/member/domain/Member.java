@@ -25,16 +25,16 @@ public class Member implements UserDetails {
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(name = "member_id", updatable = false)
-    private UUID member_id;
+    private UUID memberId;
 
     @Column(name = "member_name", nullable = false, updatable = false, unique = true)
-    private String member_name;
+    private String memberName;
 
     @Column(name = "member_email", nullable = false, updatable = true, unique = true)
-    private String member_email;
+    private String memberEmail;
 
     @Column(name = "member_password", nullable = false)
-    private String member_password;
+    private String memberPassword;
 
     @CreatedDate
     @Column(name = "created_at")
@@ -44,9 +44,9 @@ public class Member implements UserDetails {
     private short member_temperature;
 
     public Member(String memberName, String member_email, String member_password) {
-        this.member_name = memberName;
-        this.member_email = member_email;
-        this.member_password = member_password;
+        this.memberName = memberName;
+        this.memberEmail = member_email;
+        this.memberPassword = member_password;
         this.member_temperature = 36;
     }
 
@@ -56,14 +56,15 @@ public class Member implements UserDetails {
     }
 
     @Override
-    public String getUsername() {
-        return member_name;
+    public String getPassword() {
+        return memberPassword;
     }
 
     @Override
-    public String getPassword() {
-        return member_password;
+    public String getUsername() {
+        return memberName;
     }
+
 
     @Override
     public boolean isAccountNonExpired() {
