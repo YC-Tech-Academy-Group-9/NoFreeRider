@@ -20,37 +20,37 @@ public class Task {
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(name = "taskId", updatable = false)
-    private UUID taskId;
+    @Column(name = "task_id", updatable = false)
+    private UUID task_id;
 
     @ManyToOne
-    @JoinColumn(name = "projectId", referencedColumnName = "projectId", updatable = false)
+    @JoinColumn(name = "project_id", referencedColumnName = "project_id", updatable = false)
     private Project project;
 
-    @Column(name = "taskName", nullable = false)
-    private String taskName;
+    @Column(name = "task_name", nullable = false)
+    private String task_name;
 
-    @Column(name = "taskContend")
-    private String taskContend;
+    @Column(name = "task_contend")
+    private String task_contend;
 
     @CreatedDate
-    @Column(name = "createdAt")
-    private LocalDateTime createdAt;
+    @Column(name = "created_at")
+    private LocalDateTime created_at;
 
-    @Column(name = "dueDate")
-    private LocalDateTime dueDate;
+    @Column(name = "due_date")
+    private LocalDateTime due_date;
 
-    @Column(name = "endedAt")
-    private LocalDateTime endedAt;
+    @Column(name = "ended_at")
+    private LocalDateTime ended_at;
 
-    @Column(name = "statusCode")
-    private byte statusCode;
+    @Column(name = "status_code")
+    private byte status_code;
 
-    public Task(Project project, String taskName, String taskContend, LocalDateTime dueDate) {
+    public Task(Project project, String task_name, String task_contend, LocalDateTime due_date) {
         this.project = project;
-        this.taskName = taskName;
-        this.taskContend = taskContend;
-        this.dueDate = dueDate;
-        this.statusCode = 0;
+        this.task_name = task_name;
+        this.task_contend = task_contend;
+        this.due_date = due_date;
+        this.status_code = 0;
     }
 }

@@ -1,4 +1,4 @@
-package com.teamnine.noFreeRider.Member.domain;
+package com.teamnine.noFreeRider.member.domain;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -24,30 +24,30 @@ public class Member implements UserDetails {
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(name = "memberId", updatable = false)
-    private UUID memberId;
+    @Column(name = "member_id", updatable = false)
+    private UUID member_id;
 
-    @Column(name = "memberName", nullable = false, updatable = false, unique = true)
-    private String memberName;
+    @Column(name = "member_name", nullable = false, updatable = false, unique = true)
+    private String member_name;
 
-    @Column(name = "memberEmail", nullable = false, updatable = true, unique = true)
-    private String memberEmail;
+    @Column(name = "member_email", nullable = false, updatable = true, unique = true)
+    private String member_email;
 
-    @Column(name = "memberPassword", nullable = false)
-    private String memberPassword;
+    @Column(name = "member_password", nullable = false)
+    private String member_password;
 
     @CreatedDate
-    @Column(name = "createdAt")
-    private LocalDateTime createdAt;
+    @Column(name = "created_at")
+    private LocalDateTime created_at;
 
-    @Column(name = "memberTemperature")
-    private short memberTemperature;
+    @Column(name = "member_temperature")
+    private short member_temperature;
 
-    public Member(String memberName, String memberEmail, String memberPassword) {
-        this.memberName = memberName;
-        this.memberEmail = memberEmail;
-        this.memberPassword = memberPassword;
-        this.memberTemperature = 36;
+    public Member(String memberName, String member_email, String member_password) {
+        this.member_name = memberName;
+        this.member_email = member_email;
+        this.member_password = member_password;
+        this.member_temperature = 36;
     }
 
     @Override
@@ -57,12 +57,12 @@ public class Member implements UserDetails {
 
     @Override
     public String getUsername() {
-        return memberName;
+        return member_name;
     }
 
     @Override
     public String getPassword() {
-        return memberPassword;
+        return member_password;
     }
 
     @Override

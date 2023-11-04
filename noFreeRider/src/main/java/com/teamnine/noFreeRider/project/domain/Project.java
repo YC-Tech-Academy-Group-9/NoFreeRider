@@ -1,6 +1,7 @@
 package com.teamnine.noFreeRider.project.domain;
 
-import com.teamnine.noFreeRider.Member.domain.Member;
+import com.teamnine.noFreeRider.member.domain.Member;
+import com.teamnine.noFreeRider.project.dto.UpdateProjectDto;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,34 +22,34 @@ public class Project {
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(name = "projectId", updatable = false)
-    private UUID projectId;
+    @Column(name = "project_id", updatable = false)
+    private UUID project_id;
 
-    @Column(name = "projectName")
-    private String projectName;
+    @Column(name = "project_name")
+    private String project_name;
 
-    @Column(name = "projectSummary")
-    private String projectSummary;
+    @Column(name = "project_summary")
+    private String project_summary;
 
-    @Column(name = "statusCode")
-    private byte statusCode; // 0 : 시작, 1 : 진행, 2 : 중단, 3: 완료
+    @Column(name = "status_code")
+    private int status_code; // 0 : 시작, 1 : 진행, 2 : 중단, 3: 완료
 
     @ManyToOne
-    @JoinColumn(name = "leaderNo", referencedColumnName = "memberNo", updatable = false)
+    @JoinColumn(name = "leader_id", referencedColumnName = "member_id", updatable = false)
     private Member leader;
 
     @CreatedDate
-    @Column(name = "createdAt")
-    private LocalDateTime createdAt;
+    @Column(name = "created_at")
+    private LocalDateTime created_at;
 
-    @Column(name = "endedAt")
-    private LocalDateTime endedAt;
+    @Column(name = "ended_at")
+    private LocalDateTime ended_at;
 
     @Builder
-    public Project(String projectName, String projectSummary,Member leader) {
-        this.projectName = projectName;
-        this.projectSummary = projectSummary;
-        this.statusCode = 0;
+    public Project(String project_name, String project_summary, Member leader) {
+        this.project_name = project_name;
+        this.project_summary = project_summary;
+        this.status_code = 0;
         this.leader = leader;
     }
 
@@ -56,7 +57,11 @@ public class Project {
         this.leader = nLeader;
     }
     public void updateNameAndSummary(UpdateProjectDto dto) {
-        this.projectName = dto.name();
-        this.projectSummary = dto.summary();
+        this.project_name = dto.name();
+        this.project_summary = dto.summary();
+    }
+
+    public void updateStatusCode(int newCode) {
+        this.status_code = newCode;
     }
 }

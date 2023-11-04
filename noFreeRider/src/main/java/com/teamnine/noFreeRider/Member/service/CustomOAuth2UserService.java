@@ -1,8 +1,8 @@
-package com.teamnine.noFreeRider.Member.service;
+package com.teamnine.noFreeRider.member.service;
 
-import com.teamnine.noFreeRider.Member.domain.Member;
+import com.teamnine.noFreeRider.member.domain.Member;
 import com.teamnine.noFreeRider.Member.dto.OAuth2Attribute;
-import com.teamnine.noFreeRider.Member.repository.MemberRepository;
+import com.teamnine.noFreeRider.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;

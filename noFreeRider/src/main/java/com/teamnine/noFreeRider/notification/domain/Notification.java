@@ -1,6 +1,6 @@
 package com.teamnine.noFreeRider.notification.domain;
 
-import com.teamnine.noFreeRider.Member.domain.Member;
+import com.teamnine.noFreeRider.member.domain.Member;
 import com.teamnine.noFreeRider.project.domain.Project;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -21,15 +21,15 @@ public class Notification {
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(name = "notice_no", updatable = false)
-    private UUID notice_no;
+    @Column(name = "notice_id", updatable = false)
+    private UUID notice_id;
 
     @ManyToOne
-    @JoinColumn(name = "project_no", referencedColumnName = "project_no", updatable = false)
+    @JoinColumn(name = "project_id", referencedColumnName = "project_id", updatable = false)
     private Project project;
 
     @ManyToOne
-    @JoinColumn(name = "notifier_no", referencedColumnName = "member_no", updatable = false)
+    @JoinColumn(name = "notifier_id", referencedColumnName = "member_id", updatable = false)
     private Member member;
 
     @Column(name = "notice_title", nullable = false)

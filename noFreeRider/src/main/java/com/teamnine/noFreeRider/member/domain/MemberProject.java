@@ -1,7 +1,8 @@
-package com.teamnine.noFreeRider.Member.domain;
+package com.teamnine.noFreeRider.member.domain;
 
 import com.teamnine.noFreeRider.project.domain.Project;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -20,16 +21,17 @@ public class MemberProject {
 
 
     @ManyToOne
-    @JoinColumn(name = "memberNo", referencedColumnName = "memberNo", updatable = false)
+    @JoinColumn(name = "member_id", referencedColumnName = "member_id", updatable = false)
     private Member member;
 
     @ManyToOne
-    @JoinColumn(name = "projectNo", referencedColumnName = "projectNo", updatable = false)
+    @JoinColumn(name = "project_id", referencedColumnName = "project_id", updatable = false)
     private Project project;
 
     @Column(name = "score", nullable = true)
     private Integer score;
 
+    @Builder
     public MemberProject(Member member, Project project) {
         this.member = member;
         this.project = project;

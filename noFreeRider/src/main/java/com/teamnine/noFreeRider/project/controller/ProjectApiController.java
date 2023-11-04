@@ -1,12 +1,10 @@
 package com.teamnine.noFreeRider.project.controller;
 
-import com.teamnine.noFreeRider.Member.domain.Member;
-import com.teamnine.noFreeRider.Member.service.MemberDetailService;
+import com.teamnine.noFreeRider.member.domain.Member;
+import com.teamnine.noFreeRider.member.service.MemberDetailService;
 import com.teamnine.noFreeRider.project.domain.Project;
-import com.teamnine.noFreeRider.project.dto.AddProjectDto;
-import com.teamnine.noFreeRider.project.dto.ChangeProjectLeaderDto;
-import com.teamnine.noFreeRider.project.dto.ProjectDto;
-import com.teamnine.noFreeRider.project.dto.ResultDto;
+import com.teamnine.noFreeRider.project.dto.*;
+import com.teamnine.noFreeRider.project.service.MemberProjectService;
 import com.teamnine.noFreeRider.project.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +21,7 @@ public class ProjectApiController {
 
     private final ProjectService projectService;
     private final MemberDetailService memberDetailService;
+    private final MemberProjectService memberProjectService;
 
     @PostMapping("")
     public ResponseEntity<ResultDto<Project>> addProject(
@@ -67,13 +66,14 @@ public class ProjectApiController {
 
     }
 
-    @PutMapping("/{projectId}/leader")
+    @PutMapping("/{project_id}/leader")
     public ResponseEntity<ResultDto<Project>> updateProjectLeader(
-            @PathVariable UUID projectId,
-            @RequestBody ChangeProjectLeaderDto dto
+            @PathVariable UUID project_id,
+            @RequestBody ChangeProjectLeaderDto dto,
+            Principal principal
             ) {
         try {
-            if (!isProjectLeader(principal.getName(), projectId)) {
+            if (!isProjectLeader(principal.getName(), project_id)) {
                 return ResponseEntity.badRequest()
                         .body(new ResultDto<>(
                                 403,
@@ -82,7 +82,7 @@ public class ProjectApiController {
                         ));
             }
 
-            Project updateLeaderProject = projectService.changeLeader(dto, projectId);
+            Project updateLeaderProject = projectService.changeLeader(dto, project_id);
             return ResponseEntity.ok()
                     .body(new ResultDto<>(
                             200,
@@ -100,13 +100,13 @@ public class ProjectApiController {
 
     }
 
-    @PostMapping("/{projectId}")
+    @PostMapping("/{project_id}")
     public ResponseEntity<ResultDto<Project>> addPartiMember(
-            @PathVariable UUID projectId,
+            @PathVariable UUID project_id,
             Principal principal
     ) {
         try {
-            MemberProjectDto dto = new MemberProjectDto(getMemberUUID(principal.getName()), projectId);
+            MemberProjectDto dto = new MemberProjectDto(getMemberUUID(principal.getName()), project_id);
             return ResponseEntity.ok()
                     .body(new ResultDto<>(
                             200,
@@ -123,13 +123,13 @@ public class ProjectApiController {
         }
     }
 
-    @DeleteMapping("/{projectId}/{memberId}")
+    @DeleteMapping("/{project_id}/{member_id}")
     public ResponseEntity<ResultDto<Long>> deletePartiMember(
-            @PathVariable UUID projectId,
-            @PathVariable UUID memberId,
+            @PathVariable UUID project_id,
+            @PathVariable UUID member_id,
             Principal principal
     ) {
-        if (!isProjectLeader(principal.getName(), projectId)) {
+        if (!isProjectLeader(principal.getName(), project_id)) {
             return ResponseEntity.badRequest()
                     .body(new ResultDto<>(
                             403,
@@ -138,7 +138,7 @@ public class ProjectApiController {
                     ));
         }
 
-        MemberProjectDto dto = new MemberProjectDto(memberId, projectId);
+        MemberProjectDto dto = new MemberProjectDto(member_id, project_id);
 
         if (!memberProjectService.isMemberPartInProject(dto)) {
             return ResponseEntity.badRequest()
@@ -159,7 +159,7 @@ public class ProjectApiController {
 
     private UUID getMemberUUID(String userName) {
         Member member = memberDetailService.loadUserByUsername(userName);
-        return member.getMemberNo();
+        return member.getMember_id();
     }
 
     private boolean isProjectLeader(String userName, UUID projectId) {
