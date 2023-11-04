@@ -60,8 +60,17 @@ public class ProjectService {
         return project;
     }
 
-    public Project changeStatusCode() {
-
+    public Project changeStatusCode(UUID project_id, StatusCodeDto dto) {
+        Optional<Project> projectBox = projectRepository.findById(project_id);
+        if (projectBox.isEmpty()) {
+            throw new IllegalArgumentException("존재하지 않는 프로젝트 입니다");
+        }
+        Project project = projectBox.get();
+        if (project.getStatus_code() == dto.code()) {
+            throw new IllegalArgumentException();
+        }
+        project.updateStatusCode(dto.code());
+        return project;
     }
 
 

@@ -27,7 +27,7 @@ public class ProjectApiController {
     public ResponseEntity<ResultDto<Project>> addProject(
             @RequestBody ProjectDto projectDto,
             Principal principal
-            ) {
+    ) {
         String userName = principal.getName();
         Member leader = memberDetailService.loadUserByUsername(userName);
         AddProjectDto addProjectDto = new AddProjectDto(
@@ -47,7 +47,7 @@ public class ProjectApiController {
             @PathVariable UUID projectId,
             @RequestBody ProjectDto dto,
             Principal principal
-            ) {
+    ) {
         if (!isProjectLeader(principal.getName(), projectId)) {
             return ResponseEntity.badRequest()
                     .body(new ResultDto<>(
@@ -71,7 +71,7 @@ public class ProjectApiController {
             @PathVariable UUID project_id,
             @RequestBody ChangeProjectLeaderDto dto,
             Principal principal
-            ) {
+    ) {
         try {
             if (!isProjectLeader(principal.getName(), project_id)) {
                 return ResponseEntity.badRequest()
@@ -97,10 +97,44 @@ public class ProjectApiController {
                             null
                     ));
         }
-
     }
 
+    @PutMapping("/{project_id}/status")
+    public ResponseEntity<ResultDto<Project>> updateStatusCode(
+            @PathVariable UUID project_id,
+            @RequestBody StatusCodeDto dto,
+            Principal principal
+    ) {
+        try {
+            if (!isProjectLeader(principal.getName(), project_id)) {
+                return ResponseEntity.badRequest()
+                        .body(new ResultDto<>(
+                                403,
+                                "access only project leader",
+                                null
+                        ));
+            }
+
+            Project updateStatusProject = projectService.changeStatusCode(project_id, dto);
+            return ResponseEntity.ok()
+                    .body(new ResultDto<>(
+                            200,
+                            "",
+                            updateStatusProject
+                    ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(new ResultDto<>(
+                            400,
+                            "Bad Request",
+                            null
+                    ));
+        }
+    }
+
+
     @PostMapping("/{project_id}")
+
     public ResponseEntity<ResultDto<Project>> addPartiMember(
             @PathVariable UUID project_id,
             Principal principal
