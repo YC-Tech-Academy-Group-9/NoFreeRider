@@ -1,4 +1,4 @@
-package com.teamnine.noFreeRider.Member.domain;
+package com.teamnine.noFreeRider.member.domain;
 
 import com.teamnine.noFreeRider.task.domain.Task;
 import lombok.AccessLevel;
@@ -17,10 +17,10 @@ public class MemberTask {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "memberId", referencedColumnName = "memberId", updatable = false)
+    @JoinColumn(name = "member_id", referencedColumnName = "member_id", updatable = false)
     private Member member;
 
     @ManyToOne
-    @JoinColumn(name = "taskId", referencedColumnName = "taskId", updatable = false)
+    @JoinColumn(name = "task_id", referencedColumnName = "task_id", updatable = false)
     private Task task;
 }

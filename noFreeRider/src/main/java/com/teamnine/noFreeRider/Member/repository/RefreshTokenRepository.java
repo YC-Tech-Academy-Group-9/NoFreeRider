@@ -1,6 +1,6 @@
 package com.teamnine.noFreeRider.Member.repository;
 
-import com.teamnine.noFreeRider.Member.domain.RefreshToken;
+import com.teamnine.noFreeRider.member.domain.RefreshToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
