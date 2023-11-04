@@ -159,7 +159,7 @@ public class ProjectApiController {
 
     private UUID getMemberUUID(String userName) {
         Member member = memberDetailService.loadUserByUsername(userName);
-        return member.getMemberId();
+        return member.getId();
     }
 
     private boolean isProjectLeader(String userName, UUID projectId) {

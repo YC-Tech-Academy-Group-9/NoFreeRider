@@ -31,7 +31,7 @@ public class ProjectService {
         Project project = projectRepository.findById(projectID)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (!project.getLeader().getMemberId().equals(dto.exLeader_id())) {
+        if (!project.getLeader().getId().equals(dto.exLeader_id())) {
             throw new IllegalArgumentException();
         }
 
@@ -66,7 +66,7 @@ public class ProjectService {
 
 
     public boolean isProjectLeader(MemberProjectDto dto) {
-        Optional<UUID> leaderUUID = projectRepository.findLeaderIdByProjectId(dto.project_id());
+        Optional<UUID> leaderUUID = projectRepository.findLeaderIdById(dto.project_id());
         if (leaderUUID.isEmpty()) {
             return false;
         }

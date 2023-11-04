@@ -23,7 +23,7 @@ public class Project {
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(name = "project_id", updatable = false)
-    private UUID projectId;
+    private UUID id;
 
     @Column(name = "project_name")
     private String projectName;
