@@ -23,16 +23,20 @@ public class Project {
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(name = "project_id", updatable = false)
-    private UUID project_id;
+    private UUID id;
 
     @Column(name = "project_name")
-    private String project_name;
+    private String projectName;
 
     @Column(name = "project_summary")
-    private String project_summary;
+    private String projectSummary;
 
+    @Column(name = "class_name")
+    private String className;
+
+    @Enumerated(EnumType.STRING)
     @Column(name = "status_code")
-    private int status_code; // 0 : 시작, 1 : 진행, 2 : 중단, 3: 완료
+    private ProjectStatusCode statusCode;
 
     @ManyToOne
     @JoinColumn(name = "leader_id", referencedColumnName = "member_id", updatable = false)
@@ -46,10 +50,11 @@ public class Project {
     private LocalDateTime ended_at;
 
     @Builder
-    public Project(String project_name, String project_summary, Member leader) {
-        this.project_name = project_name;
-        this.project_summary = project_summary;
-        this.status_code = 0;
+    public Project(String project_name, String project_summary, String class_name, Member leader) {
+        this.projectName = project_name;
+        this.projectSummary = project_summary;
+        this.className = class_name;
+        this.statusCode = ProjectStatusCode.STARTED;
         this.leader = leader;
     }
 
@@ -57,11 +62,17 @@ public class Project {
         this.leader = nLeader;
     }
     public void updateNameAndSummary(UpdateProjectDto dto) {
-        this.project_name = dto.name();
-        this.project_summary = dto.summary();
+        this.projectName = dto.title();
+        this.projectSummary = dto.summary();
+        this.className = dto.className();
     }
 
-    public void updateStatusCode(int newCode) {
-        this.status_code = newCode;
+    public void updateStatusCode(ProjectStatusCode newCode) {
+        this.statusCode = newCode;
     }
+
+    public void setEnded_atToNow() {
+        this.ended_at = LocalDateTime.now();
+    }
+
 }

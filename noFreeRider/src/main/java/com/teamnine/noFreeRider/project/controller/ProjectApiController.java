@@ -33,6 +33,7 @@ public class ProjectApiController {
         AddProjectDto addProjectDto = new AddProjectDto(
                 projectDto.name(),
                 projectDto.summary(),
+                projectDto.className(),
                 leader);
 
         return ResponseEntity.ok()
@@ -61,7 +62,7 @@ public class ProjectApiController {
                 .body(new ResultDto<>(
                         200,
                         "",
-                        projectService.update(new UpdateProjectDto(projectId, dto.name(), dto.summary()))
+                        projectService.update(new UpdateProjectDto(projectId, dto.name(), dto.summary(), dto.className()))
                 ));
 
     }
@@ -135,7 +136,7 @@ public class ProjectApiController {
 
     @PostMapping("/{project_id}")
 
-    public ResponseEntity<ResultDto<Project>> addPartiMember(
+    public ResponseEntity<ResultDto<Project>> addPartyMember(
             @PathVariable UUID project_id,
             Principal principal
     ) {
@@ -158,7 +159,7 @@ public class ProjectApiController {
     }
 
     @DeleteMapping("/{project_id}/{member_id}")
-    public ResponseEntity<ResultDto<Long>> deletePartiMember(
+    public ResponseEntity<ResultDto<Long>> deletePartyMember(
             @PathVariable UUID project_id,
             @PathVariable UUID member_id,
             Principal principal
@@ -193,7 +194,7 @@ public class ProjectApiController {
 
     private UUID getMemberUUID(String userName) {
         Member member = memberDetailService.loadUserByUsername(userName);
-        return member.getMember_id();
+        return member.getId();
     }
 
     private boolean isProjectLeader(String userName, UUID projectId) {

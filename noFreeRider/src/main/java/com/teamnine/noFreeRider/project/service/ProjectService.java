@@ -5,6 +5,7 @@ import com.teamnine.noFreeRider.member.repository.MemberRepository;
 import com.teamnine.noFreeRider.member.domain.MemberProject;
 import com.teamnine.noFreeRider.member.repository.MemberProjectRepository;
 import com.teamnine.noFreeRider.project.domain.Project;
+import com.teamnine.noFreeRider.project.domain.ProjectStatusCode;
 import com.teamnine.noFreeRider.project.dto.*;
 import com.teamnine.noFreeRider.project.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,7 @@ public class ProjectService {
         Project project = projectRepository.findById(projectID)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (!project.getLeader().getMember_id().equals(dto.exLeader_id())) {
+        if (!project.getLeader().getId().equals(dto.exLeader_id())) {
             throw new IllegalArgumentException();
         }
 
@@ -60,28 +61,32 @@ public class ProjectService {
         return project;
     }
 
+    @Transactional
     public Project changeStatusCode(UUID project_id, StatusCodeDto dto) {
         Optional<Project> projectBox = projectRepository.findById(project_id);
         if (projectBox.isEmpty()) {
             throw new IllegalArgumentException("존재하지 않는 프로젝트 입니다");
         }
         Project project = projectBox.get();
-        if (project.getStatus_code() == dto.code()) {
+        if (project.getStatusCode() == dto.code()) {
             throw new IllegalArgumentException();
+        }
+        if (dto.code().equals(ProjectStatusCode.DONE)) {
+            project.setEnded_atToNow();
         }
         project.updateStatusCode(dto.code());
         return project;
     }
 
-
     public boolean isProjectLeader(MemberProjectDto dto) {
-        Optional<UUID> leaderUUID = projectRepository.findLeader_idByProject_id(dto.project_id());
+        Optional<UUID> leaderUUID = projectRepository.findLeader_idById(dto.project_id());
         if (leaderUUID.isEmpty()) {
             return false;
         }
         return leaderUUID.get().equals(dto.member_id());
     }
 
+    @Transactional
     public Project update(UpdateProjectDto dto) {
         Project project = projectRepository.findById(dto.project_id())
                 .orElseThrow(IllegalArgumentException::new);

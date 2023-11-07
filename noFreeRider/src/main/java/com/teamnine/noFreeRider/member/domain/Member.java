@@ -25,7 +25,7 @@ public class Member implements UserDetails {
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(name = "member_id", updatable = false)
-    private UUID member_id;
+    private UUID id;
 
     @Column(name = "member_name", nullable = false, updatable = false, unique = true)
     private String member_name;
