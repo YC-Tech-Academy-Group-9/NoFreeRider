@@ -52,7 +52,7 @@ public class ProjectService {
                 .orElseThrow(IllegalArgumentException::new);
 
         if (memberProjectRepository.existsByMember_idAndProject_id(dto.member_id(), dto.project_id())) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("이미 존재하는 멤버입니다");
         }
 
         memberProjectRepository.save(MemberProject.builder()
@@ -72,7 +72,7 @@ public class ProjectService {
         }
         Project project = projectBox.get();
         if (project.getStatusCode() == dto.code()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("변경하려는 상태코드가 현재 상태코드와 같습니다");
         }
         if (dto.code().equals(ProjectStatusCode.DONE)) {
             project.setEnded_atToNow();
@@ -91,8 +91,8 @@ public class ProjectService {
 
     @Transactional
     public Project update(UpdateProjectDto dto) {
-        Project project = projectRepository.findById(dto.project_id())
-                .orElseThrow(IllegalArgumentException::new);
+        Optional<Project> projectBox = projectRepository.findById(dto.project_id());
+        Project project = projectBox.get();
         project.updateNameAndSummary(dto);
         return project;
     }
@@ -103,5 +103,10 @@ public class ProjectService {
             return false;
         }
         return true;
+    }
+
+    public GetProjectDto getProjectInfo(UUID projectId) {
+        Project project = projectRepository.findById(projectId).get();
+        return new GetProjectDto(project);
     }
 }

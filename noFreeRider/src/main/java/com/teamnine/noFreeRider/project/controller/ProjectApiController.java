@@ -45,12 +45,40 @@ public class ProjectApiController {
                         projectService.save(addProjectDto)));
     }
 
+    @GetMapping("/{projectId}")
+    public ResponseEntity<ResultDto<GetProjectDto>> projectInfo(
+            @PathVariable UUID projectId
+    ) {
+        if (!isExistProject(projectId)) {
+            return ResponseEntity.badRequest()
+                    .body(new ResultDto<>(
+                            404,
+                            "not found project",
+                            null
+                    ));
+        }
+        return ResponseEntity.ok()
+                .body(new ResultDto<>(
+                        200,
+                        "",
+                        projectService.getProjectInfo(projectId)
+                ));
+    }
+
     @PutMapping("/{projectId}")
     public ResponseEntity<ResultDto<Project>> updateProject(
             @PathVariable UUID projectId,
             @RequestBody ProjectDto dto,
             Principal principal
     ) {
+        if (!isExistProject(projectId)) {
+            return ResponseEntity.badRequest()
+                    .body(new ResultDto<>(
+                            404,
+                            "not found project",
+                            null
+                    ));
+        }
         if (!isProjectLeader(principal.getName(), projectId)) {
             return ResponseEntity.badRequest()
                     .body(new ResultDto<>(
@@ -59,14 +87,12 @@ public class ProjectApiController {
                             null
                     ));
         }
-
         return ResponseEntity.ok()
                 .body(new ResultDto<>(
                         200,
                         "",
                         projectService.update(new UpdateProjectDto(projectId, dto.name(), dto.summary(), dto.className()))
                 ));
-
     }
 
     @PutMapping("/{projectId}/leader")
@@ -212,7 +238,7 @@ public class ProjectApiController {
                         taskService.searchTasksByProjectId(projectId)
                 ));
     }
-    
+
 
     private UUID getMemberUUID(String userName) {
         Member member = memberDetailService.loadUserByUsername(userName);
