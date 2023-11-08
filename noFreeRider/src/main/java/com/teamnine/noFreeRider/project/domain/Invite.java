@@ -13,9 +13,9 @@ public class Invite {
     private UUID inviteCode;
     private boolean isInvited;
 
-    public Invite(UUID projectId, UUID inviteCode) {
+    public Invite(UUID projectId) {
         this.projectId = projectId;
-        this.inviteCode = inviteCode;
+        this.inviteCode = UUID.randomUUID();
         this.isInvited = false;
     }
 }
