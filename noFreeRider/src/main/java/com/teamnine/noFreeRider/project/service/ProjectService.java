@@ -23,8 +23,11 @@ public class ProjectService {
     private final MemberRepository memberRepository;
     private final MemberProjectRepository memberProjectRepository;
 
+    @Transactional
     public Project save(AddProjectDto addProjectDto) {
-        return projectRepository.save(addProjectDto.toEntity());
+        Project project = projectRepository.save(addProjectDto.toEntity());
+        memberProjectRepository.save(new MemberProject(addProjectDto.leader(), project));
+        return project;
     }
 
     @Transactional
