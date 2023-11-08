@@ -93,4 +93,12 @@ public class ProjectService {
         project.updateNameAndSummary(dto);
         return project;
     }
+
+    public boolean isExistProject(UUID projectId) {
+        Optional<Project> projectBox = projectRepository.findById(projectId);
+        if (projectBox.isEmpty()) {
+            return false;
+        }
+        return true;
+    }
 }

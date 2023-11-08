@@ -6,6 +6,7 @@ import com.teamnine.noFreeRider.project.domain.Project;
 import com.teamnine.noFreeRider.project.dto.*;
 import com.teamnine.noFreeRider.project.service.MemberProjectService;
 import com.teamnine.noFreeRider.project.service.ProjectService;
+import com.teamnine.noFreeRider.task.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,7 @@ public class ProjectApiController {
     private final ProjectService projectService;
     private final MemberDetailService memberDetailService;
     private final MemberProjectService memberProjectService;
+    private final TaskService taskService;
 
     @PostMapping("")
     public ResponseEntity<ResultDto<Project>> addProject(
@@ -67,14 +69,14 @@ public class ProjectApiController {
 
     }
 
-    @PutMapping("/{project_id}/leader")
+    @PutMapping("/{projectId}/leader")
     public ResponseEntity<ResultDto<Project>> updateProjectLeader(
-            @PathVariable UUID project_id,
+            @PathVariable UUID projectId,
             @RequestBody ChangeProjectLeaderDto dto,
             Principal principal
     ) {
         try {
-            if (!isProjectLeader(principal.getName(), project_id)) {
+            if (!isProjectLeader(principal.getName(), projectId)) {
                 return ResponseEntity.badRequest()
                         .body(new ResultDto<>(
                                 403,
@@ -83,7 +85,7 @@ public class ProjectApiController {
                         ));
             }
 
-            Project updateLeaderProject = projectService.changeLeader(dto, project_id);
+            Project updateLeaderProject = projectService.changeLeader(dto, projectId);
             return ResponseEntity.ok()
                     .body(new ResultDto<>(
                             200,
@@ -100,14 +102,14 @@ public class ProjectApiController {
         }
     }
 
-    @PutMapping("/{project_id}/status")
+    @PutMapping("/{projectId}/status")
     public ResponseEntity<ResultDto<Project>> updateStatusCode(
-            @PathVariable UUID project_id,
+            @PathVariable UUID projectId,
             @RequestBody StatusCodeDto dto,
             Principal principal
     ) {
         try {
-            if (!isProjectLeader(principal.getName(), project_id)) {
+            if (!isProjectLeader(principal.getName(), projectId)) {
                 return ResponseEntity.badRequest()
                         .body(new ResultDto<>(
                                 403,
@@ -116,7 +118,7 @@ public class ProjectApiController {
                         ));
             }
 
-            Project updateStatusProject = projectService.changeStatusCode(project_id, dto);
+            Project updateStatusProject = projectService.changeStatusCode(projectId, dto);
             return ResponseEntity.ok()
                     .body(new ResultDto<>(
                             200,
@@ -134,14 +136,13 @@ public class ProjectApiController {
     }
 
 
-    @PostMapping("/{project_id}")
-
+    @PostMapping("/{projectId}")
     public ResponseEntity<ResultDto<Project>> addPartyMember(
-            @PathVariable UUID project_id,
+            @PathVariable UUID projectId,
             Principal principal
     ) {
         try {
-            MemberProjectDto dto = new MemberProjectDto(getMemberUUID(principal.getName()), project_id);
+            MemberProjectDto dto = new MemberProjectDto(getMemberUUID(principal.getName()), projectId);
             return ResponseEntity.ok()
                     .body(new ResultDto<>(
                             200,
@@ -158,13 +159,13 @@ public class ProjectApiController {
         }
     }
 
-    @DeleteMapping("/{project_id}/{member_id}")
+    @DeleteMapping("/{projectId}/{memberId}")
     public ResponseEntity<ResultDto<Long>> deletePartyMember(
-            @PathVariable UUID project_id,
-            @PathVariable UUID member_id,
+            @PathVariable UUID projectId,
+            @PathVariable UUID memberId,
             Principal principal
     ) {
-        if (!isProjectLeader(principal.getName(), project_id)) {
+        if (!isProjectLeader(principal.getName(), projectId)) {
             return ResponseEntity.badRequest()
                     .body(new ResultDto<>(
                             403,
@@ -173,7 +174,7 @@ public class ProjectApiController {
                     ));
         }
 
-        MemberProjectDto dto = new MemberProjectDto(member_id, project_id);
+        MemberProjectDto dto = new MemberProjectDto(memberId, projectId);
 
         if (!memberProjectService.isMemberPartInProject(dto)) {
             return ResponseEntity.badRequest()
@@ -192,6 +193,27 @@ public class ProjectApiController {
                 ));
     }
 
+    @GetMapping("/{projectId}/tasks")
+    public ResponseEntity<ResultDto<SearchTaskListDto>> searchTasks(
+            @PathVariable UUID projectId
+    ) {
+        if (!isExistProject(projectId)) {
+            return ResponseEntity.badRequest()
+                    .body(new ResultDto<>(
+                            404,
+                            "not found Project",
+                            null
+                    ));
+        }
+        return ResponseEntity.ok()
+                .body(new ResultDto<>(
+                        200,
+                        "",
+                        taskService.searchTasksByProjectId(projectId)
+                ));
+    }
+    
+
     private UUID getMemberUUID(String userName) {
         Member member = memberDetailService.loadUserByUsername(userName);
         return member.getId();
@@ -199,5 +221,9 @@ public class ProjectApiController {
 
     private boolean isProjectLeader(String userName, UUID projectId) {
         return projectService.isProjectLeader(new MemberProjectDto(getMemberUUID(userName), projectId));
+    }
+
+    private boolean isExistProject(UUID projectId) {
+        return projectService.isExistProject(projectId);
     }
 }
