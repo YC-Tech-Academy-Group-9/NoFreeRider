@@ -194,6 +194,7 @@ public class ProjectApiController {
             MemberProjectDto dto = new MemberProjectDto(
                     getMemberUUID(principal.getName()),
                     inviteService.useCode(new AcceptInviteDto(projectId, inviteCode)));
+
             return ResponseEntity.ok()
                     .body(new ResultDto<>(
                             200,

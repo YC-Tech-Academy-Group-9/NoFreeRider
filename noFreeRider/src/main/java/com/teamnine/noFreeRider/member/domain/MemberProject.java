@@ -21,11 +21,11 @@ public class MemberProject {
 
 
     @ManyToOne
-    @JoinColumn(name = "member_id", referencedColumnName = "member_id", updatable = false)
+    @JoinColumn(name = "memberId", updatable = false)
     private Member member;
 
     @ManyToOne
-    @JoinColumn(name = "project_id", referencedColumnName = "project_id", updatable = false)
+    @JoinColumn(name = "projectId", updatable = false)
     private Project project;
 
     @Column(name = "score", nullable = true)

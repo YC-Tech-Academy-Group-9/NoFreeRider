@@ -38,8 +38,8 @@ public class Project {
     @Column(name = "status_code")
     private ProjectStatusCode statusCode;
 
-    @ManyToOne
-    @JoinColumn(name = "leader_id", referencedColumnName = "member_id", updatable = false)
+    @OneToOne
+    @JoinColumn(name = "leader_id", updatable = false)
     private Member leader;
 
     @CreatedDate
@@ -73,6 +73,7 @@ public class Project {
 
     public void setEnded_atToNow() {
         this.ended_at = LocalDateTime.now();
+
     }
 
 }
