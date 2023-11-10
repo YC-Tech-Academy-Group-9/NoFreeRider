@@ -4,6 +4,7 @@ import com.teamnine.noFreeRider.member.domain.Member;
 import com.teamnine.noFreeRider.member.service.MemberDetailService;
 import com.teamnine.noFreeRider.project.domain.Project;
 import com.teamnine.noFreeRider.project.dto.*;
+import com.teamnine.noFreeRider.project.service.InviteService;
 import com.teamnine.noFreeRider.project.service.MemberProjectService;
 import com.teamnine.noFreeRider.project.service.ProjectService;
 import com.teamnine.noFreeRider.task.service.TaskService;
@@ -24,18 +25,19 @@ public class ProjectApiController {
     private final MemberDetailService memberDetailService;
     private final MemberProjectService memberProjectService;
     private final TaskService taskService;
+    private final InviteService inviteService;
 
     @PostMapping("")
     public ResponseEntity<ResultDto<Project>> addProject(
-            @RequestBody ProjectDto projectDto,
+            @RequestBody PostProjectDto postProjectDto,
             Principal principal
     ) {
         String userName = principal.getName();
         Member leader = memberDetailService.loadUserByUsername(userName);
         AddProjectDto addProjectDto = new AddProjectDto(
-                projectDto.name(),
-                projectDto.summary(),
-                projectDto.className(),
+                postProjectDto.name(),
+                postProjectDto.summary(),
+                postProjectDto.className(),
                 leader);
 
         return ResponseEntity.ok()
@@ -68,7 +70,7 @@ public class ProjectApiController {
     @PutMapping("/{projectId}")
     public ResponseEntity<ResultDto<Project>> updateProject(
             @PathVariable UUID projectId,
-            @RequestBody ProjectDto dto,
+            @RequestBody PostProjectDto dto,
             Principal principal
     ) {
         if (!isExistProject(projectId)) {
@@ -161,21 +163,44 @@ public class ProjectApiController {
         }
     }
 
-
-    @PostMapping("/{projectId}")
-    public ResponseEntity<ResultDto<Project>> addPartyMember(
+    @PostMapping("/{projectId}/invite")
+    public ResponseEntity<ResultDto<UUID>> generateInviteCode(
             @PathVariable UUID projectId,
             Principal principal
     ) {
+        if (!isProjectLeader(principal.getName(), projectId)) {
+            return ResponseEntity.badRequest()
+                    .body(new ResultDto<>(
+                            403,
+                            "access only project leader",
+                            null
+                    ));
+        }
+        return ResponseEntity.ok()
+                .body(new ResultDto<>(
+                        200,
+                        "",
+                        inviteService.create(projectId)
+                ));
+    }
+
+    @PostMapping("/{projectId}/{inviteCode}")
+    public ResponseEntity<ResultDto<Project>> addPartyMember(
+            @PathVariable UUID projectId,
+            @PathVariable UUID inviteCode,
+            Principal principal
+    ) {
         try {
-            MemberProjectDto dto = new MemberProjectDto(getMemberUUID(principal.getName()), projectId);
+            MemberProjectDto dto = new MemberProjectDto(
+                    getMemberUUID(principal.getName()),
+                    inviteService.useCode(new AcceptInviteDto(projectId, inviteCode)));
             return ResponseEntity.ok()
                     .body(new ResultDto<>(
                             200,
                             "",
                             projectService.addMember(dto)
                     ));
-        } catch (Exception e) {
+        } catch (Exception e) { // 세분화 추가 작업 필요
             return ResponseEntity.badRequest()
                     .body(new ResultDto<>(
                             400,
