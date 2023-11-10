@@ -1,7 +1,7 @@
 package com.teamnine.noFreeRider.auth;
 
-import com.teamnine.noFreeRider.Member.domain.RefreshToken;
-import com.teamnine.noFreeRider.Member.repository.RefreshTokenRepository;
+import com.teamnine.noFreeRider.member.domain.RefreshToken;
+import com.teamnine.noFreeRider.member.repository.RefreshTokenRepository;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

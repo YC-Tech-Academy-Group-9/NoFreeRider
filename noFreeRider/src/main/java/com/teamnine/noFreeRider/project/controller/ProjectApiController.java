@@ -68,12 +68,12 @@ public class ProjectApiController {
 
     @PutMapping("/{project_id}/leader")
     public ResponseEntity<ResultDto<Project>> updateProjectLeader(
-            @PathVariable UUID project_id,
+            @PathVariable UUID projectId,
             @RequestBody ChangeProjectLeaderDto dto,
             Principal principal
             ) {
         try {
-            if (!isProjectLeader(principal.getName(), project_id)) {
+            if (!isProjectLeader(principal.getName(), projectId)) {
                 return ResponseEntity.badRequest()
                         .body(new ResultDto<>(
                                 403,
@@ -82,7 +82,7 @@ public class ProjectApiController {
                         ));
             }
 
-            Project updateLeaderProject = projectService.changeLeader(dto, project_id);
+            Project updateLeaderProject = projectService.changeLeader(dto, projectId);
             return ResponseEntity.ok()
                     .body(new ResultDto<>(
                             200,
@@ -100,13 +100,13 @@ public class ProjectApiController {
 
     }
 
-    @PostMapping("/{project_id}")
+    @PostMapping("/{projectId}")
     public ResponseEntity<ResultDto<Project>> addPartiMember(
-            @PathVariable UUID project_id,
+            @PathVariable UUID projectId,
             Principal principal
     ) {
         try {
-            MemberProjectDto dto = new MemberProjectDto(getMemberUUID(principal.getName()), project_id);
+            MemberProjectDto dto = new MemberProjectDto(getMemberUUID(principal.getName()), projectId);
             return ResponseEntity.ok()
                     .body(new ResultDto<>(
                             200,
@@ -159,7 +159,7 @@ public class ProjectApiController {
 
     private UUID getMemberUUID(String userName) {
         Member member = memberDetailService.loadUserByUsername(userName);
-        return member.getMember_id();
+        return member.getId();
     }
 
     private boolean isProjectLeader(String userName, UUID projectId) {
