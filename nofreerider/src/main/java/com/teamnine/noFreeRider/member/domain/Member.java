@@ -1,5 +1,8 @@
 package com.teamnine.noFreeRider.member.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,14 +30,19 @@ public class Member implements UserDetails {
     @Column(name = "member_id", updatable = false)
     private UUID id;
 
-    @Column(name = "member_name", nullable = false, updatable = false, unique = true)
+    @Column(name = "member_name")
     private String memberName;
 
     @Column(name = "member_email", nullable = false, updatable = true, unique = true)
     private String memberEmail;
 
-    @Column(name = "member_password", nullable = false)
-    private String memberPassword;
+    @Column(name = "member_studentId")
+    private int memberStudentId;
+
+    @Column(name = "member_major")
+    private String memberMajor;
+
+
 
     @CreatedDate
     @Column(name = "created_at")
@@ -43,10 +51,11 @@ public class Member implements UserDetails {
     @Column(name = "member_temperature")
     private short member_temperature;
 
-    public Member(String memberName, String member_email, String member_password) {
+    public Member(String memberName, String member_email, int member_studentId, String member_major) {
         this.memberName = memberName;
         this.memberEmail = member_email;
-        this.memberPassword = member_password;
+        this.memberStudentId = member_studentId;
+        this.memberMajor = member_major;
         this.member_temperature = 36;
     }
 
@@ -56,8 +65,9 @@ public class Member implements UserDetails {
     }
 
     @Override
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public String getPassword() {
-        return memberPassword;
+        return null;
     }
 
     @Override

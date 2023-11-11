@@ -6,6 +6,7 @@ import com.teamnine.noFreeRider.project.domain.Project;
 import com.teamnine.noFreeRider.project.dto.*;
 import com.teamnine.noFreeRider.project.service.MemberProjectService;
 import com.teamnine.noFreeRider.project.service.ProjectService;
+import com.teamnine.noFreeRider.util.dto.ResultDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
