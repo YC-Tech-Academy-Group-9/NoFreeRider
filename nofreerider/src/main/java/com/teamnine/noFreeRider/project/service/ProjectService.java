@@ -66,7 +66,7 @@ public class ProjectService {
 
 
     public boolean isProjectLeader(MemberProjectDto dto) {
-        Optional<UUID> leaderUUID = projectRepository.findLeaderIdByProjectId(dto.project_id());
+        Optional<UUID> leaderUUID = projectRepository.findLeaderIdById(dto.project_id());
         if (leaderUUID.isEmpty()) {
             return false;
         }
