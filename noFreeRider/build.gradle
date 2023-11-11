@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.7.15'
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	id 'com.google.cloud.tools.jib' version '3.4.0'
 }
 
 group = 'com.teamnine'
@@ -53,8 +54,25 @@ dependencies {
 	//querydsl
 	implementation "com.querydsl:querydsl-jpa:5.0.0"
 	annotationProcessor "com.querydsl:querydsl-apt:5.0.0"
+
+	runtimeOnly 'org.postgresql:postgresql'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+//jib
+jib {
+	from {
+		image = 'openjdk:17-alpine'
+	}
+	to {
+		image = project.name
+		credHelper = 'ecr-login'
+		tags = ['latest']
+	}
+	container {
+		ports = ['8080']
+	}
 }

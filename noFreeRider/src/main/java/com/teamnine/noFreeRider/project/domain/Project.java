@@ -35,8 +35,9 @@ public class Project {
     private String className;
 
     @Enumerated(EnumType.STRING)
+
     @Column(name = "status_code")
-    private ProjectStatusCode statusCode;
+    private ProjectStatusCode statusCode; // 0 : 시작, 1 : 진행, 2 : 중단, 3: 완료
 
     @OneToOne
     @JoinColumn(name = "leader_id", updatable = false)
@@ -67,8 +68,8 @@ public class Project {
         this.className = dto.className();
     }
 
-    public void updateStatusCode(ProjectStatusCode newCode) {
-        this.statusCode = newCode;
+    public void updateStatusCode(int newCode) {
+        this.statusCode = ProjectStatusCode.values()[newCode];
     }
 
     public void setEnded_atToNow() {
