@@ -36,9 +36,9 @@ public class AuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
         if (!isExist) {
             Member newMember = new Member(
-                    oAuth2User.getName(),
+                    null,
                     email,
-                    passwordEncoder.encode(UUID.randomUUID().toString())
+                    0, null
             );
             memberRepository.save(newMember);
         }
@@ -46,6 +46,10 @@ public class AuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         response.addCookie(jwtTokenProvider.generateCookie("accessToken", tokenInfo.accessToken()));
         response.addCookie(jwtTokenProvider.generateCookie("refreshToken", tokenInfo.refreshToken()));
 
-        getRedirectStrategy().sendRedirect(request, response, "/");
+        if (!isExist) {
+            getRedirectStrategy().sendRedirect(request, response, "/member");
+            return;
+        }
+        getRedirectStrategy().sendRedirect(request, response, "/main");
     }
 }

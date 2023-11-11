@@ -1,4 +1,4 @@
-package com.teamnine.noFreeRider.project.dto;
+package com.teamnine.noFreeRider.util.dto;
 
 public record ResultDto<T>(
         int code,

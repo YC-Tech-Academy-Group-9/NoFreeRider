@@ -1,24 +1,14 @@
 package com.teamnine.noFreeRider.config;
 
-import com.teamnine.noFreeRider.member.repository.RefreshTokenRepository;
-import com.teamnine.noFreeRider.member.service.CustomOAuth2UserService;
 import com.teamnine.noFreeRider.auth.AuthSuccessHandler;
 import com.teamnine.noFreeRider.auth.JwtAuthFilter;
-import com.teamnine.noFreeRider.auth.JwtTokenProvider;
-
+import com.teamnine.noFreeRider.member.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -30,7 +20,6 @@ public class SecSecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
     private final AuthSuccessHandler authSuccessHandler;
     private final CustomOAuth2UserService customOAuth2UserService;
-
 //    @Bean
 //    public WebSecurityCustomizer webSecurityCustomizer() {
 //        // 정적 자원에 대해서 Security를 적용하지 않음으로 설정
@@ -52,8 +41,7 @@ public class SecSecurityConfig {
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class).oauth2Login()
-                .loginPage("/login")
-                .defaultSuccessUrl("/main")
+                .loginPage("/")
                 .successHandler(authSuccessHandler)
                 .userInfoEndpoint()
                 .userService(customOAuth2UserService);
