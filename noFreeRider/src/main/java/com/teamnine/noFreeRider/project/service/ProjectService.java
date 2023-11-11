@@ -5,6 +5,7 @@ import com.teamnine.noFreeRider.member.repository.MemberRepository;
 import com.teamnine.noFreeRider.member.domain.MemberProject;
 import com.teamnine.noFreeRider.member.repository.MemberProjectRepository;
 import com.teamnine.noFreeRider.project.domain.Project;
+import com.teamnine.noFreeRider.project.domain.ProjectStatusCode;
 import com.teamnine.noFreeRider.project.dto.*;
 import com.teamnine.noFreeRider.project.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +23,11 @@ public class ProjectService {
     private final MemberRepository memberRepository;
     private final MemberProjectRepository memberProjectRepository;
 
+    @Transactional
     public Project save(AddProjectDto addProjectDto) {
-        return projectRepository.save(addProjectDto.toEntity());
+        Project project = projectRepository.save(addProjectDto.toEntity());
+        memberProjectRepository.save(new MemberProject(addProjectDto.leader(), project));
+        return project;
     }
 
     @Transactional
@@ -47,8 +51,8 @@ public class ProjectService {
         Project project = projectRepository.findById(dto.project_id())
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (memberProjectRepository.existsByMemberIdAndProjectId(dto.member_id(), dto.project_id())) {
-            throw new IllegalArgumentException();
+        if (memberProjectRepository.existsByMember_idAndProject_id(dto.member_id(), dto.project_id())) {
+            throw new IllegalArgumentException("이미 존재하는 멤버입니다");
         }
 
         memberProjectRepository.save(MemberProject.builder()
@@ -60,23 +64,49 @@ public class ProjectService {
         return project;
     }
 
-    public Project changeStatusCode() {
-        return null;
+    @Transactional
+    public Project changeStatusCode(UUID project_id, StatusCodeDto dto) {
+        Optional<Project> projectBox = projectRepository.findById(project_id);
+        if (projectBox.isEmpty()) {
+            throw new IllegalArgumentException("존재하지 않는 프로젝트 입니다");
+        }
+        Project project = projectBox.get();
+        if (project.getStatusCode() == dto.code()) {
+            throw new IllegalArgumentException("변경하려는 상태코드가 현재 상태코드와 같습니다");
+        }
+        if (dto.code().equals(ProjectStatusCode.DONE)) {
+            project.setEnded_atToNow();
+        }
+        project.updateStatusCode(dto.code());
+        return project;
     }
 
-
     public boolean isProjectLeader(MemberProjectDto dto) {
-        Optional<UUID> leaderUUID = projectRepository.findLeaderIdById(dto.project_id());
+        Optional<UUID> leaderUUID = projectRepository.findLeader_idById(dto.project_id());
         if (leaderUUID.isEmpty()) {
             return false;
         }
         return leaderUUID.get().equals(dto.member_id());
     }
 
+    @Transactional
     public Project update(UpdateProjectDto dto) {
-        Project project = projectRepository.findById(dto.project_id())
-                .orElseThrow(IllegalArgumentException::new);
+        Optional<Project> projectBox = projectRepository.findById(dto.project_id());
+        Project project = projectBox.get();
         project.updateNameAndSummary(dto);
         return project;
+    }
+
+    public boolean isExistProject(UUID projectId) {
+        Optional<Project> projectBox = projectRepository.findById(projectId);
+        if (projectBox.isEmpty()) {
+            return false;
+        }
+        return true;
+    }
+
+    public GetProjectDto getProjectInfo(UUID projectId) {
+        Project project = projectRepository.findById(projectId).get();
+        return new GetProjectDto(project);
     }
 }
