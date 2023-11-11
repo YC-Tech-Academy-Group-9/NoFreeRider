@@ -12,5 +12,6 @@ spring:
 security:
   basic:
     enabled: false
+
 jwt:
   secret: fpvuvttzKZKGmQ3UoD0QpU7oSDAmCKb8X6l78RULm1Rm01R5Itcg5C8Q9me5sffF

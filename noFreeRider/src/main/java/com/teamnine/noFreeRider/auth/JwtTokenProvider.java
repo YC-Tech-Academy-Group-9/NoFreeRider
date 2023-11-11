@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDeniedException;
@@ -28,11 +29,17 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class JwtTokenProvider {
+
+    private String jwtSecret = "fpvuvttzKZKGmQ3UoD0QpU7oSDAmCKb8X6l78RULm1Rm01R5Itcg5C8Q9me5sffF";
+
     private final Key key;
 
-    public JwtTokenProvider(@Value("${jwt.secret}") String secretKey) {
-        byte[] keyBytes = Base64.getDecoder().decode(secretKey.getBytes());
+    private byte[] keyBytes;
+
+    public JwtTokenProvider() {
+        this.keyBytes = Base64.getDecoder().decode(jwtSecret.getBytes());
         this.key = new SecretKeySpec(keyBytes, SignatureAlgorithm.HS256.getJcaName());
     }
 

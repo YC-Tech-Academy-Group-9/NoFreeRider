@@ -14,10 +14,10 @@ public class DevDataSourceConfig {
     public DataSource dataSource() {
         return DataSourceBuilder
                 .create()
-                .url("jdbc:h2:mem:testdb")
-                .driverClassName("org.h2.Driver")
-                .username("sa")
-                .password("password")
+                .url("jdbc:postgresql://localhost:5432/postgres")
+                .driverClassName("org.postgresql.Driver")
+                .username("postgres")
+                .password("postgres")
                 .build();
     }
 }
