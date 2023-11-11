@@ -32,13 +32,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class JwtTokenProvider {
 
-    private String jwtSecret = "fpvuvttzKZKGmQ3UoD0QpU7oSDAmCKb8X6l78RULm1Rm01R5Itcg5C8Q9me5sffF";
-
     private final Key key;
 
     private byte[] keyBytes;
 
     public JwtTokenProvider() {
+        String jwtSecret = "fpvuvttzKZKGmQ3UoD0QpU7oSDAmCKb8X6l78RULm1Rm01R5Itcg5C8Q9me5sffF";
         this.keyBytes = Base64.getDecoder().decode(jwtSecret.getBytes());
         this.key = new SecretKeySpec(keyBytes, SignatureAlgorithm.HS256.getJcaName());
     }
