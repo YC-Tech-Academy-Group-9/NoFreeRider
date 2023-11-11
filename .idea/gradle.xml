@@ -7,7 +7,7 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$/noFreeRider" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$/noFreeRider" />
+            <option value="$PROJECT_DIR$/nofreerider" />
           </set>
         </option>
       </GradleProjectSettings>
