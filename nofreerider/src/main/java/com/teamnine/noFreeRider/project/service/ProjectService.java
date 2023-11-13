@@ -60,8 +60,10 @@ public class ProjectService {
         return project;
     }
 
-    public Project changeStatusCode() {
-        return null;
+    public Project changeStatusCode(UUID projectId, StatusCodeDto dto) {
+        Project project = projectRepository.findById(projectId).get();
+        project.updateStatusCode(dto.statusCode());
+        return project;
     }
 
 
@@ -78,5 +80,15 @@ public class ProjectService {
                 .orElseThrow(IllegalArgumentException::new);
         project.updateNameAndSummary(dto);
         return project;
+    }
+
+    public boolean isExistProject(UUID projectId) {
+        Optional<Project> projectBox = projectRepository.findById(projectId);
+        return !projectBox.isEmpty();
+    }
+
+    public Project getProjectInfo(UUID projectId) {
+        Optional<Project> projectBox = projectRepository.findById(projectId);
+        return projectBox.get();
     }
 }
