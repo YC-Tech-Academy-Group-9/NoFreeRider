@@ -1,12 +1,8 @@
 package com.teamnine.noFreeRider.project.dto;
 
+import com.teamnine.noFreeRider.project.domain.ProjectStatusCode;
+
 public record StatusCodeDto(
-        int code
+        ProjectStatusCode statusCode
 ) {
-    public StatusCodeDto(int code) {
-        if (code < 0 || code > 3) {
-            throw new IllegalArgumentException("잘못된 코드 입니다.");
-        }
-        this.code = code;
-    }
 }
