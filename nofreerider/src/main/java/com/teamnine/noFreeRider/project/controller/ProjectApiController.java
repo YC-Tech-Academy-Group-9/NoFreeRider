@@ -2,6 +2,10 @@ package com.teamnine.noFreeRider.project.controller;
 
 import com.teamnine.noFreeRider.member.domain.Member;
 import com.teamnine.noFreeRider.member.service.MemberDetailService;
+import com.teamnine.noFreeRider.member.service.MemberService;
+import com.teamnine.noFreeRider.notification.dto.ContentDto;
+import com.teamnine.noFreeRider.notification.dto.PostInviteDto;
+import com.teamnine.noFreeRider.notification.service.NotificationService;
 import com.teamnine.noFreeRider.project.domain.Project;
 import com.teamnine.noFreeRider.project.dto.*;
 import com.teamnine.noFreeRider.project.service.InviteService;
@@ -23,10 +27,13 @@ import java.util.UUID;
 public class ProjectApiController {
 
     private final ProjectService projectService;
+    private final MemberService memberService;
     private final MemberDetailService memberDetailService;
     private final MemberProjectService memberProjectService;
     private final TaskService taskService;
     private final InviteService inviteService;
+    private final NotificationService notificationService;
+
     @PostMapping("")
     public ResponseEntity<ResultDto<Project>> addProject(
             @RequestBody ProjectDto projectDto,
@@ -166,8 +173,9 @@ public class ProjectApiController {
     }
 
     @PostMapping("/{projectId}/invite")
-    public ResponseEntity<ResultDto<UUID>> generateInviteCode(
+    public ResponseEntity<ResultDto<ContentDto>> generateInvite(
             @PathVariable UUID projectId,
+            CreateInviteDto dto,
             Principal principal
     ) {
         if (!isProjectLeader(principal.getName(), projectId)) {
@@ -178,14 +186,27 @@ public class ProjectApiController {
                             null
                     ));
         }
-        return ResponseEntity.ok()
-                .body(new ResultDto<>(
-                        200,
-                        "",
-                        inviteService.create(projectId)
-                ));
+        try {
+            UUID inviteCode = inviteService.create(projectId);
+            Member member = memberService.getMemberByEmail(dto.memberEmail());
+            PostInviteDto postInviteDto = new PostInviteDto(projectId, inviteCode, member.getId());
+
+            return ResponseEntity.ok()
+                    .body(new ResultDto<>(
+                            200,
+                            "",
+                            notificationService.postInviteMessage(postInviteDto)
+                    ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(new ResultDto<>(
+                            400,
+                            e.getMessage(),
+                            null
+                    ));
+        }
     }
-    @PostMapping("/{projectId}/{inviteCode}")
+    @PostMapping("/{projectId}/invite/{inviteCode}")
     public ResponseEntity<ResultDto<Project>> addPartyMember(
             @PathVariable UUID projectId,
             @PathVariable UUID inviteCode,
@@ -212,7 +233,7 @@ public class ProjectApiController {
         }
     }
 
-    @DeleteMapping("/{projectId}/{memberId}")
+    @DeleteMapping("/{projectId}/member/{memberId}")
     public ResponseEntity<ResultDto<Long>> deletePartyMember(
             @PathVariable UUID projectId,
             @PathVariable UUID memberId,

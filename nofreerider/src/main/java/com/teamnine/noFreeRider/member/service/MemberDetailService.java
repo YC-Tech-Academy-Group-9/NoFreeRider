@@ -19,5 +19,4 @@ public class MemberDetailService implements UserDetailsService {
                 .orElseThrow(() -> new IllegalArgumentException((member_id)));
     }
 
-
 }
