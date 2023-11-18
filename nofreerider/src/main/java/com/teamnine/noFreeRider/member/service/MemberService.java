@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -27,14 +28,19 @@ public class MemberService {
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRepository refreshTokenRepository;
+    EntityManager entityManager;
 
     public Member addUser(String userName, String email, int studentId, String major) {
+
 
         // 1. Member 객체 생성, PasswordEncoder 로 비밀번호 암호화, 권한은 USER로 설정
         Member newMember = new Member(userName, email, studentId, major);
 
         // 2. repository 에 저장
         memberRepository.save(newMember);
+
+        // 3. Comment Initialize
+
         return newMember;
     }
 
