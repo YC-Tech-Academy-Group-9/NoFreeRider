@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Jua&family=Nanum+Gothic+Coding:wght@400;700&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
@@ -84,7 +84,18 @@
     <div class="w-[434px] mx-auto text-2xl title">
         <h1>NoFreeRider</h1>
     </div>
-    <div class="w-full h-full flex flex-row justify-end items-center px-[51px]">
+    <div class="w-full h-full flex flex-row justify-end items-center px-[51px] space-x-2">
+        <div class="relative" id="dropdown-container">
+            <button type="button" id="dropdown-button" class="flex items-center justify-center w-12 h-12 text-gray-800 bg-gray-300 rounded-full focus:outline-none">
+                <span class="material-icons">notifications</span>
+                <span class="absolute top-0 right-0 flex items-center justify-center w-6 h-6 text-white bg-red-600 rounded-full">2</span>
+            </button>
+            <div class="absolute hidden right-0 mt-1 w-48 bg-white rounded-md shadow-xl z-20" id="dropdown-menu">
+                <a href="#" class="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100">Menu Item 1</a>
+                <a href="#" class="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100">Menu Item 2</a>
+                <a href="#" class="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100">Menu Item 3</a>
+            </div>
+        </div>
         <button class="button text-lg bg-shade text-center w-[170px] h-[60px]">Sign Out</button>
     </div>
 </nav>
@@ -95,17 +106,20 @@
     <div class="w-1/4 bg-secondary p-8">
         <div class="flex flex-col space-y-4">
             <!-- User greeting -->
-            <div class="text-center font-jua text-3xl text-primary pb-4">
-                안녕하세요 000님
+            <div>
+                <div class="text-center font-jua text-3xl text-primary">안녕하세요</div>
+                <div th:text="${name + '님'}" class="text-center font-jua text-3xl text-primary pb-4">
+                </div>
             </div>
 
             <!-- User stats -->
             <div class="space-y-2">
                 <!-- Temperature reading -->
-                <div class="flex items-center justify-between">
+                <div class="flex flex-col">
                     <span class="font-inter text-lg text-text">나의 팀플 온도</span>
-                    <span class="font-inter text-lg text-primary">36.5°C</span>
+                    <span th:text="${temp + '°C'}"class="font-inter text-lg text-primary"></span>
                 </div>
+                <br>
 
                 <!-- 유저 스텟 -->
                 <div class="space-y-1">
@@ -143,11 +157,12 @@
                                   fill="none" stroke-width="2.8" stroke-linecap="round" />
                             <path class="text-primary stroke-current"
                                   stroke-dasharray="100, 100"
-                                  stroke-dashoffset="25"  <!-- This value is for 75% completion -->
+                                  stroke-dashoffset="25"
                             d="M18 2.0845
                             a 15.9155 15.9155 0 0 1 0 31.831
                             a 15.9155 15.9155 0 0 1 0 -31.831"
                             fill="none" stroke-width="2.8" stroke-linecap="round" />
+                            <!-- stroke-dashoffset is for 100-x completion -->
                         </svg>
                         <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                             <span class="font-inter text-sm text-primary">75%</span>
@@ -269,6 +284,13 @@
         integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
         crossorigin="anonymous"></script>
 <script>
+    //dropdown setup
+    document.getElementById('dropdown-button').addEventListener('click', function() {
+        var dropdownMenu = document.getElementById('dropdown-menu');
+        dropdownMenu.classList.toggle('hidden');
+    });
+
+    //tab setup
     document.addEventListener('DOMContentLoaded', () => {
         const tabs = document.querySelectorAll('.tab');
         const tabContents = document.querySelectorAll('.tab-content');

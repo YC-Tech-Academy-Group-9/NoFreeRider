@@ -89,8 +89,8 @@
         <h2 class="text-2xl text-white font-bold">회원가입</h2>
         <form class="w-full px-[84px]" id="signup-form">
             <div class="first-page mb-4">
-                <label for="username" class="text-xl font-bold text-white">아이디</label>
-                <input type="text" name="username" id="username" placeholder="gildong_hong" class="bg-gray-100 border-2 w-full p-4 rounded-lg h-[106px] text-xl" required>
+                <label for="email" class="text-xl font-bold text-white">이메일</label>
+                <input type="text" name="email" id="email" placeholder="gildong_hong" class="bg-gray-100 border-2 w-full p-4 rounded-lg h-[106px] text-xl text-gray-500" readonly th:value="${useremail}">
             </div>
             <div class="first-page mb-4">
                 <label for="realname" class="text-xl font-bold text-white">실명 (등록 이름)</label>
@@ -195,7 +195,6 @@
                 console.error('Error:', error);
             });
     }
-
 
 </script>
 </html>
