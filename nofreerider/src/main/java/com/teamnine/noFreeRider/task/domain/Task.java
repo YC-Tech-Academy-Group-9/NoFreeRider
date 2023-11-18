@@ -21,17 +21,17 @@ public class Task {
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(name = "task_id", updatable = false)
-    private UUID task_id;
+    private UUID id;
 
     @ManyToOne
     @JoinColumn(name = "project_id", referencedColumnName = "project_id", updatable = false)
     private Project project;
 
     @Column(name = "task_name", nullable = false)
-    private String task_name;
+    private String taskName;
 
     @Column(name = "task_contend")
-    private String task_contend;
+    private String taskContend;
 
     @CreatedDate
     @Column(name = "created_at")
@@ -48,8 +48,8 @@ public class Task {
 
     public Task(Project project, String task_name, String task_contend, LocalDateTime due_date) {
         this.project = project;
-        this.task_name = task_name;
-        this.task_contend = task_contend;
+        this.taskName = task_name;
+        this.taskContend = task_contend;
         this.due_date = due_date;
         this.status_code = 0;
     }

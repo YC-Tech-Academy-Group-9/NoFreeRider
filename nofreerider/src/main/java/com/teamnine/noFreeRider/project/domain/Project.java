@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -15,6 +16,7 @@ import java.util.UUID;
 
 @Table(name = "projects")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
 @Getter
 @Entity
 public class Project {
@@ -31,8 +33,11 @@ public class Project {
     @Column(name = "project_summary")
     private String projectSummary;
 
+    @Column(name = "class_name")
+    private String className;
+
     @Column(name = "status_code")
-    private ProjectStatusCode statusCode; // 0 : 시작, 1 : 진행, 2 : 중단, 3: 완료
+    private ProjectStatusCode statusCode;
 
     @OneToOne
     @JoinColumn(name = "leader_id", updatable = false)
@@ -46,9 +51,10 @@ public class Project {
     private LocalDateTime ended_at;
 
     @Builder
-    public Project(String project_name, String project_summary, Member leader) {
+    public Project(String project_name, String project_summary, String className, Member leader) {
         this.projectName = project_name;
         this.projectSummary = project_summary;
+        this.className = className;
         this.statusCode = ProjectStatusCode.STARTED;
         this.leader = leader;
     }
@@ -56,12 +62,14 @@ public class Project {
     public void updateLeaderNo(Member nLeader) {
         this.leader = nLeader;
     }
+
     public void updateNameAndSummary(UpdateProjectDto dto) {
         this.projectName = dto.name();
         this.projectSummary = dto.summary();
+        this.className = dto.className();
     }
 
-    public void updateStatusCode(int newCode) {
-        this.statusCode = ProjectStatusCode.values()[newCode];
+    public void updateStatusCode(ProjectStatusCode newCode) {
+        this.statusCode = newCode;
     }
 }

@@ -1,5 +1,6 @@
 package com.teamnine.noFreeRider.project.service;
 
+import com.teamnine.noFreeRider.member.domain.MemberProject;
 import com.teamnine.noFreeRider.member.repository.MemberProjectRepository;
 import com.teamnine.noFreeRider.project.dto.MemberProjectDto;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,9 @@ public class MemberProjectService {
 
     @Transactional
     public Long deleteMemberProject(MemberProjectDto dto) {
-        Long delete_id = memberProjectRepository.findIdByMemberIdAndProjectId(dto.member_id(), dto.project_id());
+        MemberProject memberProject = memberProjectRepository.findByMemberIdAndProjectId(dto.member_id(), dto.project_id())
+                .orElseThrow(IllegalArgumentException::new);
+        Long delete_id = memberProject.getId();
         memberProjectRepository.deleteById(delete_id);
         return delete_id;
     }
