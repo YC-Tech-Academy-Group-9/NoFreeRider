@@ -47,9 +47,9 @@ public class AuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         response.addCookie(jwtTokenProvider.generateCookie("refreshToken", tokenInfo.refreshToken()));
 
         if (!isExist) {
-            getRedirectStrategy().sendRedirect(request, response, "/member");
-            return;
+            getRedirectStrategy().sendRedirect(request, response, "/signup");
         }
+
         getRedirectStrategy().sendRedirect(request, response, "/main");
     }
 }
