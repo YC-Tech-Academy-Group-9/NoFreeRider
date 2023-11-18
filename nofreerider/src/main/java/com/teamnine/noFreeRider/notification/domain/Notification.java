@@ -22,7 +22,7 @@ public class Notification {
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(name = "notice_id", updatable = false)
-    private UUID notice_id;
+    private UUID id;
 
     @ManyToOne
     @JoinColumn(name = "project_id", referencedColumnName = "project_id", updatable = false)
@@ -35,8 +35,8 @@ public class Notification {
     @Column(name = "notice_title", nullable = false)
     private String notice_title;
 
-    @Column(name = "notice_contend", nullable = false)
-    private String notice_contend;
+    @Column(name = "notice_content", nullable = false)
+    private String notice_content;
 
     @CreatedDate
     @Column(name = "created_at")
