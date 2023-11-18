@@ -88,12 +88,13 @@
         <div class="relative" id="dropdown-container">
             <button type="button" id="dropdown-button" class="flex items-center justify-center w-12 h-12 text-gray-800 bg-gray-300 rounded-full focus:outline-none">
                 <span class="material-icons">notifications</span>
-                <span class="absolute top-0 right-0 flex items-center justify-center w-6 h-6 text-white bg-red-600 rounded-full">2</span>
+                <span th:hidden="${notificationList.length== 0}" th:text="${notificationList.length}" class="absolute top-0 right-0 flex items-center justify-center w-6 h-6 text-white bg-red-600 rounded-full"></span>
             </button>
             <div class="absolute hidden right-0 mt-1 w-48 bg-white rounded-md shadow-xl z-20" id="dropdown-menu">
-                <a href="#" class="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100">Menu Item 1</a>
-                <a href="#" class="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100">Menu Item 2</a>
-                <a href="#" class="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100">Menu Item 3</a>
+                <div th:each="notificaiton : ${notificationList}" class="flex flex-col p-2">
+                    <span th:text="${notificaiton.notice_title()}" class="text-lg"></span>
+                    <span th:text="${notificaiton.notice_content()}" class="text-md"></span>
+                </div>
             </div>
         </div>
         <button class="button text-lg bg-shade text-center w-[170px] h-[60px]">Sign Out</button>
