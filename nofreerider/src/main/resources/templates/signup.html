@@ -149,17 +149,54 @@
     });
     buttons[2].addEventListener('click', () => {
         // sign up logic
+        updateUserInfo();
         alert("Sign up done")
     });
 
-    // Signup form
-    const signupForm = document.getElementById('signup-form');
-    let username = document.getElementById('username');
-    let realname = document.getElementById('realname');
-    let studentId = document.getElementById('student_id');
-    let major = document.getElementById('major');
 
-    // POST request to API
+    function updateUserInfo() {
+        // Signup form data
+        let realName = document.getElementById('realname');
+        let studentId = document.getElementById('student_id');
+        let major = document.getElementById('major');
+        let memberId = "";
+
+        // Get the member id by email saved in Token
+        fetch('http://localhost:8080/member/info', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }).then((response) => response.json())
+            .then((data) => {
+                memberId = data.data.id;
+                console.log('Success:', data);
+                console.log('memberId:', memberId);
+            })
+            .then(() => {
+                // PUT request
+                fetch('http://localhost:8080/member/info/update/' + memberId, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        realName: realName.value,
+                        studentId: studentId.value,
+                        major: major.value,
+                    }),
+                }).then((response) => response.json())
+                    .then((data) => {
+                        console.log('Success:', data);
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                    });
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
 
 
 </script>
