@@ -85,20 +85,185 @@
         <h1>NoFreeRider</h1>
     </div>
     <div class="w-full h-full flex flex-row justify-end items-center px-[51px]">
-        <button id="userIntro" class="button text-xl mr-auto text-white font-bold self-end">안녕하세요 000님</button>
         <button class="button text-lg bg-shade text-center w-[170px] h-[60px]">Sign Out</button>
     </div>
 </nav>
-<div class="main flex flex-row">
-    <div class="flex-[2] h-[90vh] pl-[88px] pb-[55px] pt-[29px] bg-white">
-        <div class="bg-white shadow-lg w-full h-full">
-            <div class="bg-primary text-center py-[16px] text-lg text-white">000님</div>
-            <div class="px-[25px] w-full h-full">
-        </div>
+
+<!--main-->
+<div class="flex flex-row h-screen">
+    <!-- Sidebar -->
+    <div class="w-1/4 bg-secondary p-8">
+        <div class="flex flex-col space-y-4">
+            <!-- User greeting -->
+            <div>
+                <div class="text-center font-jua text-3xl text-primary">안녕하세요</div>
+                <div th:text="${name + '님'}" class="text-center font-jua text-3xl text-primary pb-4">
+                </div>
+            </div>
+
+            <!-- User stats -->
+            <div class="space-y-2">
+                <!-- Temperature reading -->
+                <div class="flex flex-col">
+                    <span class="font-inter text-lg text-text">나의 팀플 온도</span>
+                    <span th:text="${temp + '°C'}"class="font-inter text-lg text-primary"></span>
+                </div>
+                <br>
+
+                <!-- 유저 스텟 -->
+                <div class="space-y-1">
+                    <div class="flex justify-between items-center">
+                        <span class="font-inter text-sm text-text">프로젝트 진행률</span>
+                        <span class="font-inter text-sm text-primary">50%</span>
+                    </div>
+                    <div class="w-full bg-shade rounded-full h-2.5">
+                        <div class="bg-primary h-2.5 rounded-full" style="width: 50%"></div>
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <div class="flex justify-between items-center">
+                        <span class="font-inter text-sm text-text">클리닝 작업</span>
+                        <span class="font-inter text-sm text-primary">20%</span>
+                    </div>
+                    <div class="w-full bg-shade rounded-full h-2.5">
+                        <div class="bg-accent h-2.5 rounded-full" style="width: 20%"></div>
+                    </div>
+                </div>
+
+                <!-- Progress bar -->
+                <div class="flex items-center space-x-4">
+                    <!-- Label for the progress bar -->
+                    <span class="font-inter text-lg text-primary text-clip overflow-hidden break-keep line-clamp-1">프로젝트 abcded</span>
+
+                    <!-- Circular Progress Bar Container -->
+                    <div class="relative w-20 h-20">
+                        <svg viewBox="0 0 36 36" class="w-20 h-20">
+                            <path class="text-shade stroke-current"
+                                  d="M18 2.0845
+            a 15.9155 15.9155 0 0 1 0 31.831
+            a 15.9155 15.9155 0 0 1 0 -31.831"
+                                  fill="none" stroke-width="2.8" stroke-linecap="round" />
+                            <path class="text-primary stroke-current"
+                                  stroke-dasharray="100, 100"
+                                  stroke-dashoffset="25"
+                            d="M18 2.0845
+                            a 15.9155 15.9155 0 0 1 0 31.831
+                            a 15.9155 15.9155 0 0 1 0 -31.831"
+                            fill="none" stroke-width="2.8" stroke-linecap="round" />
+                            <!-- stroke-dashoffset is for 100-x completion -->
+                        </svg>
+                        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                            <span class="font-inter text-sm text-primary">75%</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Additional user information or stats -->
+            <!-- ... -->
         </div>
     </div>
-    <div class="flex-[5] h-[90vh]"></div>
-    <div class="flex-[2] h-[90vh]"></div>
+
+    <!-- Main Panel -->
+    <div class="w-3/4 bg-background p-8">
+        <!-- Content Header -->
+        <div class="flex-1 bg-background">
+            <!-- Tabs -->
+            <div class="bg-primary">
+                <ul class="flex justify-center space-x-4 pt-4" role="tablist">
+                    <!-- Active tab -->
+                    <li role="presentation">
+                        <button class="tab text-white py-2 px-4 focus:outline-none" role="tab" aria-selected="true" data-tab-target="#tab2">할 일</button>
+                    </li>
+                    <!-- Other tabs -->
+                    <li role="presentation">
+                        <button class="tab text-secondary py-2 px-4 focus:outline-none" role="tab" data-tab-target="#tab1">프로젝트</button>
+                    </li>
+                </ul>
+            </div>
+            <!-- Tab content -->
+            <div class="p-8">
+                <!-- Content for the first tab -->
+                <div role="tabpanel" id="tab1" class="tab-content hidden">
+                    <!-- Your content for the first tab goes here -->
+                    <!-- For example, the project list as per your second screenshot -->
+                    <div id="project-content" class="space-y-4">
+                        <!-- Project list header -->
+                        <div class="flex justify-between items-center">
+                            <h2 class="text-primary font-bold text-lg">프로젝트 목록</h2>
+                        </div>
+                        <!-- Divider -->
+                        <div class="border-t border-shade"></div>
+                        <!-- Project item -->
+<!--                        <button class="flex justify-between items-center py-2 w-full">-->
+<!--                            <span class="text-lg font-bold font-inter">YC Tech</span>-->
+<!--                            <span class="text-primary">4명</span>-->
+<!--                        </button>-->
+                        <!-- Divider -->
+<!--                        <div class="border-t border-shade"></div>-->
+                        <!-- More project items -->
+                        <template id="project">
+                            <button class="flex justify-between items-center py-2 w-full">
+                                <span class="text-lg font-bold font-inter">YC Tech</span>
+                                <span class="text-primary">4명</span>
+                            </button>
+                            <!-- Divider -->
+                            <div class="border-t border-shade"></div>
+                        </template>
+                    </div>
+                </div>
+                <!-- Content for the second tab (hidden by default) -->
+                <div role="tabpanel" id="tab2" class="tab-content active">
+                    <div id="task-content" class="flex flex-col space-y-4">
+                        <div class="flex justify-between items-center">
+                            <h2 class="text-primary font-bold text-lg">할 일 목록</h2>
+                        </div>
+                        <!-- Date item -->
+<!--                        <div class="space-y-4">-->
+<!--                            <div class="text-center font-inter text-lg font-bold text-primary py-2 bg-secondary rounded">-->
+<!--                                오늘 2023. 11. 04-->
+<!--                            </div>-->
+<!--                            &lt;!&ndash; Task list for the date &ndash;&gt;-->
+<!--                            <div class="bg-white p-4 rounded-lg shadow space-y-2">-->
+<!--                                &lt;!&ndash; Task item &ndash;&gt;-->
+<!--                                <div class="flex justify-between items-center">-->
+<!--                                    <span class="font-inter text-text">Bomb Lab Phase 1</span>-->
+<!--                                    <button class="text-primary">View</button>-->
+<!--                                </div>-->
+<!--                                &lt;!&ndash; Additional task items... &ndash;&gt;-->
+<!--                            </div>-->
+<!--                        </div>-->
+
+
+                        <template id="day-list">
+                            <div class="space-y-4">
+                                <div class="text-center font-inter text-lg font-bold text-primary py-2 bg-secondary rounded">
+                                    오늘 2023. 11. 04
+                                </div>
+                                <!-- Task list for the date -->
+
+                            </div>
+                        </template>
+
+                        <template id="task">
+                            <div class="bg-white p-4 rounded-lg shadow space-y-2">
+                                <!-- Task item -->
+                                <div class="flex justify-between items-center">
+                                    <span class="font-inter text-text">Bomb Lab Phase 1</span>
+                                    <button class="text-primary">View</button>
+                                </div>
+                                <!-- Additional task items... -->
+                            </div>
+                        </template>
+
+                        <!-- Add more dates and tasks as needed -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"
         integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
@@ -107,6 +272,30 @@
         src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
         integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
         crossorigin="anonymous"></script>
-<script src="/js/login.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+
+                tabs.forEach(t => {
+                    t.classList.remove('text-white');
+                    t.classList.add('text-secondary');
+                });
+                // Add 'text-white' to the clicked tab and remove 'text-secondary'
+                tab.classList.add('text-white');
+                tab.classList.remove('text-secondary');
+
+                // Hide all tab contents
+                tabContents.forEach(tc => tc.classList.add('hidden'));
+                // Show the targeted tab content
+                const target = document.querySelector(tab.dataset.tabTarget);
+                target.classList.remove('hidden');
+            });
+        });
+    });
+</script>
 </body>
 </html>
