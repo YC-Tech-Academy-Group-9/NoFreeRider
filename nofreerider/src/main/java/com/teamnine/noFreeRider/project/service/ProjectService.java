@@ -23,7 +23,9 @@ public class ProjectService {
     private final MemberProjectRepository memberProjectRepository;
 
     public Project save(AddProjectDto addProjectDto) {
-        return projectRepository.save(addProjectDto.toEntity());
+        Project project = projectRepository.save(addProjectDto.toEntity());
+        memberProjectRepository.save(new MemberProject(addProjectDto.leader(), project));
+        return project;
     }
 
     @Transactional
@@ -60,21 +62,24 @@ public class ProjectService {
         return project;
     }
 
+    @Transactional
     public Project changeStatusCode(UUID projectId, StatusCodeDto dto) {
-        Project project = projectRepository.findById(projectId).get();
+        Project project = projectRepository.findById(projectId).orElseThrow(IllegalArgumentException::new);
         project.updateStatusCode(dto.statusCode());
         return project;
     }
 
 
     public boolean isProjectLeader(MemberProjectDto dto) {
-        Optional<UUID> leaderUUID = projectRepository.findLeaderIdById(dto.project_id());
-        if (leaderUUID.isEmpty()) {
+        Project project = projectRepository.findById(dto.project_id()).orElse(null);
+        if (project == null) {
             return false;
         }
-        return leaderUUID.get().equals(dto.member_id());
+        UUID leaderUUID = project.getLeader().getId();
+        return leaderUUID.equals(dto.member_id());
     }
 
+    @Transactional
     public Project update(UpdateProjectDto dto) {
         Project project = projectRepository.findById(dto.project_id())
                 .orElseThrow(IllegalArgumentException::new);
