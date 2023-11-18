@@ -120,4 +120,8 @@ public class JwtTokenProvider {
 
         return cookie;
     }
+
+    public String getUserEmailFromToken(String token) {
+        return parseClaims(token).get("email").toString();
+    }
 }

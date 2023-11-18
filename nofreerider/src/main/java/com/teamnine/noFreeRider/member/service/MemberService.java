@@ -84,4 +84,8 @@ public class MemberService {
 
         return tokenInfo;
     }
+
+    public String getCurrentMemberEmailFromToken(String token) {
+        return jwtTokenProvider.getUserEmailFromToken(token);
+    }
 }

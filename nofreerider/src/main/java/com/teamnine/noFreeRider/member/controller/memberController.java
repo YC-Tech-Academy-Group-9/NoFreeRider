@@ -21,21 +21,21 @@ public class memberController {
 
     @PostMapping("/auth/signUp")
     public ResponseEntity<ResultDto<Member>> signUp(@RequestBody SignupDto signupDto) {
-        Member newMember = memberService.addUser(signupDto.userName(), signupDto.email(), signupDto.studentId(), signupDto.major());
+        Member newMember = memberService.addUser(signupDto.realName(), signupDto.email(), signupDto.studentId(), signupDto.major());
 
         return ResponseEntity.ok(new ResultDto<>(200, "ok", newMember));
     }
 
     @Autowired
     private MemberRepository memberRepository;
-    @PutMapping("/info/{memberId}")
+    @PutMapping("/info/update/{memberId}")
     public ResponseEntity<ResultDto<Member>> updateMember(
             @PathVariable("memberId") UUID memberId,
             @RequestBody SignupDto signupDto
     ) {
         Member member = memberRepository
                 .findById(memberId).orElseThrow(() -> new IllegalArgumentException("not found member"));
-        member.updateMember(signupDto.userName(), signupDto.email(), signupDto.studentId(), signupDto.major());
+        member.updateMember(signupDto.realName(), signupDto.studentId(), signupDto.major());
         memberRepository.save(member);
         return ResponseEntity.ok(new ResultDto<>(200, "ok", member));
     }
@@ -45,6 +45,15 @@ public class memberController {
             @PathVariable("memberId") UUID memberId
     ) {
         Member member = memberService.getMemberById(memberId);
+        return new ResultDto<>(200, "ok", member);
+    }
+
+    @GetMapping("/info")
+    public ResultDto<Member> getCurrentMemberFromToken(
+            @CookieValue(value = "accessToken") String token
+    ) {
+        String email = memberService.getCurrentMemberEmailFromToken(token);
+        Member member = memberService.getMemberByEmail(email);
         return new ResultDto<>(200, "ok", member);
     }
 }
