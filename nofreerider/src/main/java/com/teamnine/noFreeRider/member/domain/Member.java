@@ -98,9 +98,8 @@ public class Member implements UserDetails {
         return this.getMemberName() != null && this.getMemberEmail() != null && this.getMemberMajor() != null && this.getMemberStudentId() != 0;
     }
 
-    public void updateMember(String memberName, String email, int memberStudentId, String major) {
-        this.memberName = memberName;
-        this.memberEmail = email;
+    public void updateMember(String realName, int memberStudentId, String major) {
+        this.memberName = realName;
         this.memberStudentId = memberStudentId;
         this.memberMajor = major;
     }
