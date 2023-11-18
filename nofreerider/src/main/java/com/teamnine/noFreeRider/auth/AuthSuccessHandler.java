@@ -31,6 +31,7 @@ public class AuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         String provider = oAuth2User.getAttribute("provider");
 
         boolean isExist = Boolean.TRUE.equals(oAuth2User.getAttribute("exist"));
+        boolean isInitialized = Boolean.TRUE.equals(oAuth2User.getAttribute("initialized"));
 
         TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication, email);
 
@@ -47,6 +48,11 @@ public class AuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         response.addCookie(jwtTokenProvider.generateCookie("refreshToken", tokenInfo.refreshToken()));
 
         if (!isExist) {
+            getRedirectStrategy().sendRedirect(request, response, "/signup");
+            return;
+        }
+
+        if (!isExist || !isInitialized) {
             getRedirectStrategy().sendRedirect(request, response, "/signup");
             return;
         }

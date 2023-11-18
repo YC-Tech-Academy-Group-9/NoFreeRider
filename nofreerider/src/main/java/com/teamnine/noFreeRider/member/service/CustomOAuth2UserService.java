@@ -51,6 +51,12 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             memberAttribute.put("exist", true);
         }
 
+        if (member.get().isFullySet()) {
+            memberAttribute.put("initialized", true);
+        } else {
+            memberAttribute.put("initialized", false);
+        }
+
         return new DefaultOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")),
                 memberAttribute, "email"

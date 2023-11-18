@@ -96,4 +96,8 @@ public class Member implements UserDetails {
         return true;
     }
 
+    public boolean isFullySet() {
+        return this.getMemberName() != null && this.getMemberEmail() != null && this.getMemberMajor() != null && this.getMemberStudentId() != 0;
+    }
+
 }
