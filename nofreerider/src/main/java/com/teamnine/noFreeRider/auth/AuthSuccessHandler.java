@@ -50,6 +50,7 @@ public class AuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
             getRedirectStrategy().sendRedirect(request, response, "/signup");
             return;
         }
+
         getRedirectStrategy().sendRedirect(request, response, "/main");
     }
 }
