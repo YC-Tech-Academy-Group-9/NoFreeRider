@@ -2,6 +2,9 @@ package com.teamnine.noFreeRider.member.service;
 
 import com.teamnine.noFreeRider.auth.JwtTokenProvider;
 import com.teamnine.noFreeRider.auth.TokenInfo;
+import com.teamnine.noFreeRider.comments.domain.UserComment;
+import com.teamnine.noFreeRider.comments.repository.CommentsRepository;
+import com.teamnine.noFreeRider.comments.service.CommentService;
 import com.teamnine.noFreeRider.member.domain.Member;
 import com.teamnine.noFreeRider.member.domain.RefreshToken;
 import com.teamnine.noFreeRider.member.repository.MemberRepository;
@@ -24,11 +27,12 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final CommentsRepository commentsRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRepository refreshTokenRepository;
-    EntityManager entityManager;
+    private final CommentService commentService;
 
     public Member addUser(String userName, String email, int studentId, String major) {
 
@@ -40,6 +44,10 @@ public class MemberService {
         memberRepository.save(newMember);
 
         // 3. Comment Initialize
+        Member savedMember = memberRepository.findByMemberEmail(email).orElseThrow(() -> new IllegalArgumentException("not found member"));
+        UUID memberId = savedMember.getId();
+
+//        commentService.createComment(memberId);
 
         return newMember;
     }

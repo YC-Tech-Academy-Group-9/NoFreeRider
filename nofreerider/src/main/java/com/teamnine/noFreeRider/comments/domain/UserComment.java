@@ -22,7 +22,7 @@ public class UserComment {
     private UUID id;
 
     @Column(name = "user_id", nullable = false)
-    private int userId;
+    private UUID userId;
 
     // 평가항목 1 - 기한을 잘 지켜요
     @Column(name="criteria1", nullable = false)
