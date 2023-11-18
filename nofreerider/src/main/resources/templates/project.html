@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>Spring Security Example</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- fonts-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Jua&family=Nanum+Gothic+Coding:wght@400;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'text': '#10181e',
+                        'background': '#ffffff',
+                        'shade': '#D9D9D9',
+                        'primary': '#18517b',
+                        'secondary': '#aad1ee',
+                        'tertiary': '#226faa',
+                        'accent': '#4e4ea2',
+                    },
+                    fontFamily: {
+                        'sans': ['Open Sans', 'sans-serif'],
+                        'inter': ['Inter', 'sans-serif'],
+                        'jua': ['Jua', 'sans-serif'],
+                        'nanum': ['Nanum Gothic Coding', 'sans-serif'],
+                    },
+                    fontSize: {
+                        'base': '16px',
+                        'lg': '25.8px',
+                        'xl': '41.8px',
+                        '2xl': '67.8px',
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        @tailwind base;
+        @tailwind components;
+        @tailwind utilities;
+
+        :root {
+            font-family: 'nanum', sans-serif;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #10181e;
+            background-color: #ffffff;
+        }
+
+        @layer base {
+
+            h1 {
+                @apply text-2xl;
+            }
+            h2 {
+                @apply text-xl;
+            }
+            h3 {
+                @apply text-lg;
+            }
+        }
+
+        nav .title {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-weight: bold;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .login-box {
+            box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.25);
+        }
+
+    </style>
+</head>
+<body>
+<nav class="bg-primary h-[10vh]">
+    <div class="w-[434px] mx-auto text-2xl title">
+        <h1>NoFreeRider</h1>
+    </div>
+    <div class="w-full h-full flex flex-row justify-end items-center px-[51px]">
+        <button class="button text-lg bg-shade text-center w-[170px] h-[60px]">Sign Out</button>
+    </div>
+</nav>
+
+<!--main-->
+<div class="flex h-[90vh]">
+    <!-- Sidebar with user overview and project list -->
+    <aside class="w-1/4 h-full bg-secondary p-8 space-y-4">
+        <div class="bg-primary text-white p-4 rounded-2xl">
+            <h2 class="text-xl font-bold">Overview</h2>
+            <!-- Form fields or user info here -->
+            <div class="mt-4 space-y-2">
+                <!-- Placeholder for form fields -->
+                <div class="bg-white p-2 rounded">
+                    <span class="text-md text-black">수업이름</span>
+                    <br>
+                    <span class="text-lg text-black">YC Tech</span>
+                </div>
+                <div class="bg-white p-2 rounded">
+                    <span class="text-md text-black">프로젝트 일자</span>
+                    <br>
+                    <span class="text-lg text-black">20xx.xx.xx ~ 20xx.xx.xx</span>
+                </div>
+                <!-- ... -->
+            </div>
+            <button class="mt-4 bg-accent text-white p-2 rounded w-full">작업 중</button>
+        </div>
+        <!-- List of projects or classes -->
+        <div class="bg-primary text-white p-4 rounded-2xl">
+            <h2 class="text-xl font-bold">참여 인원</h2>
+            <!-- Form fields or user info here -->
+            <div class="mt-4 space-y-2">
+                <!-- Placeholder for form fields -->
+                <div class="bg-white p-2 rounded">
+                    <span class="text-md text-black">000님 20xxxxxxxx</span>
+                </div>
+                <div class="bg-white p-2 rounded">
+                    <span class="text-md text-black">000님 20xxxxxxxx</span>
+                </div>
+                <div class="bg-white p-2 rounded">
+                    <span class="text-md text-black">000님 20xxxxxxxx</span>
+                </div>
+                <div class="bg-white p-2 rounded">
+                    <span class="text-md text-black">000님 20xxxxxxxx</span>
+                </div>
+                <!-- ... -->
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main content with task list -->
+    <main class="flex-1 bg-white p-8">
+        <div class="space-y-6">
+            <!-- Task item -->
+            <div class="shadow rounded p-4">
+                <h3 class="text-primary text-xl mb-2">Task 이름</h3>
+                <p class="text-text mb-4">
+                    <!-- Task description here -->
+                </p>
+                <!-- Task checklist -->
+                <ul class="list-disc list-inside">
+                    <li>Checklist item 1</li>
+                    <!-- ... -->
+                </ul>
+                <div class="flex justify-end items-center mt-4">
+                    <span class="text-text">2023.11.04까지</span>
+                    <span class="text-primary ml-4">진행도 66%</span>
+                </div>
+            </div>
+            <!-- More tasks here -->
+        </div>
+        <!-- Button to add a new task -->
+        <button class="fixed bottom-8 right-8 bg-primary text-white p-4 rounded-full shadow-lg">
+            +
+        </button>
+    </main>
+</div>
+
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+<script
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+
+                tabs.forEach(t => {
+                    t.classList.remove('text-white');
+                    t.classList.add('text-secondary');
+                });
+                // Add 'text-white' to the clicked tab and remove 'text-secondary'
+                tab.classList.add('text-white');
+                tab.classList.remove('text-secondary');
+
+                // Hide all tab contents
+                tabContents.forEach(tc => tc.classList.add('hidden'));
+                // Show the targeted tab content
+                const target = document.querySelector(tab.dataset.tabTarget);
+                target.classList.remove('hidden');
+            });
+        });
+    });
+</script>
+</body>
+</html>
