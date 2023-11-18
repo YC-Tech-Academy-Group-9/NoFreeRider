@@ -1,8 +1,6 @@
 package com.teamnine.noFreeRider.member.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -49,14 +47,14 @@ public class Member implements UserDetails {
     private LocalDateTime created_at;
 
     @Column(name = "member_temperature")
-    private short member_temperature;
+    private short memberTemperature;
 
     public Member(String memberName, String member_email, int member_studentId, String member_major) {
         this.memberName = memberName;
         this.memberEmail = member_email;
         this.memberStudentId = member_studentId;
         this.memberMajor = member_major;
-        this.member_temperature = 36;
+        this.memberTemperature = 36;
     }
 
     @Override
