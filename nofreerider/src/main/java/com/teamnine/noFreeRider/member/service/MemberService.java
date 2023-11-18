@@ -85,11 +85,6 @@ public class MemberService {
         return tokenInfo;
     }
 
-    public Member getMemberByEmail(String memberEmail) {
-
-        return memberRepository.findByMemberEmail(memberEmail).orElseThrow(() -> new IllegalArgumentException("not found member"));
-    }
-
     public String getCurrentMemberEmailFromToken(String token) {
         return jwtTokenProvider.getUserEmailFromToken(token);
     }
