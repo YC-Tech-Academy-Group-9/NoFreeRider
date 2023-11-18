@@ -95,17 +95,20 @@
     <div class="w-1/4 bg-secondary p-8">
         <div class="flex flex-col space-y-4">
             <!-- User greeting -->
-            <div class="text-center font-jua text-3xl text-primary pb-4">
-                안녕하세요 000님
+            <div>
+                <div class="text-center font-jua text-3xl text-primary">안녕하세요</div>
+                <div th:text="${name + '님'}" class="text-center font-jua text-3xl text-primary pb-4">
+                </div>
             </div>
 
             <!-- User stats -->
             <div class="space-y-2">
                 <!-- Temperature reading -->
-                <div class="flex items-center justify-between">
+                <div class="flex flex-col">
                     <span class="font-inter text-lg text-text">나의 팀플 온도</span>
-                    <span class="font-inter text-lg text-primary">36.5°C</span>
+                    <span th:text="${temp + '°C'}"class="font-inter text-lg text-primary"></span>
                 </div>
+                <br>
 
                 <!-- 유저 스텟 -->
                 <div class="space-y-1">
@@ -143,11 +146,12 @@
                                   fill="none" stroke-width="2.8" stroke-linecap="round" />
                             <path class="text-primary stroke-current"
                                   stroke-dasharray="100, 100"
-                                  stroke-dashoffset="25"  <!-- This value is for 75% completion -->
+                                  stroke-dashoffset="25"
                             d="M18 2.0845
                             a 15.9155 15.9155 0 0 1 0 31.831
                             a 15.9155 15.9155 0 0 1 0 -31.831"
                             fill="none" stroke-width="2.8" stroke-linecap="round" />
+                            <!-- stroke-dashoffset is for 100-x completion -->
                         </svg>
                         <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                             <span class="font-inter text-sm text-primary">75%</span>
