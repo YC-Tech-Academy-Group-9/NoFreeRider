@@ -3,6 +3,7 @@ package com.teamnine.noFreeRider.notification.domain;
 import com.teamnine.noFreeRider.member.domain.Member;
 import com.teamnine.noFreeRider.project.domain.Project;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
@@ -41,4 +42,12 @@ public class Notification {
     @CreatedDate
     @Column(name = "created_at")
     private LocalDateTime created_at;
+
+    @Builder
+    public Notification(Project project, Member member, String notice_title, String notice_content) {
+        this.project = project;
+        this.member = member;
+        this.notice_title = notice_title;
+        this.notice_content = notice_content;
+    }
 }

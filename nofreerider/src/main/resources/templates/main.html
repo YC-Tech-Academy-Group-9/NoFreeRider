@@ -97,7 +97,7 @@
                 </div>
             </div>
         </div>
-        <button class="button text-lg bg-shade text-center w-[170px] h-[60px]">Sign Out</button>
+        <button class="button text-lg bg-shade text-center w-[170px] h-[60px]" id="signout-btn">Sign Out</button>
     </div>
 </nav>
 
@@ -314,6 +314,12 @@
                 target.classList.remove('hidden');
             });
         });
+    });
+
+    //signout button
+    document.getElementById('signout-btn').addEventListener('click', function() {
+        document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        window.location.href = "http://localhost:8080/";
     });
 </script>
 </body>

@@ -6,6 +6,7 @@ import com.teamnine.noFreeRider.project.domain.Project;
 public record AddProjectDto(
         String name,
         String summary,
+        String className,
         Member leader
 ) {
 
@@ -13,6 +14,7 @@ public record AddProjectDto(
         return Project.builder()
                 .project_name(name)
                 .project_summary(summary)
+                .className(className)
                 .leader(leader)
                 .build();
     }
