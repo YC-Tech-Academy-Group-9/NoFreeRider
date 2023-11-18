@@ -22,14 +22,15 @@ public class PageController {
     }
 
     @RequestMapping("/signup")
-    public String signup() {
+    public String signup(Model model, Authentication authentication) {
+
+        String email = authentication.getName();
+        model.addAttribute("useremail", email);
         return "signup";
     }
 
     @RequestMapping("/main")
     public String index(Model model, Authentication authentication) {
-        //temp variables
-        String name = "한태현";
 
         String email = authentication.getName();
         Member loginMember = memberService.getMemberByEmail(email);
