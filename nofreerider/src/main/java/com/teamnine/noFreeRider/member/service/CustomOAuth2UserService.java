@@ -49,12 +49,11 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             memberAttribute.put("exist", false);
         } else {
             memberAttribute.put("exist", true);
-        }
-
-        if (member.get().isFullySet()) {
-            memberAttribute.put("initialized", true);
-        } else {
-            memberAttribute.put("initialized", false);
+            if (member.get().isFullySet()) {
+                memberAttribute.put("initialized", true);
+            } else {
+                memberAttribute.put("initialized", false);
+            }
         }
 
         return new DefaultOAuth2User(
