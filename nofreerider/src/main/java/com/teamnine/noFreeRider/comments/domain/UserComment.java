@@ -24,11 +24,24 @@ public class UserComment {
     @Column(name = "user_id", nullable = false)
     private int userId;
 
-    @Column(name = "rating", nullable = false)
-    private short rating;
+    // 평가항목 1 - 기한을 잘 지켜요
+    @Column(name="criteria1", nullable = false)
+    private int criteria1;
 
-    @Column(name = "comment", nullable = false)
-    private String comment;
+    // 평가항목 2 - 퀄리티가 높아요
+    @Column(name="criteria2", nullable = false)
+    private int criteria2;
+
+    // 평가항목 3 - 참여도가 높아요
+    @Column(name="criteria3", nullable = false)
+    private int criteria3;
+
+    // 평가항목 4 - 책임감이 있어요
+    @Column(name="criteria4", nullable = false)
+    private int criteria4;
+
+//    @Column(name = "comment", nullable = false)
+//    private String comment;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
@@ -36,9 +49,12 @@ public class UserComment {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    public UserComment(int userId, String comment, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public UserComment(int userId, int criteria1, int criteria2, int criteria3, int criteria4, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.userId = userId;
-        this.comment = comment;
+        this.criteria1 = criteria1;
+        this.criteria2 = criteria2;
+        this.criteria3 = criteria3;
+        this.criteria4 = criteria4;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
