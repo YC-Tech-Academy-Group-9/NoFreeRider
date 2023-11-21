@@ -8,6 +8,7 @@ import com.teamnine.noFreeRider.notification.dto.NotificationDto;
 import com.teamnine.noFreeRider.notification.service.NotificationService;
 import com.teamnine.noFreeRider.project.domain.Project;
 import com.teamnine.noFreeRider.project.dto.GetProjectDto;
+import com.teamnine.noFreeRider.project.dto.MemberProjectDto;
 import com.teamnine.noFreeRider.project.dto.ProjectDto;
 import com.teamnine.noFreeRider.project.service.MemberProjectService;
 import com.teamnine.noFreeRider.project.service.ProjectService;
@@ -79,6 +80,9 @@ public class PageController {
     @RequestMapping("/project/{projectId}")
     public String projects(Model model, Authentication authentication, @PathVariable UUID projectId) {
 
+        String email = authentication.getName();
+        Member loginMember = memberService.getMemberByEmail(email);
+
         //project info
         Project project = projectService.getProjectInfo(projectId);
         ProjectDto projectDto = new ProjectDto(project.getProjectName(), project.getProjectSummary(), project.getClassName(), project.getStarted_at(), project.getEnded_at());
@@ -90,7 +94,25 @@ public class PageController {
         for (int i = 0; i < memberList.length; i++) {
             memberDtoList[i] = new MemberDto(memberList[i].getMemberName(), memberList[i].getMemberEmail(), memberList[i].getMemberStudentId(), memberList[i].getMemberTemperature());
         }
+
+        MemberProjectDto memberProjectDto = new MemberProjectDto(loginMember.getId(), project.getId());
+
+        boolean isLeader = projectService.isProjectLeader(memberProjectDto);
         model.addAttribute("memberList", memberDtoList);
+        model.addAttribute("isLeader", isLeader);
+
+        // notifications
+        Notification[] notificationList = notificationService.getNotificationListByMember(loginMember);
+        NotificationDto[] notificationDtoList = new NotificationDto[notificationList.length];
+        for (int i = 0; i < notificationList.length; i++) {
+            String url = "";
+            if (notificationList[i].getProject() != null) {
+                url = "/projects/" + notificationList[i].getProject().getId();
+            }
+            notificationDtoList[i] = new NotificationDto(notificationList[i].getId(), notificationList[i].getNoticeTitle(), notificationList[i].getNoticeContent(), notificationList[i].getNoticeUrl());
+        }
+
+        model.addAttribute("notificationList", notificationDtoList);
 
         return "project";
     }
