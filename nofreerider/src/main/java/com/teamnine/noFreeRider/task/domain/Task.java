@@ -51,6 +51,7 @@ public class Task {
         this.taskName = task_name;
         this.taskContent = task_content;
         this.due_date = due_date;
+        this.created_at = LocalDateTime.now();
         this.status_code = 0;
     }
 }
