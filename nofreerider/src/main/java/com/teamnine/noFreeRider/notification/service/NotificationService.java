@@ -11,6 +11,8 @@ import com.teamnine.noFreeRider.project.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class NotificationService {
@@ -37,6 +39,15 @@ public class NotificationService {
 
         notificationRepository.save(notification);
         return new ContentDto(notification.getNotice_title(), notification.getNotice_content(), dto.destinationMemberID());
+    }
+
+    public Notification[] getNotificationListByMember(Member member) {
+        List<Notification> notificationList = notificationRepository.findAllByMember(member).orElseThrow();
+        Notification[] notificationArray = new Notification[notificationList.size()];
+        for (int i = 0; i < notificationList.size(); i++) {
+            notificationArray[i] = notificationList.get(i);
+        }
+        return notificationArray;
     }
 
 }
