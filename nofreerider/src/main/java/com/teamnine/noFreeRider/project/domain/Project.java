@@ -12,6 +12,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.UUID;
 
 @Table(name = "projects")
@@ -47,15 +48,20 @@ public class Project {
     @Column(name = "created_at")
     private LocalDateTime created_at;
 
+    @Column(name = "started_at")
+    private Date started_at;
+
     @Column(name = "ended_at")
-    private LocalDateTime ended_at;
+    private Date ended_at;
 
     @Builder
-    public Project(String project_name, String project_summary, String className, Member leader) {
+    public Project(String project_name, String project_summary, String className, Date startDate, Date endDate, Member leader) {
         this.projectName = project_name;
         this.projectSummary = project_summary;
         this.className = className;
         this.statusCode = ProjectStatusCode.STARTED;
+        this.started_at = startDate;
+        this.ended_at = endDate;
         this.leader = leader;
     }
 

@@ -23,4 +23,9 @@ public class MemberTask {
     @ManyToOne
     @JoinColumn(name = "task_id", updatable = false)
     private Task task;
+
+    public MemberTask(Task task, Member member) {
+        this.task = task;
+        this.member = member;
+    }
 }

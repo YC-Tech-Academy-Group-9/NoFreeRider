@@ -34,20 +34,25 @@ public class Notification {
     private Member member;
 
     @Column(name = "notice_title", nullable = false)
-    private String notice_title;
+    private String noticeTitle;
 
     @Column(name = "notice_content", nullable = false)
-    private String notice_content;
+    private String noticeContent;
+
+    @Column(name = "notice_url")
+    private String noticeUrl;
 
     @CreatedDate
     @Column(name = "created_at")
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
     @Builder
-    public Notification(Project project, Member member, String notice_title, String notice_content) {
+    public Notification(Project project, Member member, String noticeTitle, String noticeContent, String noticeUrl) {
         this.project = project;
         this.member = member;
-        this.notice_title = notice_title;
-        this.notice_content = notice_content;
+        this.noticeTitle = noticeTitle;
+        this.noticeContent = noticeContent;
+        this.noticeUrl = noticeUrl;
+        this.createdAt = LocalDateTime.now();
     }
 }

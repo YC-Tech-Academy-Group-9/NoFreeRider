@@ -11,6 +11,11 @@ import com.teamnine.noFreeRider.project.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.UUID;
+
 @RequiredArgsConstructor
 @Service
 public class NotificationService {
@@ -19,24 +24,50 @@ public class NotificationService {
     private final ProjectService projectService;
     private final MemberService memberService;
 
-    private final String rootUrl = "https://localhost:8080";
+    private final String rootUrl = "http://localhost:8080";
 
     public ContentDto postInviteMessage(PostInviteDto dto) {
         Project project = projectService.getProjectInfo(dto.projectID());
         Member member = memberService.getMemberById(dto.destinationMemberID());
         String inviteUrl = rootUrl + "/projects/" + dto.projectID() + "/invite/" + dto.inviteCode();
-        String title = project.getProjectName() + "에 초대합니다.";
-        String content = String.format("%s에서 초대 메시지를 보냈습니다.\n%s", project.getProjectName(), inviteUrl);
+        String title = project.getProjectName() + " 초대";
+        String content = String.format("%s에서 초대 메시지를 보냈습니다!", project.getProjectName());
 
         Notification notification = Notification.builder()
                 .project(project)
                 .member(member)
-                .notice_title(title)
-                .notice_content(content)
+                .noticeTitle(title)
+                .noticeContent(content)
+                .noticeUrl(inviteUrl)
                 .build();
 
         notificationRepository.save(notification);
-        return new ContentDto(notification.getNotice_title(), notification.getNotice_content(), dto.destinationMemberID());
+        return new ContentDto(notification.getNoticeTitle(), notification.getNoticeContent(), dto.destinationMemberID());
+    }
+
+    public Notification[] getNotificationListByMember(Member member) {
+        List<Notification> notificationList = notificationRepository.findAllByMember(member);
+        Notification[] notificationArray = new Notification[notificationList.size()];
+        for (int i = 0; i < notificationList.size(); i++) {
+            notificationArray[i] = notificationList.get(i);
+        }
+        return notificationArray;
+    }
+
+    @Transactional
+    public UUID deleteNotification(UUID notificationId, String username) {
+        Notification notification = notificationRepository.findById(notificationId)
+                .orElseThrow(() -> new NoSuchElementException("Notification not found"));
+        if (!notification.getMember().getMemberEmail().equals(username)) {
+            throw new IllegalArgumentException("unauthorized delete request");
+        }
+        try {
+            notificationRepository.deleteById(notificationId);
+            return notificationId;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw new IllegalArgumentException("Notification not found");
+        }
     }
 
 }
