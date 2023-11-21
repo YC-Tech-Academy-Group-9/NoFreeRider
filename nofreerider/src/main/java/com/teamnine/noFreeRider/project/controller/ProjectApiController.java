@@ -45,6 +45,8 @@ public class ProjectApiController {
                 projectDto.name(),
                 projectDto.summary(),
                 projectDto.className(),
+                projectDto.startDate(),
+                projectDto.endDate(),
                 leader);
 
         return ResponseEntity.ok()
@@ -175,7 +177,7 @@ public class ProjectApiController {
     @PostMapping("/{projectId}/invite")
     public ResponseEntity<ResultDto<ContentDto>> generateInvite(
             @PathVariable UUID projectId,
-            CreateInviteDto dto,
+            @RequestBody CreateInviteDto dto,
             Principal principal
     ) {
         if (!isProjectLeader(principal.getName(), projectId)) {
@@ -224,10 +226,10 @@ public class ProjectApiController {
                             projectService.addMember(dto)
                     ));
         } catch (Exception e) { // 세분화 추가 작업 필요
-            return ResponseEntity.badRequest()
+           return ResponseEntity.badRequest()
                     .body(new ResultDto<>(
                             400,
-                            "Bad Request",
+                            e.getCause().toString(),
                             null
                     ));
         }

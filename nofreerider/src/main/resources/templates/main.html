@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Jua&family=Nanum+Gothic+Coding:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
     <script>
         tailwind.config = {
             theme: {
@@ -88,12 +90,26 @@
         <div class="relative" id="dropdown-container">
             <button type="button" id="dropdown-button" class="flex items-center justify-center w-12 h-12 text-gray-800 bg-gray-300 rounded-full focus:outline-none">
                 <span class="material-icons">notifications</span>
-                <span th:hidden="${notificationList.length== 0}" th:text="${notificationList.length}" class="absolute top-0 right-0 flex items-center justify-center w-6 h-6 text-white bg-red-600 rounded-full"></span>
+                <span id="notification-count" th:if="${notificationList.length != 0}" th:text="${notificationList.length}" class="absolute top-0 right-0 flex items-center justify-center w-6 h-6 text-white bg-red-600 rounded-full"></span>
             </button>
-            <div class="absolute hidden right-0 mt-1 w-48 bg-white rounded-md shadow-xl z-20" id="dropdown-menu">
-                <div th:each="notificaiton : ${notificationList}" class="flex flex-col p-2">
-                    <span th:text="${notificaiton.notice_title()}" class="text-lg"></span>
-                    <span th:text="${notificaiton.notice_content()}" class="text-md"></span>
+            <div class="absolute hidden right-0 mt-2 w-64 bg-white rounded-md shadow-xl z-20 overflow-y-auto" style="max-height: 16rem;" id="dropdown-menu">
+                <div class="flex flex-col divide-y divide-gray-200">
+                    <div th:each="notification : ${notificationList}" class="flex items-center hover:bg-gray-50 notification-item">
+                        <a href="#"
+                           th:data-notice-url="${notification.notice_url()}"
+                           onclick="handleNotificationClick(this); return false;"
+                           class="block p-4">
+                            <span th:text="${notification.notice_title()}" class="block text-lg font-medium text-gray-900"></span>
+                            <span th:text="${notification.notice_content()}" class="block text-sm text-gray-600"></span>
+                        </a>
+                        <!-- Delete Button -->
+                        <button th:data-notif-id="${notification.notice_id()}"
+                                onclick="handleDeleteNotification(this);"
+                                class="text-red-500 hover:text-red-700 p-4 ml-auto">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -179,7 +195,7 @@
     </div>
 
     <!-- Main Panel -->
-    <div class="w-3/4 bg-background p-8">
+    <main class="w-3/4 bg-background p-8">
         <!-- Content Header -->
         <div class="flex-1 bg-background">
             <!-- Tabs -->
@@ -209,10 +225,27 @@
                         <!-- Divider -->
                         <div class="border-t border-shade"></div>
                         <!-- Project item -->
-<!--                        <button class="flex justify-between items-center py-2 w-full">-->
-<!--                            <span class="text-lg font-bold font-inter">YC Tech</span>-->
-<!--                            <span class="text-primary">4명</span>-->
-<!--                        </button>-->
+                            <a th:each="project : ${projectList}" th:href="@{'/project/' + ${project.id()}}"
+                               class="block mb-4 p-4 bg-white shadow rounded-lg hover:bg-gray-100 transition duration-300 ease-in-out">
+
+                                <div class="flex justify-between items-center mb-2">
+                                    <h3 class="text-lg font-bold font-inter" th:text="${project.name()}"></h3>
+                                    <span class="text-primary font-inter">4명</span>
+                                </div>
+
+                                <p class="text-sm font-inter mb-2" th:text="${project.summary()}">
+                                    <!-- Summary will be inserted here by Thymeleaf -->
+                                </p>
+
+                                <p class="text-sm font-inter mb-2" th:text="'수업: ' + ${project.className()}">
+                                    <!-- Class name will be inserted here by Thymeleaf -->
+                                </p>
+
+                                <div class="flex justify-between text-sm font-inter mb-2">
+                                    <span th:text="'Start: ' + ${#dates.format(project.startDate(), 'yyyy-MM-dd')}"></span>
+                                    <span th:text="'End: ' + ${#dates.format(project.endDate(), 'yyyy-MM-dd')}"></span>
+                                </div>
+                            </a>
                         <!-- Divider -->
 <!--                        <div class="border-t border-shade"></div>-->
                         <!-- More project items -->
@@ -225,6 +258,9 @@
                             <div class="border-t border-shade"></div>
                         </template>
                     </div>
+                    <button id="projectAddButton" class="fixed bottom-8 right-8 bg-primary text-white px-6 py-4 rounded-full shadow-lg">
+                        +
+                    </button>
                 </div>
                 <!-- Content for the second tab (hidden by default) -->
                 <div role="tabpanel" id="tab2" class="tab-content active">
@@ -275,7 +311,62 @@
                 </div>
             </div>
         </div>
-    </div>
+
+        <!-- modal -->
+        <div id="projectModal" class="hidden">
+        <!-- Modal Background -->
+            <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full" id="my-modal"></div>
+
+            <!-- Modal -->
+            <div class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-md shadow-lg w-1/3">
+                <!-- Modal Header -->
+                <div class="bg-primary text-white text-xl font-bold py-4 px-6 rounded-t-md">
+                    Add New Project
+                </div>
+
+                <!-- Modal Body -->
+                <div class="p-6">
+                    <form id="newProjectForm">
+                        <!-- Project Name -->
+                        <div class="mb-4">
+                            <label for="projectName" class="block text-gray-700 text-sm font-bold mb-2">Name of the Project:</label>
+                            <input type="text" id="projectName" name="projectName" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                        </div>
+
+                        <!-- Project Summary -->
+                        <div class="mb-4">
+                            <label for="projectSummary" class="block text-gray-700 text-sm font-bold mb-2">Project Summary:</label>
+                            <textarea id="projectSummary" name="projectSummary" rows="3" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required></textarea>
+                        </div>
+
+                        <!-- Class Name -->
+                        <div class="mb-4">
+                            <label for="className" class="block text-gray-700 text-sm font-bold mb-2">Class Name of the Project:</label>
+                            <input type="text" id="className" name="className" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                        </div>
+
+                        <!-- Project Start Date -->
+                        <div class="mb-4">
+                            <label for="startDate" class="block text-gray-700 text-sm font-bold mb-2">Start Date:</label>
+                            <input type="date" id="startDate" name="startDate" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                        </div>
+
+                        <!-- Project End Date -->
+                        <div class="mb-4">
+                            <label for="endDate" class="block text-gray-700 text-sm font-bold mb-2">End Date:</label>
+                            <input type="date" id="endDate" name="endDate" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                        </div>
+
+                        <!-- Modal Footer -->
+                        <div class="flex justify-end pt-2">
+                            <button id="projectModalSubmit" type="submit" class="px-4 bg-primary text-white p-3 rounded-lg hover:bg-primary-dark focus:outline-none focus:shadow-outline">Create</button>
+                            <button type="button" class="ml-2 px-4 bg-gray-500 text-white p-3 rounded-lg hover:bg-gray-600 focus:outline-none focus:shadow-outline" onclick="document.getElementById('projectModal').classList.add('hidden')">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
 </div>
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"
         integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
@@ -289,6 +380,16 @@
     document.getElementById('dropdown-button').addEventListener('click', function() {
         var dropdownMenu = document.getElementById('dropdown-menu');
         dropdownMenu.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', function(event) {
+        var dropdownMenu = document.getElementById('dropdown-menu');
+        var dropdownButton = document.getElementById('dropdown-button');
+
+        // Check if the clicked area is outside the dropdown and button
+        if (!dropdownMenu.contains(event.target) && !dropdownButton.contains(event.target)) {
+            dropdownMenu.classList.add('hidden');
+        }
     });
 
     //tab setup
@@ -321,6 +422,102 @@
         document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
         window.location.href = "http://localhost:8080/";
     });
+
+    //project modal
+    document.getElementById('projectAddButton').addEventListener('click', function() {
+        let modal = document.getElementById('projectModal');
+        modal.classList.remove('hidden');
+    });
+
+    //project modal submit
+    document.getElementById('projectModalSubmit').addEventListener('click', function() {
+        let modal = document.getElementById('projectModal');
+        modal.classList.add('hidden');
+        // call api to add project
+        let projectName = document.getElementById('projectName').value;
+        let projectSummary = document.getElementById('projectSummary').value;
+        let className = document.getElementById('className').value;
+        let startDate = document.getElementById('startDate').value;
+        let endDate = document.getElementById('endDate').value;
+        let data = {
+            "name": projectName,
+            "summary": projectSummary,
+            "className": className,
+            "startDate": startDate,
+            "endDate": endDate
+        };
+        $.ajax({
+            type: "POST",
+            url: "http://localhost:8080/projects",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(data){
+                console.log(data);
+                let projectList = document.getElementById('project-content');
+                let projectTemplate = document.getElementById('project');
+                let project = projectTemplate.content.cloneNode(true);
+                project.querySelector('span').innerText = projectName;
+                projectList.appendChild(project);
+            },
+            failure: function(errMsg) {
+                alert(errMsg);
+            }
+        });
+    });
+
+    function handleNotificationClick(element) {
+        var noticeUrl = element.getAttribute('data-notice-url');
+        console.log(noticeUrl);
+        $.ajax({
+            url: noticeUrl,
+            type: 'POST', // Adjust as needed
+            success: function(data) {
+                window.location.reload();
+            },
+            error: function(error) {
+                console.log("Error: " + error);
+                alert("API call failed.");
+            }
+        });
+    }
+
+    //delete notification
+    function handleDeleteNotification(element) {
+        // Add your AJAX call or other logic to delete the notification
+        var notificationId = element.getAttribute('data-notif-id');
+        // For example, using jQuery AJAX:
+        $.ajax({
+            url: '/notification/delete/' + notificationId, // Modify with your actual endpoint
+            type: 'POST',
+            success: function(response) {
+                // Handle successful deletion
+                // Optionally, remove the notification from the DOM
+                var notificationDiv = element.closest('.notification-item');
+                if (notificationDiv) {
+                    notificationDiv.remove();
+                }
+                var notificationCount = document.getElementById('notification-count');
+                if (notificationCount) {
+                    let count = parseInt(notificationCount.innerText) - 1;
+                    if (count <= 0) {
+                        notificationCount.remove();
+                    }
+                    else {
+                        notificationCount.innerText = count.toString();
+                    }
+
+                }
+            },
+            error: function(error) {
+                // Handle error
+                console.log(error);
+                alert('Failed to delete notification');
+            }
+        });
+    }
+
+
 </script>
 </body>
 </html>

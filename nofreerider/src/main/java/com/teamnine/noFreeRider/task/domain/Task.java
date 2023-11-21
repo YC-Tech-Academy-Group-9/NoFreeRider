@@ -30,8 +30,8 @@ public class Task {
     @Column(name = "task_name", nullable = false)
     private String taskName;
 
-    @Column(name = "task_contend")
-    private String taskContend;
+    @Column(name = "task_content")
+    private String taskContent;
 
     @CreatedDate
     @Column(name = "created_at")
@@ -46,10 +46,10 @@ public class Task {
     @Column(name = "status_code")
     private byte status_code;
 
-    public Task(Project project, String task_name, String task_contend, LocalDateTime due_date) {
+    public Task(Project project, String task_name, String task_content, LocalDateTime due_date) {
         this.project = project;
         this.taskName = task_name;
-        this.taskContend = task_contend;
+        this.taskContent = task_content;
         this.due_date = due_date;
         this.status_code = 0;
     }
