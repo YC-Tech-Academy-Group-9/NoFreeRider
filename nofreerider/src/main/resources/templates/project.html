@@ -104,7 +104,7 @@
                     <div th:each="notification : ${notificationList}" class="flex items-center hover:bg-gray-50 notification-item">
                         <a href="#"
                            th:data-notice-url="${notification.notice_url()}"
-                           onclick="handleNotificationClick(this); return false;"
+                           onclick="handleNotificationClick(this);"
                            class="block p-4">
                             <span th:text="${notification.notice_title()}" class="block text-lg font-medium text-gray-900"></span>
                             <span th:text="${notification.notice_content()}" class="block text-sm text-gray-600"></span>
@@ -187,26 +187,33 @@
         </div>
         <div class="space-y-6">
             <!-- Task item -->
-            <div class="shadow-lg p-4 rounded-lg">
-                <h3 class="text-primary text-lg mb-2">Task 이름</h3>
-                <p class="text-tertiary mb-4">
-                    Task 내용
-                </p>
-                <!-- Task checklist -->
-                <ul class="list-none space-y-2">
-                    <li class="flex items-center">
-                        <input id="checkbox1" type="checkbox" class="form-checkbox h-5 w-5 text-primary rounded" checked>
-                        <label for="checkbox1" class="ml-2 text-text">Checklist item 1</label>
-                    </li>
-                    <li class="flex items-center">
-                        <input id="checkbox2" type="checkbox" class="form-checkbox h-5 w-5 text-primary rounded">
-                        <label for="checkbox2" class="ml-2 text-text">Checklist item 2</label>
-                    </li>
-                    <!-- Repeat for other checklist items -->
-                </ul>
-                <div class="flex justify-end items-center mt-4">
-                    <span class="text-text">2023.11.04까지</span>
-                    <span class="text-primary ml-4">진행도 66%</span>
+            <div th:each="task : ${taskList}" class="flex items-center p-4 bg-white shadow rounded-lg">
+                <!-- Custom Checkbox -->
+                <div th:id="'customCheckbox' + ${taskStat.index}"
+                     th:data-task-id="${task.taskId()}"
+                     th:data-task-status="${task.taskStatusCode()}"
+                     class="block cursor-pointer rounded-full border-2 border-gray-300 h-6 w-6 flex items-center justify-center bg-transparent mr-4 statusCheckBox" onclick="toggleCheckboxState(this)">
+                    <!-- Icons (initially hidden) -->
+                    <i id="runningManIcon" class="fas fa-running text-yellow-500 hidden"></i>
+                    <i id="checkmarkIcon" class="fas fa-check text-green-500 hidden"></i>
+                </div>
+
+                <!-- Task Details -->
+                <div class="flex-grow">
+                    <!-- Task Name -->
+                    <h3 class="text-lg font-semibold" th:text="${task.taskName()}">Task Name</h3>
+                    <!-- Task Content -->
+                    <p class="text-sm text-gray-600" th:text="${task.taskContent()}">Task content goes here...</p>
+                </div>
+
+                <!-- Due Date and Assigned Person -->
+                <div class="ml-4 text-right">
+                    <div class="text-sm text-gray-500" th:text="${#temporals.format(task.dueDateTime(), 'yyyy-MM-dd HH:mm')}">Due: 2023-12-31</div>
+                    <div class="text-sm text-gray-700" >Assigned to:
+                        <span th:each="name : ${task.memberName()}">
+                            <span th:text="${name}"></span><br>
+                        </span>
+                    </div>
                 </div>
             </div>
             <!-- More tasks here -->
@@ -245,7 +252,19 @@
                         <!-- Task Due Date -->
                         <div class="mb-4">
                             <label for="dueDate" class="block text-gray-700 text-sm font-bold mb-2">Due Date:</label>
-                            <input type="date" id="dueDate" name="dueDate" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                            <input type="datetime-local" id="dueDate" name="dueDate" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                        </div>
+
+                        <!-- Task Members -->
+                        <div class="mb-4">
+                            <label class="block font-bold text-lg mb-2">Pick Members</label>
+                            <ul class="list-none m-0 p-0 mt-1 border border-gray-700 shadow-md">
+                                <li th:each="member : ${memberList}">
+                                    <label class="cursor-pointer block w-full px-4 py-2 hover:bg-gray-700 hover:text-white">
+                                        <input type="checkbox" name="members" th:value="${member.studentId()}" class="mr-2 studentCheckBox" th:text="${member.name()} + ' ' + ${member.studentId()}">
+                                    </label>
+                                </li>
+                            </ul>
                         </div>
 
                         <!-- Modal Footer -->
@@ -317,7 +336,6 @@
         const data = {
             memberEmail: newMemberEmail
         };
-        console.log(data)
         // curl api
         // generate invite link
         $.ajax({
@@ -327,11 +345,10 @@
             dataType: 'json',
             data: JSON.stringify(data),
             success: function(data) {
-                console.log(data);
                 alert('초대 링크가 전송되었습니다.');
             },
             error: function(request, status, error) {
-                console.log(error);
+                console.log("Error: " + error);
                 alert('초대 링크 전송에 실패했습니다.')
             }
         });
@@ -377,7 +394,6 @@
                     else {
                         notificationCount.innerText = count.toString();
                     }
-
                 }
             },
             error: function(error) {
@@ -387,6 +403,127 @@
             }
         });
     }
+
+    //task checkbox
+    // 0: unchecked, 1: in-progress, 2: completed
+    const TaskStatus = ['TODO', 'DOING', 'DONE']
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const checkboxes = document.getElementsByClassName('statusCheckBox')
+        for (let i = 0; i < checkboxes.length; i++) {
+            updateIcon(checkboxes[i]);
+        }
+    });
+
+    function updateIcon(element) {
+        const taskStatus = element.getAttribute('data-task-status');
+        const checkboxState = (TaskStatus.indexOf(taskStatus));
+        const runningManIcon = element.querySelector('#runningManIcon');
+        const checkmarkIcon = element.querySelector('#checkmarkIcon');
+
+        // Update icons and background color based on state
+        switch (checkboxState) {
+            case 0: // unchecked
+                runningManIcon.classList.add('hidden');
+                checkmarkIcon.classList.add('hidden');
+                element.style.backgroundColor = 'transparent';
+                break;
+            case 1: // in-progress
+                runningManIcon.classList.remove('hidden');
+                checkmarkIcon.classList.add('hidden');
+                element.style.backgroundColor = 'transparent';
+                break;
+            case 2: // completed
+                runningManIcon.classList.add('hidden');
+                checkmarkIcon.classList.remove('hidden');
+                element.style.backgroundColor = 'transparent';
+                break;
+        }
+    }
+    function toggleCheckboxState(element) {
+        //curl api
+        const projectId = location.pathname.split('/')[2];
+        const taskId = element.getAttribute('data-task-id');
+        var taskStatus = element.getAttribute('data-task-status');
+
+        const runningManIcon = element.querySelector('#runningManIcon');
+        const checkmarkIcon = element.querySelector('#checkmarkIcon');
+
+        let checkboxState = (TaskStatus.indexOf(taskStatus) + 1) % 3; // Cycle through states
+        taskStatus = TaskStatus[checkboxState];
+
+        $.ajax({
+            url: 'http://localhost:8080/tasks/status/' + taskId + '/' + taskStatus,
+            type: 'POST',
+            success: function(data) {
+                console.log(data);
+                alert('Task 상태가 변경되었습니다.');
+                element.setAttribute('data-task-status', taskStatus)
+            },
+            error: function(request, status, error) {
+                console.log(error);
+                alert('Task 상태 변경에 실패했습니다.')
+            }
+        });
+
+        // Update icons and background color based on state
+        switch (checkboxState) {
+            case 0: // unchecked
+                runningManIcon.classList.add('hidden');
+                checkmarkIcon.classList.add('hidden');
+                element.style.backgroundColor = 'transparent';
+                break;
+            case 1: // in-progress
+                runningManIcon.classList.remove('hidden');
+                checkmarkIcon.classList.add('hidden');
+                element.style.backgroundColor = 'transparent';
+                break;
+            case 2: // completed
+                runningManIcon.classList.add('hidden');
+                checkmarkIcon.classList.remove('hidden');
+                element.style.backgroundColor = 'transparent';
+                break;
+        }
+    }
+
+
+
+    //task modal
+    document.getElementById('newTaskForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const projectId = location.pathname.split('/')[2];
+        const data = {
+            taskName: document.getElementById('taskName').value,
+            taskContent: document.getElementById('taskDescription').value,
+            dueDateTime: document.getElementById('dueDate').value,
+            projectId: projectId,
+            memberIds: []
+        };
+        const members = document.getElementsByClassName('studentCheckBox');
+        for (let i = 0; i < members.length; i++) {
+            if (members[i].checked) {
+                data.memberIds.push(members[i].value);
+            }
+        }
+        // curl api
+        // generate invite link
+        $.ajax({
+            url: 'http://localhost:8080/tasks/create',
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            data: JSON.stringify(data),
+            success: function(data) {
+                console.log(data);
+                alert('Task가 추가되었습니다.');
+                window.location.reload();
+            },
+            error: function(request, status, error) {
+                console.log(error);
+                alert('Task 추가에 실패했습니다.')
+            }
+        });
+    });
 
 
 </script>

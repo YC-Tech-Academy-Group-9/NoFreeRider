@@ -12,6 +12,9 @@ import com.teamnine.noFreeRider.project.dto.MemberProjectDto;
 import com.teamnine.noFreeRider.project.dto.ProjectDto;
 import com.teamnine.noFreeRider.project.service.MemberProjectService;
 import com.teamnine.noFreeRider.project.service.ProjectService;
+import com.teamnine.noFreeRider.task.domain.Task;
+import com.teamnine.noFreeRider.task.dto.TaskDisplayDto;
+import com.teamnine.noFreeRider.task.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -30,6 +33,7 @@ public class PageController {
     private final NotificationService notificationService;
     private final ProjectService projectService;
     private final MemberProjectService memberProjectService;
+    private final TaskService taskService;
 
     @RequestMapping("/")
     public String login() {
@@ -101,6 +105,8 @@ public class PageController {
         model.addAttribute("memberList", memberDtoList);
         model.addAttribute("isLeader", isLeader);
 
+        // tasks
+        model.addAttribute("taskList", taskService.searchTasksByProjectId(projectId));
         // notifications
         Notification[] notificationList = notificationService.getNotificationListByMember(loginMember);
         NotificationDto[] notificationDtoList = new NotificationDto[notificationList.length];

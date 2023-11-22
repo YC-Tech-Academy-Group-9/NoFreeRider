@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface InviteRedisRepository extends CrudRepository<Invite, String> {
-//    Optional<Invite> findInviteByProjectIdAndInviteCode(UUID projectId, UUID inviteCode);
+    Optional<Invite> findInviteByProjectIdAndInviteCode(UUID projectId, UUID inviteCode);
 
 //    Optional<Invite> findInviteByProjectId(UUID projectId);
 

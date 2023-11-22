@@ -194,16 +194,16 @@ public class ProjectApiController {
             PostInviteDto postInviteDto = new PostInviteDto(projectId, inviteCode, member.getId());
 
             return ResponseEntity.ok()
-                    .body(new ResultDto<>(
+                    .body(new ResultDto<ContentDto>(
                             200,
                             "",
                             notificationService.postInviteMessage(postInviteDto)
                     ));
         } catch (Exception e) {
             return ResponseEntity.badRequest()
-                    .body(new ResultDto<>(
-                            400,
-                            e.getMessage(),
+                    .body(new ResultDto<ContentDto>(
+                            401,
+                            e.getCause().toString(),
                             null
                     ));
         }
@@ -266,26 +266,6 @@ public class ProjectApiController {
                         200,
                         "",
                         memberProjectService.deleteMemberProject(dto)
-                ));
-    }
-
-    @GetMapping("/{projectId}/tasks")
-    public ResponseEntity<ResultDto<SearchTaskListDto>> searchTasks(
-            @PathVariable UUID projectId
-    ) {
-        if (!isExistProject(projectId)) {
-            return ResponseEntity.badRequest()
-                    .body(new ResultDto<>(
-                            404,
-                            "not found Project",
-                            null
-                    ));
-        }
-        return ResponseEntity.ok()
-                .body(new ResultDto<>(
-                        200,
-                        "",
-                        taskService.searchTasksByProjectId(projectId)
                 ));
     }
 
