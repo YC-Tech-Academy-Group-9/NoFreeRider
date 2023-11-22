@@ -191,18 +191,37 @@ public class ProjectApiController {
         try {
             UUID inviteCode = inviteService.create(projectId);
             Member member = memberService.getMemberByEmail(dto.memberEmail());
+
+            boolean isAlreadyMember = memberProjectService.isMemberPartInProject(new MemberProjectDto(member.getId(), projectId));
+            if (isAlreadyMember) {
+                return ResponseEntity.status(409)
+                        .body(new ResultDto<ContentDto>(
+                                409,
+                                "already member",
+                                null
+                        ));
+            }
+
             PostInviteDto postInviteDto = new PostInviteDto(projectId, inviteCode, member.getId());
 
             return ResponseEntity.ok()
-                    .body(new ResultDto<>(
+                    .body(new ResultDto<ContentDto>(
                             200,
                             "",
                             notificationService.postInviteMessage(postInviteDto)
                     ));
         } catch (Exception e) {
-            return ResponseEntity.badRequest()
-                    .body(new ResultDto<>(
-                            400,
+            if (e.getMessage().equals("not found member")) {
+                return ResponseEntity.status(404)
+                        .body(new ResultDto<ContentDto>(
+                                404,
+                                e.getMessage(),
+                                null
+                        ));
+            }
+            return ResponseEntity.status(401)
+                    .body(new ResultDto<ContentDto>(
+                            401,
                             e.getMessage(),
                             null
                     ));
@@ -229,7 +248,7 @@ public class ProjectApiController {
            return ResponseEntity.badRequest()
                     .body(new ResultDto<>(
                             400,
-                            e.getCause().toString(),
+                            e.getMessage(),
                             null
                     ));
         }
@@ -242,7 +261,7 @@ public class ProjectApiController {
             Principal principal
     ) {
         if (!isProjectLeader(principal.getName(), projectId)) {
-            return ResponseEntity.badRequest()
+            return ResponseEntity.status(403)
                     .body(new ResultDto<>(
                             403,
                             "access only project leader",
@@ -266,26 +285,6 @@ public class ProjectApiController {
                         200,
                         "",
                         memberProjectService.deleteMemberProject(dto)
-                ));
-    }
-
-    @GetMapping("/{projectId}/tasks")
-    public ResponseEntity<ResultDto<SearchTaskListDto>> searchTasks(
-            @PathVariable UUID projectId
-    ) {
-        if (!isExistProject(projectId)) {
-            return ResponseEntity.badRequest()
-                    .body(new ResultDto<>(
-                            404,
-                            "not found Project",
-                            null
-                    ));
-        }
-        return ResponseEntity.ok()
-                .body(new ResultDto<>(
-                        200,
-                        "",
-                        taskService.searchTasksByProjectId(projectId)
                 ));
     }
 

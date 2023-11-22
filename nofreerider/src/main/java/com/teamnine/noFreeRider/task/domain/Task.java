@@ -1,7 +1,9 @@
 package com.teamnine.noFreeRider.task.domain;
 
 import com.teamnine.noFreeRider.project.domain.Project;
+import com.teamnine.noFreeRider.task.dto.TaskDto;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
@@ -40,18 +42,33 @@ public class Task {
     @Column(name = "due_date")
     private LocalDateTime due_date;
 
-    @Column(name = "ended_at")
-    private LocalDateTime ended_at;
-
     @Column(name = "status_code")
-    private byte status_code;
+    private TaskStatusCode status_code;
 
+    @Builder
     public Task(Project project, String task_name, String task_content, LocalDateTime due_date) {
         this.project = project;
         this.taskName = task_name;
         this.taskContent = task_content;
         this.due_date = due_date;
         this.created_at = LocalDateTime.now();
-        this.status_code = 0;
+        this.status_code = TaskStatusCode.TODO;
+    }
+
+    @Builder
+    public Task(Project project, String task_name, String task_content, LocalDateTime due_date, TaskStatusCode status_code) {
+        this.project = project;
+        this.taskName = task_name;
+        this.taskContent = task_content;
+        this.due_date = due_date;
+        this.created_at = LocalDateTime.now();
+        this.status_code = status_code;
+    }
+
+    public void updateTask(TaskDto taskDto) {
+        this.taskName = taskDto.taskName();
+        this.taskContent = taskDto.taskContent();
+        this.due_date = taskDto.dueDateTime();
+        this.status_code = taskDto.status();
     }
 }

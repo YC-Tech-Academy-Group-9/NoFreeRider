@@ -2,6 +2,7 @@ package com.teamnine.noFreeRider.member.domain;
 
 import com.teamnine.noFreeRider.task.domain.Task;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -9,6 +10,7 @@ import javax.persistence.*;
 @Table(name = "members_tasks")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@Getter
 public class MemberTask {
 
     @Id

@@ -23,18 +23,9 @@ public class InviteService {
     }
 
     public UUID useCode(AcceptInviteDto dto) {
-        Iterable<Invite> invites = inviteRedisRepository.findAll();
-        Invite invite = null;
-        for (Invite i : invites) {
-            if (i.getProjectId().equals(dto.projectId()) && i.getInviteCode().equals(dto.invitedCode())) {
-                invite = i;
-                break;
-            }
-        }
+        Optional<Invite> inviteBox = inviteRedisRepository.findInviteByProjectIdAndInviteCode(dto.projectId(), dto.invitedCode());
+        Invite invite = inviteBox.orElseThrow(() -> new NoSuchElementException("존재하지 않는 초대코드 입니다."));
 
-        if (invite == null) {
-            throw new NoSuchElementException("존재하지 않는 초대코드 입니다.");
-        }
         if (invite.isInvited()) {
             throw new IllegalArgumentException("이미 사용된 초대코드 입니다.");
         }
