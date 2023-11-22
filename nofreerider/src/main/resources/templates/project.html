@@ -326,6 +326,7 @@
         event.stopPropagation();
     });
 
+
     // Add member button
     document.getElementById('addMemberADD').addEventListener('click', function(event) {
         event.preventDefault();
@@ -345,11 +346,20 @@
             dataType: 'json',
             data: JSON.stringify(data),
             success: function(data) {
+                console.log(data);
                 alert('초대 링크가 전송되었습니다.');
             },
-            error: function(request, status, error) {
-                console.log("Error: " + error);
-                alert('초대 링크 전송에 실패했습니다.')
+            error: function(request) {
+                if(request.status === 409)
+                    alert('이미 프로젝트에 참여중인 사용자입니다.')
+                else if(request.status === 403)
+                    alert('권한이 없습니다.')
+                else if(request.status === 404)
+                    alert('존재하지 않는 사용자입니다.')
+                else if(request.status === 500)
+                    alert('서버 오류입니다.')
+                else
+                    alert('초대 링크 전송에 실패했습니다.')
             }
         });
     });
