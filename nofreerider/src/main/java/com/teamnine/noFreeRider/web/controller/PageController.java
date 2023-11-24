@@ -94,15 +94,19 @@ public class PageController {
 
         //project members
         Member[] memberList = memberProjectService.getMemberListByProject(project).toArray(new Member[0]);
+        boolean[] isLeaderList = new boolean[memberList.length];
         MemberDto[] memberDtoList = new MemberDto[memberList.length];
         for (int i = 0; i < memberList.length; i++) {
+            boolean isLeader = projectService.isProjectLeader(memberList[i], project);
             memberDtoList[i] = new MemberDto(memberList[i].getMemberName(), memberList[i].getMemberEmail(), memberList[i].getMemberStudentId(), memberList[i].getMemberTemperature());
+            isLeaderList[i] = isLeader;
         }
 
         MemberProjectDto memberProjectDto = new MemberProjectDto(loginMember.getId(), project.getId());
 
         boolean isLeader = projectService.isProjectLeader(memberProjectDto);
         model.addAttribute("memberList", memberDtoList);
+        model.addAttribute("isLeaderList", isLeaderList);
         model.addAttribute("isLeader", isLeader);
 
         // tasks

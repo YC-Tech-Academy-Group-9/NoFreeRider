@@ -153,8 +153,20 @@
             <!-- Form fields or user info here -->
             <div class="mt-4 space-y-2">
                 <!-- Placeholder for form fields -->
-                <div class="bg-white p-2 rounded" th:each="member: ${memberList}">
-                    <span class="text-md text-black" th:text="${member.name()} + '님 ' + ${member.studentId()}"></span>
+                <div class="bg-white p-2 rounded text-red" th:each="member : ${memberList}">
+                    <div class="flex justify-between items-center">
+                        <!-- Member Name -->
+                        <div>
+                            <span class="text-md text-black" th:text="${member.name()} + '님 ' + ${member.studentId()}"></span>
+                        </div>
+
+                        <!-- User Minus Icon as a Button -->
+                        <div th:if="${isLeader && !isLeaderList[memberStat.index]}">
+                            <button class="text-red-500 hover:text-red-700 focus:outline-none" onclick="removeMember(${member.id})">
+                                <i class="fas fa-user-minus"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 <!-- Add Member Button -->
                 <div th:if="${isLeader}" class="relative w-full">
@@ -186,6 +198,9 @@
             <span th:text="${project.name()}"></span>
         </div>
         <div class="space-y-6">
+            <div>
+                <h2 class="text-xl italic text-secondary" th:if="${taskList.isEmpty()}">할당된 작업이 없습니다. </h2>
+            </div>
             <!-- Task item -->
             <div th:each="task : ${taskList}" class="flex items-center p-4 bg-white shadow rounded-lg">
                 <!-- Custom Checkbox -->
@@ -315,54 +330,65 @@
         var tooltip = document.getElementById('tooltip');
         var button = document.querySelector('#addMemberButton'); // Replace with a more specific selector if needed
 
+        if (tooltip == null || button == null) {
+            return;
+        }
+
         // Check if the clicked area is outside the tooltip and button
         if (!tooltip.contains(event.target) && !button.contains(event.target)) {
             tooltip.classList.add('hidden');
         }
     });
 
-    // Prevent event from closing tooltip when clicking inside
-    document.getElementById('tooltip').addEventListener('click', function(event) {
-        event.stopPropagation();
-    });
 
+    document.addEventListener('DOMContentLoaded', (event) => {
+        // Prevent event from closing tooltip when clicking inside
+        let tooltip = document.getElementById('tooltip');
+        if (tooltip == null) {
+            return;
+        }
+        document.getElementById('tooltip').addEventListener('click', function(event) {
+            event.stopPropagation();
+        });
 
-    // Add member button
-    document.getElementById('addMemberADD').addEventListener('click', function(event) {
-        event.preventDefault();
-        var tooltip = document.getElementById('tooltip');
-        tooltip.classList.add('hidden');
-        var newMemberEmail = document.getElementById('newMemberEmail').value;
-        const projectId = location.pathname.split('/')[2];
-        const data = {
-            memberEmail: newMemberEmail
-        };
-        // curl api
-        // generate invite link
-        $.ajax({
-            url: 'http://localhost:8080/projects/' + projectId + '/invite',
-            type: 'POST',
-            contentType: 'application/json; charset=utf-8',
-            dataType: 'json',
-            data: JSON.stringify(data),
-            success: function(data) {
-                console.log(data);
-                alert('초대 링크가 전송되었습니다.');
-            },
-            error: function(request) {
-                if(request.status === 409)
-                    alert('이미 프로젝트에 참여중인 사용자입니다.')
-                else if(request.status === 403)
-                    alert('권한이 없습니다.')
-                else if(request.status === 404)
-                    alert('존재하지 않는 사용자입니다.')
-                else if(request.status === 500)
-                    alert('서버 오류입니다.')
-                else
-                    alert('초대 링크 전송에 실패했습니다.')
-            }
+        // Add member button
+        document.getElementById('addMemberADD').addEventListener('click', function(event) {
+            event.preventDefault();
+            var tooltip = document.getElementById('tooltip');
+            tooltip.classList.add('hidden');
+            var newMemberEmail = document.getElementById('newMemberEmail').value;
+            const projectId = location.pathname.split('/')[2];
+            const data = {
+                memberEmail: newMemberEmail
+            };
+            // curl api
+            // generate invite link
+            $.ajax({
+                url: 'http://localhost:8080/projects/' + projectId + '/invite',
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                data: JSON.stringify(data),
+                success: function(data) {
+                    console.log(data);
+                    alert('초대 링크가 전송되었습니다.');
+                },
+                error: function(request) {
+                    if(request.status === 409)
+                        alert('이미 프로젝트에 참여중인 사용자입니다.')
+                    else if(request.status === 403)
+                        alert('권한이 없습니다.')
+                    else if(request.status === 404)
+                        alert('존재하지 않는 사용자입니다.')
+                    else if(request.status === 500)
+                        alert('서버 오류입니다.')
+                    else
+                        alert('초대 링크 전송에 실패했습니다.')
+                }
+            });
         });
     });
+
 
     function handleNotificationClick(element) {
         var noticeUrl = element.getAttribute('data-notice-url');
@@ -467,7 +493,6 @@
             type: 'POST',
             success: function(data) {
                 console.log(data);
-                alert('Task 상태가 변경되었습니다.');
                 element.setAttribute('data-task-status', taskStatus)
             },
             error: function(request, status, error) {
