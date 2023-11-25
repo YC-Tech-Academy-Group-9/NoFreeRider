@@ -58,13 +58,7 @@ public class PageController {
         model.addAttribute("temp", loginMember.getMemberTemperature());
 
         // notifications
-        Notification[] notificationList = notificationService.getNotificationListByMember(loginMember);
-
-        NotificationDto[] notificationDtoList = new NotificationDto[notificationList.length];
-        for (int i = 0; i < notificationList.length; i++) {
-            notificationDtoList[i] = new NotificationDto(notificationList[i].getId(), notificationList[i].getNoticeTitle(), notificationList[i].getNoticeContent(), notificationList[i].getNoticeUrl());
-        }
-
+        NotificationDto[] notificationDtoList = getNotificationListByMember(loginMember);
         model.addAttribute("notificationList", notificationDtoList);
 
         // projects
@@ -137,6 +131,41 @@ public class PageController {
         // tasks
         model.addAttribute("taskList", taskService.searchTasksByProjectId(projectId));
         // notifications
+        NotificationDto[] notificationDtoList = getNotificationListByMember(loginMember);
+        model.addAttribute("notificationList", notificationDtoList);
+
+        return "project";
+    }
+
+    @RequestMapping("/rating/{projectId}")
+    public String rating(Model model, Authentication authentication, @PathVariable UUID projectId) {
+    	String email = authentication.getName();
+        Member loginMember = memberService.getMemberByEmail(email);
+        model.addAttribute("name", loginMember.getMemberName());
+
+        //members
+        Project project = projectService.getProjectInfo(projectId);
+        List<Member> memberList = memberProjectService.getMemberListByProject(project);
+        MemberDto[] memberDtoList = new MemberDto[memberList.size()];
+        for (int i = 0; i < memberList.size(); i++) {
+            memberDtoList[i] = new MemberDto(
+                    memberList.get(i).getId(),
+                    memberList.get(i).getMemberName(),
+                    memberList.get(i).getMemberEmail(),
+                    memberList.get(i).getMemberStudentId(),
+                    memberList.get(i).getMemberTemperature());
+        }
+        model.addAttribute("memberList", memberDtoList);
+
+        //notifications
+        NotificationDto[] notificationDtoList = getNotificationListByMember(loginMember);
+        model.addAttribute("notificationList", notificationDtoList);
+
+        return "rating";
+    }
+
+    private NotificationDto[] getNotificationListByMember(Member loginMember) {
+        // notifications
         Notification[] notificationList = notificationService.getNotificationListByMember(loginMember);
         NotificationDto[] notificationDtoList = new NotificationDto[notificationList.length];
         for (int i = 0; i < notificationList.length; i++) {
@@ -147,9 +176,7 @@ public class PageController {
             notificationDtoList[i] = new NotificationDto(notificationList[i].getId(), notificationList[i].getNoticeTitle(), notificationList[i].getNoticeContent(), notificationList[i].getNoticeUrl());
         }
 
-        model.addAttribute("notificationList", notificationDtoList);
-
-        return "project";
+        return notificationDtoList;
     }
 
 }
