@@ -2,6 +2,10 @@ package com.teamnine.noFreeRider.member.service;
 
 import com.teamnine.noFreeRider.auth.JwtTokenProvider;
 import com.teamnine.noFreeRider.auth.TokenInfo;
+
+import com.teamnine.noFreeRider.comments.domain.UserComment;
+import com.teamnine.noFreeRider.comments.repository.CommentsRepository;
+
 import com.teamnine.noFreeRider.comments.service.CommentService;
 import com.teamnine.noFreeRider.member.domain.Member;
 import com.teamnine.noFreeRider.member.domain.RefreshToken;
@@ -25,6 +29,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final CommentsRepository commentsRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
@@ -41,7 +46,6 @@ public class MemberService {
         newMember = memberRepository.save(newMember);
 
         // 3. Comment Initialize
-        commentService.createComment(newMember);
 
         return newMember;
     }

@@ -28,6 +28,7 @@ public class UserComment {
     @JoinColumn(name = "user_id", referencedColumnName = "member_id", updatable = false)
     private Member member;
 
+
     // 평가항목 1 - 기한을 잘 지켜요
     @Column(name="criteria1", nullable = false)
     private int criteria1;

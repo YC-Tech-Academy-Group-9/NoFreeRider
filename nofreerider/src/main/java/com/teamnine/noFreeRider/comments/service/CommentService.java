@@ -6,7 +6,6 @@ import com.teamnine.noFreeRider.comments.repository.CommentsRepository;
 import com.teamnine.noFreeRider.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 
