@@ -79,6 +79,14 @@ public class ProjectService {
         return leaderUUID.equals(dto.member_id());
     }
 
+    public boolean isProjectLeader(Member member, Project project) {
+        if (project == null) {
+            return false;
+        }
+        UUID leaderUUID = project.getLeader().getId();
+        return leaderUUID.equals(member.getId());
+    }
+
     @Transactional
     public Project update(UpdateProjectDto dto) {
         Project project = projectRepository.findById(dto.project_id())

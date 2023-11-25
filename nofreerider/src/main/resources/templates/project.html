@@ -7,6 +7,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Jua&family=Nanum+Gothic+Coding:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
     <script>
         tailwind.config = {
@@ -73,8 +75,15 @@
             font-family: 'Inter', sans-serif;
         }
 
-        .login-box {
-            box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.25);
+        #tooltip::before {
+            content: '';
+            position: absolute;
+            left: -15px; /* Adjust based on the size of the triangle */
+            top: 25%; /* Adjust if necessary to align with the input field */
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-right: 15px solid white; /* Color of the triangle should match the tooltip background */
+            transform: translateY(-50%);
         }
 
     </style>
@@ -84,7 +93,33 @@
     <div class="w-[434px] mx-auto text-2xl title">
         <h1>NoFreeRider</h1>
     </div>
-    <div class="w-full h-full flex flex-row justify-end items-center px-[51px]">
+    <div class="w-full h-full flex flex-row justify-end items-center px-[51px] space-x-2">
+        <div class="relative" id="dropdown-container">
+            <button type="button" id="dropdown-button" class="flex items-center justify-center w-12 h-12 text-gray-800 bg-gray-300 rounded-full focus:outline-none">
+                <span class="material-icons">notifications</span>
+                <span id="notification-count" th:if="${notificationList.length != 0}" th:text="${notificationList.length}" class="absolute top-0 right-0 flex items-center justify-center w-6 h-6 text-white bg-red-600 rounded-full"></span>
+            </button>
+            <div class="absolute hidden right-0 mt-2 w-64 bg-white rounded-md shadow-xl z-20 overflow-y-auto" style="max-height: 16rem;" id="dropdown-menu">
+                <div class="flex flex-col divide-y divide-gray-200">
+                    <div th:each="notification : ${notificationList}" class="flex items-center hover:bg-gray-50 notification-item">
+                        <a href="#"
+                           th:data-notice-url="${notification.notice_url()}"
+                           onclick="handleNotificationClick(this);"
+                           class="block p-4">
+                            <span th:text="${notification.notice_title()}" class="block text-lg font-medium text-gray-900"></span>
+                            <span th:text="${notification.notice_content()}" class="block text-sm text-gray-600"></span>
+                        </a>
+                        <!-- Delete Button -->
+                        <button th:data-notif-id="${notification.notice_id()}"
+                                onclick="handleDeleteNotification(this);"
+                                class="text-red-500 hover:text-red-700 p-4 ml-auto">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
         <button class="button text-lg bg-shade text-center w-[170px] h-[60px]">Sign Out</button>
     </div>
 </nav>
@@ -101,12 +136,12 @@
                 <div class="bg-white p-2 rounded">
                     <span class="text-md text-black">수업이름</span>
                     <br>
-                    <span class="text-lg text-black">YC Tech</span>
+                    <span class="text-lg text-black" th:text="${project.className()}">YC Tech</span>
                 </div>
                 <div class="bg-white p-2 rounded">
                     <span class="text-md text-black">프로젝트 일자</span>
                     <br>
-                    <span class="text-lg text-black">20xx.xx.xx ~ 20xx.xx.xx</span>
+                    <span class="text-lg text-black" th:text="${#dates.format(project.startDate(), 'yyyy.MM.dd')} + ' ~ ' + ${#dates.format(project.endDate(), 'yyyy.MM.dd')}"></span>
                 </div>
                 <!-- ... -->
             </div>
@@ -118,17 +153,33 @@
             <!-- Form fields or user info here -->
             <div class="mt-4 space-y-2">
                 <!-- Placeholder for form fields -->
-                <div class="bg-white p-2 rounded">
-                    <span class="text-md text-black">000님 20xxxxxxxx</span>
+                <div class="bg-white p-2 rounded text-red" th:each="member : ${memberList}">
+                    <div class="flex justify-between items-center">
+                        <!-- Member Name -->
+                        <div>
+                            <span class="text-md text-black" th:text="${member.name()} + '님 ' + ${member.studentId()}"></span>
+                        </div>
+
+                        <!-- User Minus Icon as a Button -->
+                        <div th:if="${isLeader && !isLeaderList[memberStat.index]}">
+                            <button class="text-red-500 hover:text-red-700 focus:outline-none" onclick="removeMember(${member.id})">
+                                <i class="fas fa-user-minus"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <div class="bg-white p-2 rounded">
-                    <span class="text-md text-black">000님 20xxxxxxxx</span>
-                </div>
-                <div class="bg-white p-2 rounded">
-                    <span class="text-md text-black">000님 20xxxxxxxx</span>
-                </div>
-                <div class="bg-white p-2 rounded">
-                    <span class="text-md text-black">000님 20xxxxxxxx</span>
+                <!-- Add Member Button -->
+                <div th:if="${isLeader}" class="relative w-full">
+                    <button id="addMemberButton" onclick="toggleTooltip()" class="w-full bg-white p-2 rounded flex items-center justify-center hover:bg-gray-100 transition duration-300 ease-in-out">
+                        <span class="text-md text-black font-semibold flex items-center">
+                            <i class="fas fa-plus mr-2"></i> Add Member
+                        </span>
+                    </button>
+                    <!-- Tooltip -->
+                    <div id="tooltip" class="absolute left-full top-[-50%] mt-2 w-64 bg-white rounded-md shadow-xl z-20 p-4 ml-4 hidden">
+                        <input id="newMemberEmail" type="email" class="border border-gray-300 p-2 rounded w-full mb-2 text-black" placeholder="Member Email">
+                        <button id="addMemberADD" class="bg-primary text-white p-2 rounded w-full">ADD</button>
+                    </div>
                 </div>
                 <!-- ... -->
             </div>
@@ -137,29 +188,109 @@
 
     <!-- Main content with task list -->
     <main class="flex-1 bg-white p-8">
+        <!-- header -->
+        <div class="flex items-center text-xl text-primary font-bold">
+            <!-- Icon Button -->
+            <a href="/main" class="ml-2 text-primary hover:text-primary-dark">
+                <i class="fa fa-home" aria-hidden="true"></i>
+            </a>
+            <span class="mx-4">></span>
+            <span th:text="${project.name()}"></span>
+        </div>
         <div class="space-y-6">
+            <div>
+                <h2 class="text-xl italic text-secondary" th:if="${taskList.isEmpty()}">할당된 작업이 없습니다. </h2>
+            </div>
             <!-- Task item -->
-            <div class="shadow rounded p-4">
-                <h3 class="text-primary text-xl mb-2">Task 이름</h3>
-                <p class="text-text mb-4">
-                    <!-- Task description here -->
-                </p>
-                <!-- Task checklist -->
-                <ul class="list-disc list-inside">
-                    <li>Checklist item 1</li>
-                    <!-- ... -->
-                </ul>
-                <div class="flex justify-end items-center mt-4">
-                    <span class="text-text">2023.11.04까지</span>
-                    <span class="text-primary ml-4">진행도 66%</span>
+            <div th:each="task : ${taskList}" class="flex items-center p-4 bg-white shadow rounded-lg">
+                <!-- Custom Checkbox -->
+                <div th:id="'customCheckbox' + ${taskStat.index}"
+                     th:data-task-id="${task.taskId()}"
+                     th:data-task-status="${task.taskStatusCode()}"
+                     class="block cursor-pointer rounded-full border-2 border-gray-300 h-6 w-6 flex items-center justify-center bg-transparent mr-4 statusCheckBox" onclick="toggleCheckboxState(this)">
+                    <!-- Icons (initially hidden) -->
+                    <i id="runningManIcon" class="fas fa-running text-yellow-500 hidden"></i>
+                    <i id="checkmarkIcon" class="fas fa-check text-green-500 hidden"></i>
+                </div>
+
+                <!-- Task Details -->
+                <div class="flex-grow">
+                    <!-- Task Name -->
+                    <h3 class="text-lg font-semibold" th:text="${task.taskName()}">Task Name</h3>
+                    <!-- Task Content -->
+                    <p class="text-sm text-gray-600" th:text="${task.taskContent()}">Task content goes here...</p>
+                </div>
+
+                <!-- Due Date and Assigned Person -->
+                <div class="ml-4 text-right">
+                    <div class="text-sm text-gray-500" th:text="${#temporals.format(task.dueDateTime(), 'yyyy-MM-dd HH:mm')}">Due: 2023-12-31</div>
+                    <div class="text-sm text-gray-700" >Assigned to:
+                        <span th:each="name : ${task.memberName()}">
+                            <span th:text="${name}"></span><br>
+                        </span>
+                    </div>
                 </div>
             </div>
             <!-- More tasks here -->
         </div>
         <!-- Button to add a new task -->
-        <button class="fixed bottom-8 right-8 bg-primary text-white p-4 rounded-full shadow-lg">
+        <button class="fixed bottom-8 right-8 bg-primary text-white p-4 rounded-full shadow-lg"
+                onclick="document.getElementById('task-modal').style.display='block'">
             +
         </button>
+
+        <!-- modal -->
+        <!-- Task Modal Background -->
+        <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full" id="task-modal" style="display: none;">
+            <!-- Task Modal -->
+            <div class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-md shadow-lg w-1/3">
+                <!-- Modal Header -->
+                <div class="bg-primary text-white text-xl font-bold py-4 px-6 rounded-t-md">
+                    Add New Task
+                </div>
+
+                <!-- Modal Body -->
+                <div class="p-6">
+                    <form id="newTaskForm">
+                        <!-- Task Name -->
+                        <div class="mb-4">
+                            <label for="taskName" class="block text-gray-700 text-sm font-bold mb-2">Task Name:</label>
+                            <input type="text" id="taskName" name="taskName" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                        </div>
+
+                        <!-- Task Description -->
+                        <div class="mb-4">
+                            <label for="taskDescription" class="block text-gray-700 text-sm font-bold mb-2">Task Description:</label>
+                            <textarea id="taskDescription" name="taskDescription" rows="3" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required></textarea>
+                        </div>
+
+                        <!-- Task Due Date -->
+                        <div class="mb-4">
+                            <label for="dueDate" class="block text-gray-700 text-sm font-bold mb-2">Due Date:</label>
+                            <input type="datetime-local" id="dueDate" name="dueDate" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                        </div>
+
+                        <!-- Task Members -->
+                        <div class="mb-4">
+                            <label class="block font-bold text-lg mb-2">Pick Members</label>
+                            <ul class="list-none m-0 p-0 mt-1 border border-gray-700 shadow-md">
+                                <li th:each="member : ${memberList}">
+                                    <label class="cursor-pointer block w-full px-4 py-2 hover:bg-gray-700 hover:text-white">
+                                        <input type="checkbox" name="members" th:value="${member.studentId()}" class="mr-2 studentCheckBox" th:text="${member.name()} + ' ' + ${member.studentId()}">
+                                    </label>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Modal Footer -->
+                        <div class="flex justify-end pt-2">
+                            <button type="submit" class="px-4 bg-primary text-white p-3 rounded-lg hover:bg-primary-dark focus:outline-none focus:shadow-outline">Save</button>
+                            <button type="button" class="ml-2 px-4 bg-gray-500 text-white p-3 rounded-lg hover:bg-gray-600 focus:outline-none focus:shadow-outline" onclick="document.getElementById('task-modal').style.display='none'">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </main>
 </div>
 
@@ -173,29 +304,263 @@
         integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
         crossorigin="anonymous"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const tabs = document.querySelectorAll('.tab');
-        const tabContents = document.querySelectorAll('.tab-content');
+    //dropdown setup
+    document.getElementById('dropdown-button').addEventListener('click', function() {
+        var dropdownMenu = document.getElementById('dropdown-menu');
+        dropdownMenu.classList.toggle('hidden');
+    });
 
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
+    document.addEventListener('click', function(event) {
+        var dropdownMenu = document.getElementById('dropdown-menu');
+        var dropdownButton = document.getElementById('dropdown-button');
 
-                tabs.forEach(t => {
-                    t.classList.remove('text-white');
-                    t.classList.add('text-secondary');
-                });
-                // Add 'text-white' to the clicked tab and remove 'text-secondary'
-                tab.classList.add('text-white');
-                tab.classList.remove('text-secondary');
+        // Check if the clicked area is outside the dropdown and button
+        if (!dropdownMenu.contains(event.target) && !dropdownButton.contains(event.target)) {
+            dropdownMenu.classList.add('hidden');
+        }
+    });
 
-                // Hide all tab contents
-                tabContents.forEach(tc => tc.classList.add('hidden'));
-                // Show the targeted tab content
-                const target = document.querySelector(tab.dataset.tabTarget);
-                target.classList.remove('hidden');
+    function toggleTooltip() {
+        var tooltip = document.getElementById('tooltip');
+        tooltip.classList.remove('hidden');
+    }
+
+    // Hide tooltip when clicking outside
+    document.addEventListener('click', function(event) {
+        var tooltip = document.getElementById('tooltip');
+        var button = document.querySelector('#addMemberButton'); // Replace with a more specific selector if needed
+
+        if (tooltip == null || button == null) {
+            return;
+        }
+
+        // Check if the clicked area is outside the tooltip and button
+        if (!tooltip.contains(event.target) && !button.contains(event.target)) {
+            tooltip.classList.add('hidden');
+        }
+    });
+
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+        // Prevent event from closing tooltip when clicking inside
+        let tooltip = document.getElementById('tooltip');
+        if (tooltip == null) {
+            return;
+        }
+        document.getElementById('tooltip').addEventListener('click', function(event) {
+            event.stopPropagation();
+        });
+
+        // Add member button
+        document.getElementById('addMemberADD').addEventListener('click', function(event) {
+            event.preventDefault();
+            var tooltip = document.getElementById('tooltip');
+            tooltip.classList.add('hidden');
+            var newMemberEmail = document.getElementById('newMemberEmail').value;
+            const projectId = location.pathname.split('/')[2];
+            const data = {
+                memberEmail: newMemberEmail
+            };
+            // curl api
+            // generate invite link
+            $.ajax({
+                url: 'http://localhost:8080/projects/' + projectId + '/invite',
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                data: JSON.stringify(data),
+                success: function(data) {
+                    console.log(data);
+                    alert('초대 링크가 전송되었습니다.');
+                },
+                error: function(request) {
+                    if(request.status === 409)
+                        alert('이미 프로젝트에 참여중인 사용자입니다.')
+                    else if(request.status === 403)
+                        alert('권한이 없습니다.')
+                    else if(request.status === 404)
+                        alert('존재하지 않는 사용자입니다.')
+                    else if(request.status === 500)
+                        alert('서버 오류입니다.')
+                    else
+                        alert('초대 링크 전송에 실패했습니다.')
+                }
             });
         });
     });
+
+
+    function handleNotificationClick(element) {
+        var noticeUrl = element.getAttribute('data-notice-url');
+        console.log(noticeUrl);
+        $.ajax({
+            url: noticeUrl,
+            type: 'POST', // Adjust as needed
+            success: function(data) {
+                window.location.reload();
+            },
+            error: function(error) {
+                console.log("Error: " + error);
+                alert("API call failed.");
+            }
+        });
+    }
+
+    //delete notification
+    function handleDeleteNotification(element) {
+        // Add your AJAX call or other logic to delete the notification
+        var notificationId = element.getAttribute('data-notif-id');
+        // For example, using jQuery AJAX:
+        $.ajax({
+            url: '/notification/delete/' + notificationId, // Modify with your actual endpoint
+            type: 'POST',
+            success: function(response) {
+                // Handle successful deletion
+                // Optionally, remove the notification from the DOM
+                var notificationDiv = element.closest('.notification-item');
+                if (notificationDiv) {
+                    notificationDiv.remove();
+                }
+                var notificationCount = document.getElementById('notification-count');
+                if (notificationCount) {
+                    let count = parseInt(notificationCount.innerText) - 1;
+                    if (count <= 0) {
+                        notificationCount.remove();
+                    }
+                    else {
+                        notificationCount.innerText = count.toString();
+                    }
+                }
+            },
+            error: function(error) {
+                // Handle error
+                console.log(error);
+                alert('Failed to delete notification');
+            }
+        });
+    }
+
+    //task checkbox
+    // 0: unchecked, 1: in-progress, 2: completed
+    const TaskStatus = ['TODO', 'DOING', 'DONE']
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const checkboxes = document.getElementsByClassName('statusCheckBox')
+        for (let i = 0; i < checkboxes.length; i++) {
+            updateIcon(checkboxes[i]);
+        }
+    });
+
+    function updateIcon(element) {
+        const taskStatus = element.getAttribute('data-task-status');
+        const checkboxState = (TaskStatus.indexOf(taskStatus));
+        const runningManIcon = element.querySelector('#runningManIcon');
+        const checkmarkIcon = element.querySelector('#checkmarkIcon');
+
+        // Update icons and background color based on state
+        switch (checkboxState) {
+            case 0: // unchecked
+                runningManIcon.classList.add('hidden');
+                checkmarkIcon.classList.add('hidden');
+                element.style.backgroundColor = 'transparent';
+                break;
+            case 1: // in-progress
+                runningManIcon.classList.remove('hidden');
+                checkmarkIcon.classList.add('hidden');
+                element.style.backgroundColor = 'transparent';
+                break;
+            case 2: // completed
+                runningManIcon.classList.add('hidden');
+                checkmarkIcon.classList.remove('hidden');
+                element.style.backgroundColor = 'transparent';
+                break;
+        }
+    }
+    function toggleCheckboxState(element) {
+        //curl api
+        const projectId = location.pathname.split('/')[2];
+        const taskId = element.getAttribute('data-task-id');
+        var taskStatus = element.getAttribute('data-task-status');
+
+        const runningManIcon = element.querySelector('#runningManIcon');
+        const checkmarkIcon = element.querySelector('#checkmarkIcon');
+
+        let checkboxState = (TaskStatus.indexOf(taskStatus) + 1) % 3; // Cycle through states
+        taskStatus = TaskStatus[checkboxState];
+
+        $.ajax({
+            url: 'http://localhost:8080/tasks/status/' + taskId + '/' + taskStatus,
+            type: 'POST',
+            success: function(data) {
+                console.log(data);
+                element.setAttribute('data-task-status', taskStatus)
+            },
+            error: function(request, status, error) {
+                console.log(error);
+                alert('Task 상태 변경에 실패했습니다.')
+            }
+        });
+
+        // Update icons and background color based on state
+        switch (checkboxState) {
+            case 0: // unchecked
+                runningManIcon.classList.add('hidden');
+                checkmarkIcon.classList.add('hidden');
+                element.style.backgroundColor = 'transparent';
+                break;
+            case 1: // in-progress
+                runningManIcon.classList.remove('hidden');
+                checkmarkIcon.classList.add('hidden');
+                element.style.backgroundColor = 'transparent';
+                break;
+            case 2: // completed
+                runningManIcon.classList.add('hidden');
+                checkmarkIcon.classList.remove('hidden');
+                element.style.backgroundColor = 'transparent';
+                break;
+        }
+    }
+
+
+
+    //task modal
+    document.getElementById('newTaskForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const projectId = location.pathname.split('/')[2];
+        const data = {
+            taskName: document.getElementById('taskName').value,
+            taskContent: document.getElementById('taskDescription').value,
+            dueDateTime: document.getElementById('dueDate').value,
+            projectId: projectId,
+            memberIds: []
+        };
+        const members = document.getElementsByClassName('studentCheckBox');
+        for (let i = 0; i < members.length; i++) {
+            if (members[i].checked) {
+                data.memberIds.push(members[i].value);
+            }
+        }
+        // curl api
+        // generate invite link
+        $.ajax({
+            url: 'http://localhost:8080/tasks/create',
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            data: JSON.stringify(data),
+            success: function(data) {
+                console.log(data);
+                alert('Task가 추가되었습니다.');
+                window.location.reload();
+            },
+            error: function(error) {
+                console.log(error);
+                alert('Task 추가에 실패했습니다.')
+            }
+        });
+    });
+
+
 </script>
 </body>
 </html>

@@ -11,4 +11,5 @@ import java.util.UUID;
 public interface MemberRepository extends JpaRepository<Member, UUID> {
 
     Optional<Member> findByMemberEmail(String member_email);
+    Optional<Member> findByMemberStudentId(int member_student_id);
 }

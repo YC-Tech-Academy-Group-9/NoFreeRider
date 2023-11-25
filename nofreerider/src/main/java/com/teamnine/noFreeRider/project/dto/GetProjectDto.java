@@ -1,8 +1,10 @@
 package com.teamnine.noFreeRider.project.dto;
 
 import java.util.Date;
+import java.util.UUID;
 
-public record ProjectDto(
+public record GetProjectDto(
+        UUID id,
         String name,
         String summary,
         String className,

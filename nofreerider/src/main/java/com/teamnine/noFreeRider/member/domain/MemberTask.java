@@ -2,6 +2,7 @@ package com.teamnine.noFreeRider.member.domain;
 
 import com.teamnine.noFreeRider.task.domain.Task;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -9,6 +10,7 @@ import javax.persistence.*;
 @Table(name = "members_tasks")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@Getter
 public class MemberTask {
 
     @Id
@@ -23,4 +25,9 @@ public class MemberTask {
     @ManyToOne
     @JoinColumn(name = "task_id", updatable = false)
     private Task task;
+
+    public MemberTask(Task task, Member member) {
+        this.task = task;
+        this.member = member;
+    }
 }
