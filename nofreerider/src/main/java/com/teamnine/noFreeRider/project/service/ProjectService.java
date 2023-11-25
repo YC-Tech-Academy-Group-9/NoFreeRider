@@ -107,4 +107,11 @@ public class ProjectService {
         Optional<Project> projectBox = projectRepository.findById(projectId);
         return projectBox.get();
     }
+
+    @Transactional
+    public void end(UUID projectId) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(IllegalArgumentException::new);
+        project.end();
+    }
 }

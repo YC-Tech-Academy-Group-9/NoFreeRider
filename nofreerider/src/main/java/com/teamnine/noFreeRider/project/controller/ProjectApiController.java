@@ -192,7 +192,10 @@ public class ProjectApiController {
             if (dto.statusCode().equals(ProjectStatusCode.DONE)) {
                 List<MemberProject> projectMembers = memberProjectService.getMemberProjectListByProject(updateStatusProject);
                 notificationService.sendReviewMessage(projectMembers, updateStatusProject.getId());
+                // ended_at 추가
+                projectService.end(projectId);
             }
+
             return ResponseEntity.status(200)
                     .body(new ResultDto<>(
                             200,
