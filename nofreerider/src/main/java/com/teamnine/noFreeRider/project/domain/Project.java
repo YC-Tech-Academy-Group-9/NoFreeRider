@@ -78,4 +78,8 @@ public class Project {
     public void updateStatusCode(ProjectStatusCode newCode) {
         this.statusCode = newCode;
     }
+
+    public void end() {
+        this.ended_at = new Date();
+    }
 }
