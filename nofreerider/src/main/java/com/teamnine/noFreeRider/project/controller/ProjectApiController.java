@@ -39,21 +39,30 @@ public class ProjectApiController {
             @RequestBody ProjectDto projectDto,
             Principal principal
             ) {
-        String userName = principal.getName();
-        Member leader = memberDetailService.loadUserByUsername(userName);
-        AddProjectDto addProjectDto = new AddProjectDto(
-                projectDto.name(),
-                projectDto.summary(),
-                projectDto.className(),
-                projectDto.startDate(),
-                projectDto.endDate(),
-                leader);
+        try {
+            String userName = principal.getName();
+            Member leader = memberDetailService.loadUserByUsername(userName);
+            AddProjectDto addProjectDto = new AddProjectDto(
+                    projectDto.name(),
+                    projectDto.summary(),
+                    projectDto.className(),
+                    projectDto.startDate(),
+                    projectDto.endDate(),
+                    leader);
 
-        return ResponseEntity.ok()
-                .body(new ResultDto<>(
-                        200,
-                        "",
-                        projectService.save(addProjectDto)));
+            return ResponseEntity.ok()
+                    .body(new ResultDto<>(
+                            200,
+                            "",
+                            projectService.save(addProjectDto)));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(new ResultDto<>(
+                            400,
+                            "Failed to add project",
+                            null
+                    ));
+        }
     }
 
     @GetMapping("/{projectId}")
@@ -107,10 +116,10 @@ public class ProjectApiController {
 
     }
 
-    @PutMapping("/{projectId}/leader")
+    @PutMapping("/{projectId}/leader/{newLeaderId}")
     public ResponseEntity<ResultDto<Project>> updateProjectLeader(
             @PathVariable UUID projectId,
-            @RequestBody ChangeProjectLeaderDto dto,
+            @PathVariable UUID newLeaderId,
             Principal principal
             ) {
         try {
@@ -123,7 +132,7 @@ public class ProjectApiController {
                         ));
             }
 
-            Project updateLeaderProject = projectService.changeLeader(dto, projectId);
+            Project updateLeaderProject = projectService.changeLeader(newLeaderId, projectId);
             return ResponseEntity.ok()
                     .body(new ResultDto<>(
                             200,
@@ -131,10 +140,26 @@ public class ProjectApiController {
                             updateLeaderProject
                     ));
         } catch (Exception e) {
+            if (e.getMessage().equals("not found project")) {
+                return ResponseEntity.status(406)
+                        .body(new ResultDto<>(
+                                406,
+                                e.getMessage(),
+                                null
+                        ));
+            }
+            if (e.getMessage().equals("already leader")) {
+                return ResponseEntity.status(409)
+                        .body(new ResultDto<>(
+                                409,
+                                e.getMessage(),
+                                null
+                        ));
+            }
             return ResponseEntity.badRequest()
                     .body(new ResultDto<>(
                             400,
-                            "Bad Request",
+                            e.getMessage(),
                             null
                     ));
         }

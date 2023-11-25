@@ -102,7 +102,7 @@
     <!-- Set Leader Button -->
     <button id="setLeaderButton" class="bg-green-500 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded min-w-fit"
         th:if="${isLeader}"
-        onclick="setLeader(this)">
+        onclick="changeLeader(this)">
         Set Leader
     </button>
 
@@ -422,6 +422,7 @@
         });
     });
 
+    //remove member
     function removeMember(element) {
         const projectId = location.pathname.split('/')[2];
         const memberId = element.closest("#memberOptionsModal").getAttribute('data-member-id');
@@ -449,14 +450,51 @@
         });
     }
 
+    //change leader
+    function changeLeader(element) {
+        const projectId = location.pathname.split('/')[2];
+        const memberId = element.closest("#memberOptionsModal").getAttribute('data-member-id');
+        console.log(memberId);
+        // curl api
+        // generate invite link
+        $.ajax({
+            url: 'http://localhost:8080/projects/' + projectId + '/leader/' + memberId,
+            type: 'PUT',
+            success: function(data) {
+                console.log(data);
+                alert('리더가 변경 되었습니다.');
+                window.location.reload();
+            },
+            error: function(request) {
+                console.log(request);
+                if(request.status === 403)
+                    alert('권한이 없습니다.')
+                else if(request.status === 404)
+                    alert('존재하지 않는 사용자입니다.')
+                else if(request.status === 500)
+                    alert('서버 오류입니다.')
+                else
+                    alert('리더 변경에 실패했습니다.')
+            }
+        });
+    }
+
     //member options modal
     function showMemberOptionsModal(event) {
         console.log('clicked member');
         const modal = document.getElementById('memberOptionsModal');
         const memberElement = event.target.closest('.studentInfo');
         const memberId = memberElement.getAttribute('data-member-id');
-        const isLeader = modal.getAttribute('data-isleader');
+        const isLeader = memberElement.getAttribute('data-isleader');
         modal.setAttribute('data-member-id', memberId);
+
+        if (isLeader === 'true') {
+            modal.querySelector('#setLeaderButton')?.classList.add('hidden');
+            modal.querySelector('#removeMemberButton')?.classList.add('hidden');
+        } else {
+            modal.querySelector('#setLeaderButton')?.classList.remove('hidden');
+            modal.querySelector('#removeMemberButton')?.classList.remove('hidden');
+        }
 
         // Show the modal
         modal.classList.remove('hidden');
