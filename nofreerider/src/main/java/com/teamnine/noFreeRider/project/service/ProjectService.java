@@ -32,18 +32,19 @@ public class ProjectService {
     }
 
     @Transactional
-    public Project changeLeader(ChangeProjectLeaderDto dto, UUID projectID) throws Exception {
+    public Project changeLeader(UUID newLeaderId, UUID projectID) throws Exception {
         Project project = projectRepository.findById(projectID)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new Exception("not found project"));
 
-        if (!project.getLeader().getId().equals(dto.exLeader_id())) {
-            throw new IllegalArgumentException();
+        if (project.getLeader().getId().equals(newLeaderId)) {
+            throw new IllegalArgumentException("already leader");
         }
 
-        Member nLeader = memberRepository.findById(dto.newLeader_id())
-                .orElseThrow(IllegalArgumentException::new);
+        Member nLeader = memberRepository.findById(newLeaderId)
+                .orElseThrow(() -> new Exception("not found member"));
 
         project.updateLeaderNo(nLeader);
+        projectRepository.save(project);
 
         return project;
     }

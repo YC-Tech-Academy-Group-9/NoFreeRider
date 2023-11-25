@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,16 +31,32 @@ public class TaskService {
     public List<TaskDisplayDto> searchTasksByProjectId(UUID projectId) {
         Project project = projectService.getProjectInfo(projectId);
         List<Task> tasks = taskRepository.findAllByProject(project);
+        tasks.sort(Comparator.comparing(Task::getDue_date));
         return tasks.stream().map(task -> new TaskDisplayDto(
                 task.getId(),
                 task.getTaskName(),
                 task.getTaskContent(),
                 task.getDue_date(),
                 task.getStatus_code(),
-                getMembersByTask(task)
+                getMembersByTask(task),
+                task.getProject().getId()
         )).toList();
-        // map tasks to TaskDisplayDto
+    }
 
+    public List<TaskDisplayDto> searchTasksByMemberId(UUID memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 멤버 입니다."));
+        List<MemberTask> memberTasks = memberTaskRepository.findAllByMember(member);
+        List<Task> tasks = new java.util.ArrayList<>(memberTasks.stream().map(MemberTask::getTask).toList());
+        tasks.sort(Comparator.comparing(Task::getDue_date));
+        return tasks.stream().map(task -> new TaskDisplayDto(
+                task.getId(),
+                task.getTaskName(),
+                task.getTaskContent(),
+                task.getDue_date(),
+                task.getStatus_code(),
+                getMembersByTask(task),
+                task.getProject().getId()
+        )).toList();
     }
 
     public List<String> getMembersByTask(Task task) {

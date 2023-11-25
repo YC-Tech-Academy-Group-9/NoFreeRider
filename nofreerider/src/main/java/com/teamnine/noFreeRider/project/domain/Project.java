@@ -41,7 +41,7 @@ public class Project {
     private ProjectStatusCode statusCode;
 
     @OneToOne
-    @JoinColumn(name = "leader_id", updatable = false)
+    @JoinColumn(name = "leader_id")
     private Member leader;
 
     @CreatedDate

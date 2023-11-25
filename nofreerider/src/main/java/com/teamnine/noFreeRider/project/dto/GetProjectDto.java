@@ -9,6 +9,7 @@ public record GetProjectDto(
         String summary,
         String className,
         Date startDate,
-        Date endDate
+        Date endDate,
+        int memberCount
 ) {
 }

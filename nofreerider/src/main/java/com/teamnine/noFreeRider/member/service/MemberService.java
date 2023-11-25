@@ -56,6 +56,10 @@ public class MemberService {
         return memberRepository.findByMemberEmail(email).orElseThrow(() -> new IllegalArgumentException("not found member"));
     }
 
+    public Member getMemberByStudentId(int studentId) {
+        return memberRepository.findByMemberStudentId(studentId).orElseThrow(() -> new IllegalArgumentException("not found member"));
+    }
+
     @Transactional
     public TokenInfo login(String email, String password) {
         // 1. Login ID/PW 를 기반으로 Authentication 객체 생성
