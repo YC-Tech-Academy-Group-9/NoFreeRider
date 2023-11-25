@@ -2,6 +2,7 @@ package com.teamnine.noFreeRider.member.service;
 
 import com.teamnine.noFreeRider.auth.JwtTokenProvider;
 import com.teamnine.noFreeRider.auth.TokenInfo;
+import com.teamnine.noFreeRider.comments.service.CommentService;
 import com.teamnine.noFreeRider.member.domain.Member;
 import com.teamnine.noFreeRider.member.domain.RefreshToken;
 import com.teamnine.noFreeRider.member.repository.MemberRepository;
@@ -28,7 +29,7 @@ public class MemberService {
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRepository refreshTokenRepository;
-    EntityManager entityManager;
+    private final CommentService commentService;
 
     public Member addUser(String userName, String email, int studentId, String major) {
 
@@ -37,9 +38,10 @@ public class MemberService {
         Member newMember = new Member(userName, email, studentId, major);
 
         // 2. repository 에 저장
-        memberRepository.save(newMember);
+        newMember = memberRepository.save(newMember);
 
         // 3. Comment Initialize
+        commentService.createComment(newMember);
 
         return newMember;
     }

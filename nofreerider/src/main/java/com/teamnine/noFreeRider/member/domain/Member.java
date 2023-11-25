@@ -40,8 +40,6 @@ public class Member implements UserDetails {
     @Column(name = "member_major")
     private String memberMajor;
 
-
-
     @CreatedDate
     @Column(name = "created_at")
     private LocalDateTime created_at;
@@ -73,7 +71,6 @@ public class Member implements UserDetails {
         return memberName;
     }
 
-
     @Override
     public boolean isAccountNonExpired() {
         return true;
@@ -102,5 +99,9 @@ public class Member implements UserDetails {
         this.memberName = realName;
         this.memberStudentId = memberStudentId;
         this.memberMajor = major;
+    }
+
+    public UUID getMemberId() {
+        return this.id;
     }
 }

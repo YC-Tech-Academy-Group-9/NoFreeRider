@@ -1,5 +1,6 @@
 package com.teamnine.noFreeRider.member.controller;
 
+import com.teamnine.noFreeRider.comments.service.CommentService;
 import com.teamnine.noFreeRider.member.domain.Member;
 import com.teamnine.noFreeRider.member.dto.SignupDto;
 import com.teamnine.noFreeRider.member.repository.MemberRepository;
@@ -28,6 +29,8 @@ public class memberController {
 
     @Autowired
     private MemberRepository memberRepository;
+    @Autowired
+    private CommentService commentService;
     @PutMapping("/info/update/{memberId}")
     public ResponseEntity<ResultDto<Member>> updateMember(
             @PathVariable("memberId") UUID memberId,
@@ -37,6 +40,9 @@ public class memberController {
                 .findById(memberId).orElseThrow(() -> new IllegalArgumentException("not found member"));
         member.updateMember(signupDto.realName(), signupDto.studentId(), signupDto.major());
         memberRepository.save(member);
+
+        commentService.createComment(member);
+
         return ResponseEntity.ok(new ResultDto<>(200, "ok", member));
     }
 
