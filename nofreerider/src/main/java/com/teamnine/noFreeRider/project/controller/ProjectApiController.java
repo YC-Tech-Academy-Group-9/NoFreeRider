@@ -254,10 +254,10 @@ public class ProjectApiController {
         }
     }
 
-    @DeleteMapping("/{projectId}/member/{studentId}")
+    @DeleteMapping("/{projectId}/member/{memberId}")
     public ResponseEntity<ResultDto<Long>> deletePartyMember(
             @PathVariable UUID projectId,
-            @PathVariable int studentId,
+            @PathVariable UUID memberId,
             Principal principal
     ) {
         if (!isProjectLeader(principal.getName(), projectId)) {
@@ -269,7 +269,7 @@ public class ProjectApiController {
                     ));
         }
 
-        Member memberToRemove = memberService.getMemberByStudentId(studentId);
+        Member memberToRemove = memberService.getMemberById(memberId);
 
         MemberProjectDto dto = new MemberProjectDto(memberToRemove.getId(), projectId);
 

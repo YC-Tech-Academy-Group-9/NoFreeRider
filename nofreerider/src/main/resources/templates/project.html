@@ -89,6 +89,37 @@
     </style>
 </head>
 <body>
+<!--floating div-->
+<div id="memberOptionsModal" class="hidden fixed bg-white p-4 rounded-lg shadow-lg z-10 flex flex-col space-y-2"
+     th:data-isleader="${isLeader}">
+    <!-- Modal Content -->
+
+    <!-- View Member Button -->
+    <button id="ViewMemberButton" class="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded min-w-fit">
+        View Member
+    </button>
+
+    <!-- Set Leader Button -->
+    <button id="setLeaderButton" class="bg-green-500 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded min-w-fit"
+        th:if="${isLeader}"
+        onclick="setLeader(this)">
+        Set Leader
+    </button>
+
+    <!-- Remove Member Button -->
+    <button id="removeMemberButton" class="bg-red-500 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded min-w-fit"
+            th:if="${isLeader}"
+            onclick="removeMember(this)">
+        Remove Member
+    </button>
+
+    <!-- Close Button -->
+    <button onclick="closeModal()" class="bg-gray-500 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded min-w-fit">
+        Close
+    </button>
+</div>
+
+
 <nav class="bg-primary h-[10vh]">
     <div class="w-[434px] mx-auto text-2xl title">
         <h1>NoFreeRider</h1>
@@ -120,7 +151,7 @@
                 </div>
             </div>
         </div>
-        <button class="button text-lg bg-shade text-center w-[170px] h-[60px]">Sign Out</button>
+        <button id="signout-btn" class="button text-lg bg-shade text-center w-[170px] h-[60px]">Sign Out</button>
     </div>
 </nav>
 
@@ -153,18 +184,14 @@
             <!-- Form fields or user info here -->
             <div class="mt-4 space-y-2">
                 <!-- Placeholder for form fields -->
-                <div class="bg-white p-2 rounded text-red" th:each="member : ${memberList}">
+                <div class="studentInfo bg-white p-2 rounded text-red"
+                     th:each="member : ${memberList}" onclick="showMemberOptionsModal(event)"
+                     th:data-member-id="${member.id()}"
+                     th:data-isleader="${isLeaderList[memberStat.index]}">
                     <div class="flex justify-between items-center">
                         <!-- Member Name -->
                         <div>
                             <span class="text-md text-black" th:text="${member.name()} + '님 ' + ${member.studentId()}"></span>
-                        </div>
-
-                        <!-- User Minus Icon as a Button -->
-                        <div th:if="${isLeader && !isLeaderList[memberStat.index]}">
-                            <button class="text-red-500 hover:text-red-700 focus:outline-none" th:onclick="'removeMember(' + ${member.studentId()} + ')'">
-                                <i class="fas fa-user-minus"></i>
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -304,6 +331,12 @@
         integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
         crossorigin="anonymous"></script>
 <script>
+    //signout button
+    document.getElementById('signout-btn').addEventListener('click', function() {
+        document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        window.location.href = "http://localhost:8080/";
+    });
+
     //dropdown setup
     document.getElementById('dropdown-button').addEventListener('click', function() {
         var dropdownMenu = document.getElementById('dropdown-menu');
@@ -389,13 +422,14 @@
         });
     });
 
-    function removeMember(studentId) {
+    function removeMember(element) {
         const projectId = location.pathname.split('/')[2];
-        console.log(studentId);
+        const memberId = element.closest("#memberOptionsModal").getAttribute('data-member-id');
+        console.log(memberId);
         // curl api
         // generate invite link
         $.ajax({
-            url: 'http://localhost:8080/projects/' + projectId + '/member/' + studentId,
+            url: 'http://localhost:8080/projects/' + projectId + '/member/' + memberId,
             type: 'DELETE',
             success: function(data) {
                 console.log(data);
@@ -415,7 +449,53 @@
         });
     }
 
+    //member options modal
+    function showMemberOptionsModal(event) {
+        console.log('clicked member');
+        const modal = document.getElementById('memberOptionsModal');
+        const memberElement = event.target.closest('.studentInfo');
+        const memberId = memberElement.getAttribute('data-member-id');
+        const isLeader = modal.getAttribute('data-isleader');
+        modal.setAttribute('data-member-id', memberId);
 
+        // Show the modal
+        modal.classList.remove('hidden');
+
+        // Get mouse position
+        var mouseX = event.clientX;
+        var mouseY = event.clientY;
+
+        // Get scrolling offset
+        var scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+        var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+
+        // Set modal position
+        modal.style.left = (mouseX + scrollLeft) + 'px';
+        modal.style.top = (mouseY + scrollTop - modal.offsetHeight) + 'px';
+
+        console.log(modal.style);
+        console.log(modal.style.top);
+    }
+
+    function closeModal() {
+        var modal = document.getElementById('memberOptionsModal');
+        modal.setAttribute('data-member-id', "");
+        modal.classList.add('hidden');
+    }
+
+    document.addEventListener('click', function(event) {
+        var modal = document.getElementById('memberOptionsModal');
+        var studentButton = event.target.closest('.studentInfo'); // Replace with a more specific selector if needed
+
+        // Check if the clicked area is outside the dropdown and button
+        if (!modal.contains(event.target) && !studentButton) {
+            modal.classList.add('hidden');
+        }
+    });
+
+
+    //notification
     function handleNotificationClick(element) {
         var noticeUrl = element.getAttribute('data-notice-url');
         console.log(noticeUrl);
@@ -585,7 +665,6 @@
             }
         });
     });
-
 
 </script>
 </body>

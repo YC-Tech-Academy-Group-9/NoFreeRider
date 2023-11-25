@@ -153,12 +153,9 @@
     buttons[2].addEventListener('click', () => {
         // sign up logic
         updateUserInfo();
-        alert("Sign up done")
-        // redirect to main page
-        window.location.href = baseURL + "/main";
     });
 
-    function updateUserInfo() {
+    async function updateUserInfo() {
         // Signup form data
         let realName = document.getElementById('realname');
         let studentId = document.getElementById('student_id');
@@ -166,7 +163,7 @@
         let memberId = "";
 
         // Get the member id by email saved in Token
-        fetch(baseURL + '/member/info', {
+        await fetch(baseURL + '/member/info', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -194,6 +191,9 @@
             .catch((error) => {
                 console.error('Error:', error);
             });
+        alert("Sign up done")
+        // redirect to main page
+        window.location.href = baseURL + "/main";
     }
 
 </script>

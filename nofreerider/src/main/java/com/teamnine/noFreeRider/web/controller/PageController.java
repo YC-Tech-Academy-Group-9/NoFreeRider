@@ -22,6 +22,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -61,10 +62,6 @@ public class PageController {
 
         NotificationDto[] notificationDtoList = new NotificationDto[notificationList.length];
         for (int i = 0; i < notificationList.length; i++) {
-            String url = "";
-            if (notificationList[i].getProject() != null) {
-                url = "/projects/" + notificationList[i].getProject().getId();
-            }
             notificationDtoList[i] = new NotificationDto(notificationList[i].getId(), notificationList[i].getNoticeTitle(), notificationList[i].getNoticeContent(), notificationList[i].getNoticeUrl());
         }
 
@@ -74,7 +71,16 @@ public class PageController {
         List<Project> projectList = memberProjectService.getProjectListByMember(loginMember);
         GetProjectDto[] projectDtoList = new GetProjectDto[projectList.size()];
         for (int i = 0; i < projectList.size(); i++) {
-            projectDtoList[i] = new GetProjectDto(projectList.get(i).getId(), projectList.get(i).getProjectName(), projectList.get(i).getProjectSummary(), projectList.get(i).getClassName(), projectList.get(i).getStarted_at(), projectList.get(i).getEnded_at());
+            int memberCount = memberProjectService.getMemberListByProject(projectList.get(i)).size();
+            projectDtoList[i] = new GetProjectDto(
+                    projectList.get(i).getId(),
+                    projectList.get(i).getProjectName(),
+                    projectList.get(i).getProjectSummary(),
+                    projectList.get(i).getClassName(),
+                    projectList.get(i).getStarted_at(),
+                    projectList.get(i).getEnded_at(),
+                    memberCount
+            );
         }
         model.addAttribute("projectList", projectDtoList);
 
@@ -91,18 +97,33 @@ public class PageController {
         String email = authentication.getName();
         Member loginMember = memberService.getMemberByEmail(email);
 
+
+
         //project info
         Project project = projectService.getProjectInfo(projectId);
         ProjectDto projectDto = new ProjectDto(project.getProjectName(), project.getProjectSummary(), project.getClassName(), project.getStarted_at(), project.getEnded_at());
         model.addAttribute("project", projectDto);
 
-        //project members
-        Member[] memberList = memberProjectService.getMemberListByProject(project).toArray(new Member[0]);
-        boolean[] isLeaderList = new boolean[memberList.length];
-        MemberDto[] memberDtoList = new MemberDto[memberList.length];
-        for (int i = 0; i < memberList.length; i++) {
-            boolean isLeader = projectService.isProjectLeader(memberList[i], project);
-            memberDtoList[i] = new MemberDto(memberList[i].getMemberName(), memberList[i].getMemberEmail(), memberList[i].getMemberStudentId(), memberList[i].getMemberTemperature());
+        // Project members
+        List<Member> memberList = memberProjectService.getMemberListByProject(project);
+
+        // Check if the logged-in member is part of the project
+        boolean isMemberOfProject = memberList.contains(loginMember);
+
+        if (!isMemberOfProject) {
+            return "redirect:/main";
+        }
+
+        boolean[] isLeaderList = new boolean[memberList.size()];
+        MemberDto[] memberDtoList = new MemberDto[memberList.size()];
+        for (int i = 0; i < memberList.size(); i++) {
+            boolean isLeader = projectService.isProjectLeader(memberList.get(i), project);
+            memberDtoList[i] = new MemberDto(
+                    memberList.get(i).getId(),
+                    memberList.get(i).getMemberName(),
+                    memberList.get(i).getMemberEmail(),
+                    memberList.get(i).getMemberStudentId(),
+                    memberList.get(i).getMemberTemperature());
             isLeaderList[i] = isLeader;
         }
 

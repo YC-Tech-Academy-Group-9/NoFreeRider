@@ -212,7 +212,7 @@
                 </ul>
             </div>
             <!-- Tab content -->
-            <div class="p-8">
+            <div class="p-8 h-[90%] overflow-y-auto">
                 <!-- Content for the first tab -->
                 <div role="tabpanel" id="tab1" class="tab-content hidden">
                     <!-- Your content for the first tab goes here -->
@@ -230,7 +230,7 @@
 
                                 <div class="flex justify-between items-center mb-2">
                                     <h3 class="text-lg font-bold font-inter" th:text="${project.name()}"></h3>
-                                    <span class="text-primary font-inter">4명</span>
+                                    <span class="text-primary font-inter" th:text="${project.memberCount() + ' 명'}"></span>
                                 </div>
 
                                 <p class="text-sm font-inter mb-2" th:text="${project.summary()}">
@@ -268,7 +268,7 @@
                         <div class="flex justify-between items-center">
                             <h2 class="text-primary font-bold text-lg">할 일 목록</h2>
                         </div>
-                        <div class="space-y-6">
+                        <div class="space-y-6 overflow-y-auto">
                             <div>
                                 <h2 class="text-xl italic text-secondary" th:if="${taskList.isEmpty()}">할당된 작업이 없습니다. </h2>
                             </div>
