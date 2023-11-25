@@ -14,6 +14,7 @@ public record TaskDisplayDto(
         String taskContent,
         LocalDateTime dueDateTime,
         TaskStatusCode taskStatusCode,
-        List<String> memberName
+        List<String> memberName,
+        UUID projectId
 ) {
 }

@@ -78,6 +78,10 @@ public class PageController {
         }
         model.addAttribute("projectList", projectDtoList);
 
+        // tasks
+        List<TaskDisplayDto> taskList = taskService.searchTasksByMemberId(loginMember.getId());
+        model.addAttribute("taskList", taskList);
+
         return "main";
     }
 

@@ -187,7 +187,7 @@
     </aside>
 
     <!-- Main content with task list -->
-    <main class="flex-1 bg-white p-8">
+    <main class="flex-1 bg-white p-8 h-[90vh] overflow-y-auto">
         <!-- header -->
         <div class="flex items-center text-xl text-primary font-bold">
             <!-- Icon Button -->
@@ -202,7 +202,7 @@
                 <h2 class="text-xl italic text-secondary" th:if="${taskList.isEmpty()}">할당된 작업이 없습니다. </h2>
             </div>
             <!-- Task item -->
-            <div th:each="task : ${taskList}" class="flex items-center p-4 bg-white shadow rounded-lg">
+            <div th:each="task : ${taskList}" class="taskItem flex items-center p-4 bg-white shadow rounded-lg">
                 <!-- Custom Checkbox -->
                 <div th:id="'customCheckbox' + ${taskStat.index}"
                      th:data-task-id="${task.taskId()}"

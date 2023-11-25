@@ -118,7 +118,7 @@
 </nav>
 
 <!--main-->
-<div class="flex flex-row h-screen">
+<div class="flex flex-row h-[90vh]">
     <!-- Sidebar -->
     <div class="w-1/4 bg-secondary p-8">
         <div class="flex flex-col space-y-4">
@@ -195,7 +195,7 @@
     </div>
 
     <!-- Main Panel -->
-    <main class="w-3/4 bg-background p-8">
+    <main class="w-3/4 bg-background p-8 overflow-y-auto">
         <!-- Content Header -->
         <div class="flex-1 bg-background">
             <!-- Tabs -->
@@ -268,43 +268,42 @@
                         <div class="flex justify-between items-center">
                             <h2 class="text-primary font-bold text-lg">할 일 목록</h2>
                         </div>
-                        <!-- Date item -->
-<!--                        <div class="space-y-4">-->
-<!--                            <div class="text-center font-inter text-lg font-bold text-primary py-2 bg-secondary rounded">-->
-<!--                                오늘 2023. 11. 04-->
-<!--                            </div>-->
-<!--                            &lt;!&ndash; Task list for the date &ndash;&gt;-->
-<!--                            <div class="bg-white p-4 rounded-lg shadow space-y-2">-->
-<!--                                &lt;!&ndash; Task item &ndash;&gt;-->
-<!--                                <div class="flex justify-between items-center">-->
-<!--                                    <span class="font-inter text-text">Bomb Lab Phase 1</span>-->
-<!--                                    <button class="text-primary">View</button>-->
-<!--                                </div>-->
-<!--                                &lt;!&ndash; Additional task items... &ndash;&gt;-->
-<!--                            </div>-->
-<!--                        </div>-->
-
-
-                        <template id="day-list">
-                            <div class="space-y-4">
-                                <div class="text-center font-inter text-lg font-bold text-primary py-2 bg-secondary rounded">
-                                    오늘 2023. 11. 04
-                                </div>
-                                <!-- Task list for the date -->
-
+                        <div class="space-y-6">
+                            <div>
+                                <h2 class="text-xl italic text-secondary" th:if="${taskList.isEmpty()}">할당된 작업이 없습니다. </h2>
                             </div>
-                        </template>
-
-                        <template id="task">
-                            <div class="bg-white p-4 rounded-lg shadow space-y-2">
-                                <!-- Task item -->
-                                <div class="flex justify-between items-center">
-                                    <span class="font-inter text-text">Bomb Lab Phase 1</span>
-                                    <button class="text-primary">View</button>
+                            <!-- Task item -->
+                            <div th:each="task : ${taskList}" class="taskItem flex items-center p-4 bg-white shadow rounded-lg" th:data-project-id="${task.projectId()}">
+                                <!-- Custom Checkbox -->
+                                <div th:id="'customCheckbox' + ${taskStat.index}"
+                                     th:data-task-id="${task.taskId()}"
+                                     th:data-task-status="${task.taskStatusCode()}"
+                                     class="block cursor-pointer rounded-full border-2 border-gray-300 h-6 w-6 flex items-center justify-center bg-transparent mr-4 statusCheckBox">
+                                    <!-- Icons (initially hidden) -->
+                                    <i id="runningManIcon" class="fas fa-running text-yellow-500 hidden"></i>
+                                    <i id="checkmarkIcon" class="fas fa-check text-green-500 hidden"></i>
                                 </div>
-                                <!-- Additional task items... -->
+
+                                <!-- Task Details -->
+                                <div class="flex-grow">
+                                    <!-- Task Name -->
+                                    <h3 class="text-lg font-semibold" th:text="${task.taskName()}">Task Name</h3>
+                                    <!-- Task Content -->
+                                    <p class="text-sm text-gray-600" th:text="${task.taskContent()}">Task content goes here...</p>
+                                </div>
+
+                                <!-- Due Date and Assigned Person -->
+                                <div class="ml-4 text-right">
+                                    <div class="text-sm text-gray-500" th:text="${#temporals.format(task.dueDateTime(), 'yyyy-MM-dd HH:mm')}">Due: 2023-12-31</div>
+                                    <div class="text-sm text-gray-700" >Assigned to:
+                                        <span th:each="name : ${task.memberName()}">
+                                            <span th:text="${name}"></span><br>
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
-                        </template>
+                            <!-- More tasks here -->
+                        </div>
 
                         <!-- Add more dates and tasks as needed -->
                     </div>
@@ -512,6 +511,59 @@
                 alert('Failed to delete notification');
             }
         });
+    }
+
+    //go to project
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const taskItems = document.getElementsByClassName('taskItem');
+        for (let i = 0; i < taskItems.length; i++) {
+            taskItems[i].addEventListener('click', function(event) {
+                const projectId = event.target.closest('.taskItem').getAttribute('data-project-id');
+                console.log(projectId);
+                gotoProject(projectId);
+            });
+        }
+    });
+
+    function gotoProject(projectId) {
+        window.location.href = '/project/' + projectId;
+    }
+
+    //task checkbox
+    // 0: unchecked, 1: in-progress, 2: completed
+    const TaskStatus = ['TODO', 'DOING', 'DONE']
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const checkboxes = document.getElementsByClassName('statusCheckBox')
+        for (let i = 0; i < checkboxes.length; i++) {
+            updateIcon(checkboxes[i]);
+        }
+    });
+
+    function updateIcon(element) {
+        const taskStatus = element.getAttribute('data-task-status');
+        const checkboxState = (TaskStatus.indexOf(taskStatus));
+        const runningManIcon = element.querySelector('#runningManIcon');
+        const checkmarkIcon = element.querySelector('#checkmarkIcon');
+
+        // Update icons and background color based on state
+        switch (checkboxState) {
+            case 0: // unchecked
+                runningManIcon.classList.add('hidden');
+                checkmarkIcon.classList.add('hidden');
+                element.style.backgroundColor = 'transparent';
+                break;
+            case 1: // in-progress
+                runningManIcon.classList.remove('hidden');
+                checkmarkIcon.classList.add('hidden');
+                element.style.backgroundColor = 'transparent';
+                break;
+            case 2: // completed
+                runningManIcon.classList.add('hidden');
+                checkmarkIcon.classList.remove('hidden');
+                element.style.backgroundColor = 'transparent';
+                break;
+        }
     }
 
 
