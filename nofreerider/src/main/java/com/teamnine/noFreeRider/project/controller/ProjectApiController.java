@@ -254,10 +254,10 @@ public class ProjectApiController {
         }
     }
 
-    @DeleteMapping("/{projectId}/member/{memberId}")
+    @DeleteMapping("/{projectId}/member/{studentId}")
     public ResponseEntity<ResultDto<Long>> deletePartyMember(
             @PathVariable UUID projectId,
-            @PathVariable UUID memberId,
+            @PathVariable int studentId,
             Principal principal
     ) {
         if (!isProjectLeader(principal.getName(), projectId)) {
@@ -269,12 +269,14 @@ public class ProjectApiController {
                     ));
         }
 
-        MemberProjectDto dto = new MemberProjectDto(memberId, projectId);
+        Member memberToRemove = memberService.getMemberByStudentId(studentId);
+
+        MemberProjectDto dto = new MemberProjectDto(memberToRemove.getId(), projectId);
 
         if (!memberProjectService.isMemberPartInProject(dto)) {
-            return ResponseEntity.badRequest()
+            return ResponseEntity.status(404)
                     .body(new ResultDto<>(
-                            400,
+                            404,
                             "member not in the project",
                             null
                     ));
