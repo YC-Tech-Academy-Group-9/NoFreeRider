@@ -40,8 +40,6 @@ public class Member implements UserDetails {
     @Column(name = "member_major")
     private String memberMajor;
 
-
-
     @CreatedDate
     @Column(name = "created_at")
     private LocalDateTime created_at;

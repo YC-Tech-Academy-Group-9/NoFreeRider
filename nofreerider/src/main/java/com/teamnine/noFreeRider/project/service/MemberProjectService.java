@@ -3,22 +3,28 @@ package com.teamnine.noFreeRider.project.service;
 import com.teamnine.noFreeRider.member.domain.Member;
 import com.teamnine.noFreeRider.member.domain.MemberProject;
 import com.teamnine.noFreeRider.member.repository.MemberProjectRepository;
+import com.teamnine.noFreeRider.member.service.MemberService;
 import com.teamnine.noFreeRider.project.domain.Project;
 import com.teamnine.noFreeRider.project.dto.MemberProjectDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
 public class MemberProjectService {
 
+    private final MemberService memberService;
     private final MemberProjectRepository memberProjectRepository;
 
     public boolean isMemberPartInProject(MemberProjectDto dto) {
         return memberProjectRepository.existsByMemberIdAndProjectId(dto.member_id(), dto.project_id());
+    }
+
+    public boolean isMemberPartInProject(UUID memberId, UUID projectId) {
+        return memberProjectRepository.existsByMemberIdAndProjectId(memberId, projectId);
     }
 
     @Transactional
@@ -38,5 +44,9 @@ public class MemberProjectService {
     public List<Member> getMemberListByProject(Project project) {
         List<MemberProject> memberProjects = memberProjectRepository.findAllByProjectId(project.getId()).orElseThrow();
         return memberProjects.stream().map(MemberProject::getMember).toList();
+    }
+
+    public List<MemberProject> getMemberProjectListByProject(Project project) {
+        return memberProjectRepository.findAllByProjectId(project.getId()).orElseThrow();
     }
 }

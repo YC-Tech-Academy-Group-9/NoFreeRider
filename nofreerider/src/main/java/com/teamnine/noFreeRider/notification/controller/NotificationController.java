@@ -22,7 +22,7 @@ import java.util.UUID;
 public class NotificationController {
 
     private final NotificationService notificationService;
-    private final MemberService memberService;
+
     @PostMapping("/delete/{notificationId}")
     public ResponseEntity<ResultDto<UUID>> deleteNotification(
             @PathVariable UUID notificationId,

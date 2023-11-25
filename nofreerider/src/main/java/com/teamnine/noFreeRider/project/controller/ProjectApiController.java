@@ -1,12 +1,14 @@
 package com.teamnine.noFreeRider.project.controller;
 
 import com.teamnine.noFreeRider.member.domain.Member;
+import com.teamnine.noFreeRider.member.domain.MemberProject;
 import com.teamnine.noFreeRider.member.service.MemberDetailService;
 import com.teamnine.noFreeRider.member.service.MemberService;
 import com.teamnine.noFreeRider.notification.dto.ContentDto;
 import com.teamnine.noFreeRider.notification.dto.PostInviteDto;
 import com.teamnine.noFreeRider.notification.service.NotificationService;
 import com.teamnine.noFreeRider.project.domain.Project;
+import com.teamnine.noFreeRider.project.domain.ProjectStatusCode;
 import com.teamnine.noFreeRider.project.dto.*;
 import com.teamnine.noFreeRider.project.service.InviteService;
 import com.teamnine.noFreeRider.project.service.MemberProjectService;
@@ -18,6 +20,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 
@@ -158,6 +163,11 @@ public class ProjectApiController {
             }
 
             Project updateStatusProject = projectService.changeStatusCode(projectId, dto);
+            // send notification
+            if (dto.statusCode().equals(ProjectStatusCode.DONE)) {
+                List<MemberProject> projectMembers = memberProjectService.getMemberProjectListByProject(updateStatusProject);
+                notificationService.sendReviewMessage(projectMembers, updateStatusProject.getId());
+            }
             return ResponseEntity.ok()
                     .body(new ResultDto<>(
                             200,
