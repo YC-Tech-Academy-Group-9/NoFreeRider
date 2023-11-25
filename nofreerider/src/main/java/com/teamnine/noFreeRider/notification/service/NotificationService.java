@@ -1,6 +1,7 @@
 package com.teamnine.noFreeRider.notification.service;
 
 import com.teamnine.noFreeRider.member.domain.Member;
+import com.teamnine.noFreeRider.member.domain.MemberProject;
 import com.teamnine.noFreeRider.member.service.MemberService;
 import com.teamnine.noFreeRider.notification.domain.Notification;
 import com.teamnine.noFreeRider.notification.dto.ContentDto;
@@ -70,4 +71,25 @@ public class NotificationService {
         }
     }
 
+    public void sendReviewMessage(List<MemberProject> members, UUID projectId) {
+        Member[] memberArr = members.stream()
+                .map(MemberProject::getMember)
+                .toArray(Member[]::new);
+        Project project = members.get(0)
+                .getProject();
+        String title = String.format("%s 동료 평가", project.getProjectName());
+        String content = String.format("%s 프로젝트가 완료되었습니다. 동료 평가를 실시해주세요!", project.getProjectName());
+        String reviewUrl = rootUrl + "/projects/" + projectId + "/review";
+
+        for (Member member : memberArr) {
+            Notification notification = Notification.builder()
+                    .project(project)
+                    .member(member)
+                    .noticeTitle(title)
+                    .noticeContent(content)
+                    .noticeUrl(reviewUrl)
+                    .build();
+            notificationRepository.save(notification);
+        }
+    }
 }

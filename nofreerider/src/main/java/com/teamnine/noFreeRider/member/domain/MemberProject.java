@@ -28,13 +28,9 @@ public class MemberProject {
     @JoinColumn(name = "projectId", updatable = false)
     private Project project;
 
-    @Column(name = "score", nullable = true)
-    private Integer score;
-
     @Builder
     public MemberProject(Member member, Project project) {
         this.member = member;
         this.project = project;
-        this.score = null;
     }
 }

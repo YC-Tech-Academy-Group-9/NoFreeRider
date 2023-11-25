@@ -1,12 +1,14 @@
 package com.teamnine.noFreeRider.project.controller;
 
 import com.teamnine.noFreeRider.member.domain.Member;
+import com.teamnine.noFreeRider.member.domain.MemberProject;
 import com.teamnine.noFreeRider.member.service.MemberDetailService;
 import com.teamnine.noFreeRider.member.service.MemberService;
 import com.teamnine.noFreeRider.notification.dto.ContentDto;
 import com.teamnine.noFreeRider.notification.dto.PostInviteDto;
 import com.teamnine.noFreeRider.notification.service.NotificationService;
 import com.teamnine.noFreeRider.project.domain.Project;
+import com.teamnine.noFreeRider.project.domain.ProjectStatusCode;
 import com.teamnine.noFreeRider.project.dto.*;
 import com.teamnine.noFreeRider.project.service.InviteService;
 import com.teamnine.noFreeRider.project.service.MemberProjectService;
@@ -18,6 +20,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 
@@ -50,13 +55,13 @@ public class ProjectApiController {
                     projectDto.endDate(),
                     leader);
 
-            return ResponseEntity.ok()
-                    .body(new ResultDto<>(
-                            200,
-                            "",
-                            projectService.save(addProjectDto)));
+        return ResponseEntity.status(200)
+                .body(new ResultDto<>(
+                        200,
+                        "",
+                        projectService.save(addProjectDto)));
         } catch (Exception e) {
-            return ResponseEntity.badRequest()
+            return ResponseEntity.status(400)
                     .body(new ResultDto<>(
                             400,
                             "Failed to add project",
@@ -70,14 +75,14 @@ public class ProjectApiController {
             @PathVariable UUID projectId
     ) {
         if (!isExistProject(projectId)) {
-            return ResponseEntity.badRequest()
+            return ResponseEntity.status(404)
                     .body(new ResultDto<>(
                             404,
                             "not found project",
                             null
                     ));
         }
-        return ResponseEntity.ok()
+        return ResponseEntity.status(200)
                 .body(new ResultDto<>(
                         200,
                         "",
@@ -92,7 +97,7 @@ public class ProjectApiController {
             Principal principal
             ) {
         if (!isExistProject(projectId)) {
-            return ResponseEntity.badRequest()
+            return ResponseEntity.status(404)
                     .body(new ResultDto<>(
                             404,
                             "not found project",
@@ -100,14 +105,14 @@ public class ProjectApiController {
                     ));
         }
         if (!isProjectLeader(principal.getName(), projectId)) {
-            return ResponseEntity.badRequest()
+            return ResponseEntity.status(403)
                     .body(new ResultDto<>(
                             403,
                             "access only project leader",
                             null
                     ));
         }
-        return ResponseEntity.ok()
+        return ResponseEntity.status(200)
                 .body(new ResultDto<>(
                         200,
                         "",
@@ -124,7 +129,7 @@ public class ProjectApiController {
             ) {
         try {
             if (!isProjectLeader(principal.getName(), projectId)) {
-                return ResponseEntity.badRequest()
+                return ResponseEntity.status(403)
                         .body(new ResultDto<>(
                                 403,
                                 "access only project leader",
@@ -133,7 +138,7 @@ public class ProjectApiController {
             }
 
             Project updateLeaderProject = projectService.changeLeader(newLeaderId, projectId);
-            return ResponseEntity.ok()
+            return ResponseEntity.status(200)
                     .body(new ResultDto<>(
                             200,
                             "",
@@ -156,7 +161,7 @@ public class ProjectApiController {
                                 null
                         ));
             }
-            return ResponseEntity.badRequest()
+            return ResponseEntity.status(400)
                     .body(new ResultDto<>(
                             400,
                             e.getMessage(),
@@ -174,7 +179,7 @@ public class ProjectApiController {
     ) {
         try {
             if (!isProjectLeader(principal.getName(), projectId)) {
-                return ResponseEntity.badRequest()
+                return ResponseEntity.status(403)
                         .body(new ResultDto<>(
                                 403,
                                 "access only project leader",
@@ -183,14 +188,19 @@ public class ProjectApiController {
             }
 
             Project updateStatusProject = projectService.changeStatusCode(projectId, dto);
-            return ResponseEntity.ok()
+            // send notification
+            if (dto.statusCode().equals(ProjectStatusCode.DONE)) {
+                List<MemberProject> projectMembers = memberProjectService.getMemberProjectListByProject(updateStatusProject);
+                notificationService.sendReviewMessage(projectMembers, updateStatusProject.getId());
+            }
+            return ResponseEntity.status(200)
                     .body(new ResultDto<>(
                             200,
                             "",
                             updateStatusProject
                     ));
         } catch (Exception e) {
-            return ResponseEntity.badRequest()
+            return ResponseEntity.status(400)
                     .body(new ResultDto<>(
                             400,
                             "Bad Request",
@@ -206,7 +216,7 @@ public class ProjectApiController {
             Principal principal
     ) {
         if (!isProjectLeader(principal.getName(), projectId)) {
-            return ResponseEntity.badRequest()
+            return ResponseEntity.status(403)
                     .body(new ResultDto<>(
                             403,
                             "access only project leader",
@@ -229,7 +239,7 @@ public class ProjectApiController {
 
             PostInviteDto postInviteDto = new PostInviteDto(projectId, inviteCode, member.getId());
 
-            return ResponseEntity.ok()
+            return ResponseEntity.status(200)
                     .body(new ResultDto<ContentDto>(
                             200,
                             "",
@@ -263,14 +273,14 @@ public class ProjectApiController {
                     getMemberUUID(principal.getName()),
                     inviteService.useCode(new AcceptInviteDto(projectId, inviteCode)));
 
-            return ResponseEntity.ok()
+            return ResponseEntity.status(200)
                     .body(new ResultDto<>(
                             200,
                             "",
                             projectService.addMember(dto)
                     ));
         } catch (Exception e) { // 세분화 추가 작업 필요
-           return ResponseEntity.badRequest()
+           return ResponseEntity.status(400)
                     .body(new ResultDto<>(
                             400,
                             e.getMessage(),

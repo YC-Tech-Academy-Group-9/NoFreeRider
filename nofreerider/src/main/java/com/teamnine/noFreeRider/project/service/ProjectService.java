@@ -4,13 +4,16 @@ import com.teamnine.noFreeRider.member.domain.Member;
 import com.teamnine.noFreeRider.member.repository.MemberRepository;
 import com.teamnine.noFreeRider.member.domain.MemberProject;
 import com.teamnine.noFreeRider.member.repository.MemberProjectRepository;
+import com.teamnine.noFreeRider.notification.service.NotificationService;
 import com.teamnine.noFreeRider.project.domain.Project;
+import com.teamnine.noFreeRider.project.domain.ProjectStatusCode;
 import com.teamnine.noFreeRider.project.dto.*;
 import com.teamnine.noFreeRider.project.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -69,7 +72,6 @@ public class ProjectService {
         project.updateStatusCode(dto.statusCode());
         return project;
     }
-
 
     public boolean isProjectLeader(MemberProjectDto dto) {
         Project project = projectRepository.findById(dto.project_id()).orElse(null);
