@@ -12,4 +12,6 @@ import java.util.List;
 public interface MemberTaskRepository extends JpaRepository<MemberTask, Long> {
     List<MemberTask> findAllByTask(Task task);
     List<MemberTask> findAllByMember(Member member);
+
+    void deleteAllByTask(Task taskToDelete);
 }

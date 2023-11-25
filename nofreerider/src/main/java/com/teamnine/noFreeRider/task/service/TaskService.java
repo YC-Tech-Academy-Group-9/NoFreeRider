@@ -97,6 +97,13 @@ public class TaskService {
 
     @Transactional
     public void deleteTask(UUID taskId) {
+        Task taskToDelete = taskRepository.getById(taskId);
+        memberTaskRepository.deleteAllByTask(taskToDelete);
         taskRepository.deleteById(taskId);
+    }
+
+    public Project getProjectByTaskId(UUID taskId) {
+        Task task = getTaskById(taskId);
+        return task.getProject();
     }
 }

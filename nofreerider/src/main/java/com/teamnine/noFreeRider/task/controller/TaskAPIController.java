@@ -1,5 +1,9 @@
 package com.teamnine.noFreeRider.task.controller;
 
+import com.teamnine.noFreeRider.member.domain.Member;
+import com.teamnine.noFreeRider.member.service.MemberService;
+import com.teamnine.noFreeRider.project.domain.Project;
+import com.teamnine.noFreeRider.project.service.ProjectService;
 import com.teamnine.noFreeRider.task.domain.Task;
 import com.teamnine.noFreeRider.task.domain.TaskStatusCode;
 import com.teamnine.noFreeRider.task.dto.TaskCreateDto;
@@ -10,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.UUID;
 
 @RestController
@@ -17,6 +22,8 @@ import java.util.UUID;
 @RequestMapping("/tasks")
 public class TaskAPIController {
     private final TaskService taskService;
+    private final MemberService memberService;
+    private final ProjectService projectService;
     @PostMapping("/create")
     public ResponseEntity<ResultDto<TaskDto>> createTask(@RequestBody TaskCreateDto taskDto) {
         try {
@@ -106,8 +113,39 @@ public class TaskAPIController {
         }
     }
 
-//    @PostMapping("/delete")
+    @PostMapping("/delete/{taskId}")
+    public ResponseEntity<ResultDto<TaskDto>> deleteTask(@PathVariable UUID taskId, Principal principal) {
+        Member member = memberService.getMemberByEmail(principal.getName());
+        Project project = taskService.getProjectByTaskId(taskId);
+        // if currentUser deleting task is a member of Project
+        if(projectService.isProjectLeader(member, project)) {
+            try {
+                taskService.deleteTask(taskId);
 
+                return ResponseEntity.ok().body(
+                        new ResultDto<>(
+                                200,
+                                "success",
+                                null
+                        ));
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.badRequest().body(
+                        new ResultDto<>(
+                                400,
+                                e.getMessage(),
+                                null
+                        ));
+            }
+        } // else reject deletion and send 403 error
+        else {
+            return ResponseEntity.badRequest().body(
+                    new ResultDto<>(
+                            403,
+                            "Unauthorized task-deletion",
+                            null
+                    ));
+        }
+    }
 
 
 }
