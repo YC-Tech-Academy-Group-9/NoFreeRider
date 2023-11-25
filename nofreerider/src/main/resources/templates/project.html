@@ -229,8 +229,8 @@
                 <h2 class="text-xl italic text-secondary" th:if="${taskList.isEmpty()}">할당된 작업이 없습니다. </h2>
             </div>
             <!-- Task item -->
-            <div th:each="task : ${taskList}" class="taskItem flex items-center p-4 bg-white shadow rounded-lg">
-                <!-- Custom Checkbox -->
+            <div th:each="task : ${taskList}" class="taskItem relative flex items-center p-4 bg-white shadow rounded-lg">
+            <!-- Custom Checkbox -->
                 <div th:id="'customCheckbox' + ${taskStat.index}"
                      th:data-task-id="${task.taskId()}"
                      th:data-task-status="${task.taskStatusCode()}"
@@ -257,8 +257,10 @@
                         </span>
                     </div>
                 </div>
+                <button onclick="deleteTask(this)" th:data-task-id="${task.taskId()}" class="absolute top-0 right-0 text-red-500 hover:text-red-700 focus:outline-none">
+                    <i class="fas fa-trash"></i>
+                </button>
             </div>
-            <!-- More tasks here -->
         </div>
         <!-- Button to add a new task -->
         <button class="fixed bottom-8 right-8 bg-primary text-white p-4 rounded-full shadow-lg"
@@ -703,6 +705,26 @@
             }
         });
     });
+
+    //delete task
+    function deleteTask(element) {
+        const taskId = element.getAttribute('data-task-id');
+        // curl api
+        // generate invite link
+        $.ajax({
+            url: 'http://localhost:8080/tasks/delete/' + taskId,
+            type: 'POST',
+            success: function(data) {
+                console.log(data);
+                alert('Task가 삭제되었습니다.');
+                window.location.reload();
+            },
+            error: function(error) {
+                console.log(error);
+                alert('Task 삭제에 실패했습니다.')
+            }
+        });
+    }
 
 </script>
 </body>
