@@ -59,7 +59,7 @@ public class Project {
         this.projectName = project_name;
         this.projectSummary = project_summary;
         this.className = className;
-        this.statusCode = ProjectStatusCode.STARTED;
+        this.statusCode = ProjectStatusCode.DOING;
         this.started_at = startDate;
         this.ended_at = endDate;
         this.leader = leader;

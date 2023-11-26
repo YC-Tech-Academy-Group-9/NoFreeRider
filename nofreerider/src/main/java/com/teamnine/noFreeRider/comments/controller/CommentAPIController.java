@@ -7,6 +7,7 @@ import com.teamnine.noFreeRider.comments.dto.ReceiveCommentDto;
 import com.teamnine.noFreeRider.comments.dto.UpdateCommentDto;
 import com.teamnine.noFreeRider.comments.repository.CommentsRepository;
 import com.teamnine.noFreeRider.comments.service.CommentService;
+import com.teamnine.noFreeRider.comments.service.RatingInviteService;
 import com.teamnine.noFreeRider.member.domain.Member;
 import com.teamnine.noFreeRider.member.repository.MemberRepository;
 import com.teamnine.noFreeRider.member.service.MemberService;
@@ -28,6 +29,7 @@ public class CommentAPIController {
     private final CommentService commentService;
     private final CommentsRepository commentsRepository;
     private final MemberService memberService;
+    private final RatingInviteService ratingInviteService;
 
     @GetMapping("/{memberId}")
     public ResponseEntity<Optional<UserComment>> getComment(@PathVariable UUID memberId) {
@@ -52,5 +54,22 @@ public class CommentAPIController {
                     );
         }
         return ResponseEntity.ok(new ResultDto<>(200, "ok", null));
+    }
+
+    @PostMapping("/rating/{ratingCode}")
+    public ResponseEntity<ResultDto<String>> getCommentByRatingCode(@PathVariable UUID ratingCode) {
+        try {
+            if (ratingInviteService.isRated(ratingCode)) {
+                return ResponseEntity.status(405).body(
+                        new ResultDto<>(405, "이미 평가 완료한 프로젝트입니다.", null)
+                );
+            }
+            return ResponseEntity.ok().body(
+                    new ResultDto<>(201, "ok", "/rating/" + ratingCode)
+            );
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(
+                    new ResultDto<>(400, e.getMessage(), null));
+        }
     }
 }

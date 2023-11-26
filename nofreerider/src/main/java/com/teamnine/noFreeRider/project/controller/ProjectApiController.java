@@ -266,7 +266,7 @@ public class ProjectApiController {
         }
     }
     @PostMapping("/{projectId}/invite/{inviteCode}")
-    public ResponseEntity<ResultDto<Project>> addPartyMember(
+    public ResponseEntity<ResultDto<UUID>> addPartyMember(
             @PathVariable UUID projectId,
             @PathVariable UUID inviteCode,
             Principal principal
@@ -276,11 +276,11 @@ public class ProjectApiController {
                     getMemberUUID(principal.getName()),
                     inviteService.useCode(new AcceptInviteDto(projectId, inviteCode)));
 
-            return ResponseEntity.status(200)
+            return ResponseEntity.status(202)
                     .body(new ResultDto<>(
-                            200,
+                            202,
                             "",
-                            projectService.addMember(dto)
+                            projectService.addMember(dto).getId()
                     ));
         } catch (Exception e) { // 세분화 추가 작업 필요
            return ResponseEntity.status(400)

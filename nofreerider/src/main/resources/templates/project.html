@@ -101,14 +101,14 @@
 
     <!-- Set Leader Button -->
     <button id="setLeaderButton" class="bg-green-500 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded min-w-fit"
-        th:if="${isLeader}"
+        th:if="${isLeader && project.statusCode().toString() == 'DOING'}"
         onclick="changeLeader(this)">
         Set Leader
     </button>
 
     <!-- Remove Member Button -->
     <button id="removeMemberButton" class="bg-red-500 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded min-w-fit"
-            th:if="${isLeader}"
+            th:if="${isLeader && project.statusCode().toString() == 'DOING'}"
             onclick="removeMember(this)">
         Remove Member
     </button>
@@ -176,7 +176,8 @@
                 </div>
                 <!-- ... -->
             </div>
-            <button class="mt-4 bg-accent text-white p-2 rounded w-full">작업 중</button>
+            <button th:if="${project.statusCode().toString() == 'DOING'}" onclick="changeStatus()" class="mt-4 bg-accent text-white p-2 rounded w-full">작업 중</button>
+            <button th:if="${project.statusCode().toString() == 'DONE'}" onclick="changeStatus()" class="mt-4 bg-green-500 text-white p-2 rounded w-full">작업 완료</button>
         </div>
         <!-- List of projects or classes -->
         <div class="bg-primary text-white p-4 rounded-2xl">
@@ -196,7 +197,7 @@
                     </div>
                 </div>
                 <!-- Add Member Button -->
-                <div th:if="${isLeader}" class="relative w-full">
+                <div th:if="${isLeader && project.statusCode().toString() == 'DOING'}" class="relative w-full">
                     <button id="addMemberButton" onclick="toggleTooltip()" class="w-full bg-white p-2 rounded flex items-center justify-center hover:bg-gray-100 transition duration-300 ease-in-out">
                         <span class="text-md text-black font-semibold flex items-center">
                             <i class="fas fa-plus mr-2"></i> Add Member
@@ -555,7 +556,13 @@
             url: noticeUrl,
             type: 'POST', // Adjust as needed
             success: function(data) {
-                window.location.reload();
+                if (data.code === 201) {
+                    window.location.href = data.data;
+                }
+                else if (data.code === 202) {
+                    alert("Successfully joined the project.");
+                    window.location.reload();
+                }
             },
             error: function(error) {
                 console.log("Error: " + error);
@@ -734,6 +741,37 @@
             error: function(error) {
                 console.log(error);
                 alert('Task 삭제에 실패했습니다.')
+            }
+        });
+    }
+
+    //change status
+    function changeStatus() {
+        let changeConfirm = confirm('프로젝트 상태를 변경하시겠습니까?');
+        if (!changeConfirm) {
+            return;
+        }
+
+        const projectId = location.pathname.split('/')[2];
+        // curl api
+        const sendData = {
+            statusCode: 'DONE'
+        }
+        // generate invite link
+        $.ajax({
+            url: baseURL + '/projects/' + projectId + '/status',
+            type: 'PUT',
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            data: JSON.stringify(sendData),
+            success: function(data) {
+                console.log(data);
+                alert('프로젝트 상태가 변경되었습니다.');
+                window.location.reload();
+            },
+            error: function(error) {
+                console.log(error);
+                alert('프로젝트 상태 변경에 실패했습니다.')
             }
         });
     }

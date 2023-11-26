@@ -1,5 +1,7 @@
 package com.teamnine.noFreeRider.project.dto;
 
+import com.teamnine.noFreeRider.project.domain.ProjectStatusCode;
+
 import java.util.Date;
 
 public record ProjectDto(
@@ -7,6 +9,7 @@ public record ProjectDto(
         String summary,
         String className,
         Date startDate,
-        Date endDate
+        Date endDate,
+        ProjectStatusCode statusCode
 ) {
 }

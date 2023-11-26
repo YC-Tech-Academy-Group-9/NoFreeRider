@@ -1,5 +1,6 @@
 package com.teamnine.noFreeRider.notification.service;
 
+import com.teamnine.noFreeRider.comments.service.RatingInviteService;
 import com.teamnine.noFreeRider.member.domain.Member;
 import com.teamnine.noFreeRider.member.domain.MemberProject;
 import com.teamnine.noFreeRider.member.service.MemberService;
@@ -24,13 +25,12 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final ProjectService projectService;
     private final MemberService memberService;
-
-    private final String rootUrl = "http://localhost:8080";
+    private final RatingInviteService ratingInviteService;;
 
     public ContentDto postInviteMessage(PostInviteDto dto) {
         Project project = projectService.getProjectInfo(dto.projectID());
         Member member = memberService.getMemberById(dto.destinationMemberID());
-        String inviteUrl = rootUrl + "/projects/" + dto.projectID() + "/invite/" + dto.inviteCode();
+        String inviteUrl = "/projects/" + dto.projectID() + "/invite/" + dto.inviteCode();
         String title = project.getProjectName() + " 초대";
         String content = String.format("%s에서 초대 메시지를 보냈습니다!", project.getProjectName());
 
@@ -72,6 +72,9 @@ public class NotificationService {
     }
 
     public void sendReviewMessage(List<MemberProject> members, UUID projectId) {
+        if (members.size() <= 1) {
+            return;
+        }
         Member[] memberArr = members.stream()
                 .map(MemberProject::getMember)
                 .toArray(Member[]::new);
@@ -79,9 +82,10 @@ public class NotificationService {
                 .getProject();
         String title = String.format("%s 동료 평가", project.getProjectName());
         String content = String.format("%s 프로젝트가 완료되었습니다. 동료 평가를 실시해주세요!", project.getProjectName());
-        String reviewUrl = rootUrl + "/projects/" + projectId + "/review";
 
         for (Member member : memberArr) {
+            UUID ratingCode = ratingInviteService.create(projectId);
+            String reviewUrl = "/comments/rating/" + ratingCode;
             Notification notification = Notification.builder()
                     .project(project)
                     .member(member)
