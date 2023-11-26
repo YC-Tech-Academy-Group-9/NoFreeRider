@@ -2,7 +2,7 @@ version: '3'
 services:
   # Spring Boot Application
   springbootapp:
-    image: simplesns:latest
+    image: nofreerider:latest
 
     ports:
       - "8080:8080"

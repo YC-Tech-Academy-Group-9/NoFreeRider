@@ -375,6 +375,8 @@
         integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
         crossorigin="anonymous"></script>
 <script>
+    const baseURL = window.location.origin;
+
     //dropdown setup
     document.getElementById('dropdown-button').addEventListener('click', function() {
         var dropdownMenu = document.getElementById('dropdown-menu');
@@ -419,7 +421,7 @@
     //signout button
     document.getElementById('signout-btn').addEventListener('click', function() {
         document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        window.location.href = "http://localhost:8080/";
+        window.location.href = "/";
     });
 
     //project modal
@@ -447,7 +449,7 @@
         };
         $.ajax({
             type: "POST",
-            url: "http://localhost:8080/projects",
+            url: baseURL + "/projects",
             data: JSON.stringify(data),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
