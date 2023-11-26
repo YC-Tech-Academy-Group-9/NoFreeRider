@@ -88,4 +88,17 @@ public class UserComment {
         this.numUpdates = incNumUpdates;
     }
 
+    public double[] calculateCriteria() {
+        double[] criteria = new double[4];
+        double numUpdates = (double) this.numUpdates;
+        if (numUpdates == 0) {
+            return criteria;
+        }
+        criteria[0] = (double) this.criteria1 / this.numUpdates;
+        criteria[1] = (double) this.criteria2 / this.numUpdates;
+        criteria[2] = (double) this.criteria3 / this.numUpdates;
+        criteria[3] = (double) this.criteria4 / this.numUpdates;
+        return criteria;
+    }
+
 }

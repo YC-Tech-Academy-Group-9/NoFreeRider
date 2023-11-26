@@ -1,7 +1,9 @@
 package com.teamnine.noFreeRider.member.controller;
 
+import com.teamnine.noFreeRider.comments.domain.UserComment;
 import com.teamnine.noFreeRider.comments.service.CommentService;
 import com.teamnine.noFreeRider.member.domain.Member;
+import com.teamnine.noFreeRider.member.dto.MemberDisplayDto;
 import com.teamnine.noFreeRider.member.dto.SignupDto;
 import com.teamnine.noFreeRider.member.repository.MemberRepository;
 import com.teamnine.noFreeRider.member.service.MemberService;
@@ -47,11 +49,32 @@ public class memberController {
     }
 
     @GetMapping("/info/{memberId}")
-    public ResultDto<Member> getMember(
+    public ResponseEntity<ResultDto<MemberDisplayDto>> getMember(
             @PathVariable("memberId") UUID memberId
     ) {
-        Member member = memberService.getMemberById(memberId);
-        return new ResultDto<>(200, "ok", member);
+        try {
+            Member member = memberRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("not found memberId"));
+            UserComment userComment = commentService.getCommentByMember(member);
+            double[] criteria = userComment.calculateCriteria();
+            MemberDisplayDto memberDisplayDto = new MemberDisplayDto(
+                    member.getMemberName(),
+                    member.getMemberEmail(),
+                    member.getMemberStudentId(),
+                    member.getMemberMajor(),
+                    member.getMemberTemperature(),
+                    criteria[0],
+                    criteria[1],
+                    criteria[2],
+                    criteria[3]
+            );
+            return ResponseEntity.ok().body(
+                    new ResultDto<>(200, "ok", memberDisplayDto)
+            );
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(
+                    new ResultDto<>(400, e.getMessage(), null)
+            );
+        }
     }
 
     @GetMapping("/info")

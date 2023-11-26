@@ -95,7 +95,8 @@
     <!-- Modal Content -->
 
     <!-- View Member Button -->
-    <button id="ViewMemberButton" class="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded min-w-fit">
+    <button onclick="viewMember(this)"
+            id="ViewMemberButton" class="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded min-w-fit">
         View Member
     </button>
 
@@ -324,6 +325,154 @@
                 </div>
             </div>
         </div>
+
+        <!-- Member Modal -->
+        <!-- Modal Background -->
+        <div id="userRatingModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
+            <!-- Modal Content -->
+            <div class="w-[40%] mt-10 bg-secondary p-8 m-auto rounded-lg">
+                <div class="flex flex-col space-y-4">
+                    <!-- User greeting -->
+                    <div>
+                        <div id="memberName" class="text-center font-jua text-3xl text-primary pb-4">
+                            <!-- User's Name -->
+                        </div>
+                        <div id="memberMajor" class="text-center font-inter text-md text-primary">
+                            <!-- User's Major -->
+                        </div>
+                        <div id="memberEmail" class="text-center font-inter text-md text-primary">
+                            <!-- User's Email -->
+                        </div>
+                    </div>
+
+                    <!-- User stats -->
+                    <div class="space-y-2">
+                        <!-- Temperature reading -->
+                        <div class="flex">
+                            <span class="font-inter text-lg text-text mr-3">나의 팀플 온도:</span>
+                            <span id="memberTemp" class="font-jua text-lg text-primary"></span>
+                        </div>
+                        <!-- 유저 스텟 -->
+                        <h2 class="font-bold text-primary">꼼꼼해요!</h2>
+                        <div>
+                            <svg height="0" width="0" xmlns="http://www.w3.org/2000/svg" viewBox="-4.79 -4.79 57.52 57.52">
+                                <g>
+                                    <path id="star" d="M26.285,2.486l5.407,10.956c0.376,0.762,1.103,1.29,1.944,1.412l12.091,1.757 c2.118,0.308,2.963,2.91,1.431,4.403l-8.749,8.528c-0.608,0.593-0.886,1.448-0.742,2.285l2.065,12.042 c0.362,2.109-1.852,3.717-3.746,2.722l-10.814-5.685c-0.752-0.395-1.651-0.395-2.403,0l-10.814,5.685 c-1.894,0.996-4.108-0.613-3.746-2.722l2.065-12.042c0.144-0.837-0.134-1.692-0.742-2.285l-8.749-8.528 c-1.532-1.494-0.687-4.096,1.431-4.403l12.091-1.757c0.841-0.122,1.568-0.65,1.944-1.412l5.407-10.956 C22.602,0.567,25.338,0.567,26.285,2.486z">
+
+                                    </path>
+                                </g>
+                            </svg>
+                            <svg id="star-collection" width="100%" viewBox="0 0 250 50" xmlns="http://www.w3.org/2000/svg">
+
+                                <clipPath id="star-coll">
+                                    <use x=0 y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                                    <use x="50" y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                                    <use x="100" y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                                    <use x="150" y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                                    <use x="200" y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                                </clipPath>
+                                <g stroke="#ED8A19" fill="#dedede" stroke-width="2px">
+                                    <use x=1 y="0" href="#star"  />
+                                    <use x="50" y="0" href="#star"  />
+                                    <use x="100" y="0" href="#star"  />
+                                    <use x="150" y="0" href="#star"  />
+                                    <use x="200" y="0" href="#star"  /></g>
+                                <rect clip-path="url(#star-coll)" class="star-slider" x="-200" y="0" width="200" height="50" fill="#ED8A19" />
+                            </svg>
+                        </div>
+                        <h2 class="font-bold text-primary">대화가 잘 통해요!</h2>
+                        <div>
+                            <svg height="0" width="0" xmlns="http://www.w3.org/2000/svg" viewBox="-4.79 -4.79 57.52 57.52">
+                                <g>
+                                    <path id="star" d="M26.285,2.486l5.407,10.956c0.376,0.762,1.103,1.29,1.944,1.412l12.091,1.757 c2.118,0.308,2.963,2.91,1.431,4.403l-8.749,8.528c-0.608,0.593-0.886,1.448-0.742,2.285l2.065,12.042 c0.362,2.109-1.852,3.717-3.746,2.722l-10.814-5.685c-0.752-0.395-1.651-0.395-2.403,0l-10.814,5.685 c-1.894,0.996-4.108-0.613-3.746-2.722l2.065-12.042c0.144-0.837-0.134-1.692-0.742-2.285l-8.749-8.528 c-1.532-1.494-0.687-4.096,1.431-4.403l12.091-1.757c0.841-0.122,1.568-0.65,1.944-1.412l5.407-10.956 C22.602,0.567,25.338,0.567,26.285,2.486z">
+
+                                    </path>
+                                </g>
+                            </svg>
+                            <svg id="star-collection" width="100%" viewBox="0 0 250 50" xmlns="http://www.w3.org/2000/svg">
+
+                                <clipPath id="star-coll">
+                                    <use x=0 y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                                    <use x="50" y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                                    <use x="100" y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                                    <use x="150" y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                                    <use x="200" y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                                </clipPath>
+                                <g stroke="#ED8A19" fill="#dedede" stroke-width="2px">
+                                    <use x=1 y="0" href="#star"  />
+                                    <use x="50" y="0" href="#star"  />
+                                    <use x="100" y="0" href="#star"  />
+                                    <use x="150" y="0" href="#star"  />
+                                    <use x="200" y="0" href="#star"  /></g>
+                                <rect clip-path="url(#star-coll)" class="star-slider" x="-200" y="0" width="200" height="50" fill="#ED8A19" />
+                            </svg>
+                        </div>
+                        <h2 class="font-bold text-primary">기한을 잘 지켜요!</h2>
+                        <div>
+                            <svg height="0" width="0" xmlns="http://www.w3.org/2000/svg" viewBox="-4.79 -4.79 57.52 57.52">
+                                <g>
+                                    <path id="star" d="M26.285,2.486l5.407,10.956c0.376,0.762,1.103,1.29,1.944,1.412l12.091,1.757 c2.118,0.308,2.963,2.91,1.431,4.403l-8.749,8.528c-0.608,0.593-0.886,1.448-0.742,2.285l2.065,12.042 c0.362,2.109-1.852,3.717-3.746,2.722l-10.814-5.685c-0.752-0.395-1.651-0.395-2.403,0l-10.814,5.685 c-1.894,0.996-4.108-0.613-3.746-2.722l2.065-12.042c0.144-0.837-0.134-1.692-0.742-2.285l-8.749-8.528 c-1.532-1.494-0.687-4.096,1.431-4.403l12.091-1.757c0.841-0.122,1.568-0.65,1.944-1.412l5.407-10.956 C22.602,0.567,25.338,0.567,26.285,2.486z">
+
+                                    </path>
+                                </g>
+                            </svg>
+                            <svg id="star-collection" width="100%" viewBox="0 0 250 50" xmlns="http://www.w3.org/2000/svg">
+
+                                <clipPath id="star-coll">
+                                    <use x=0 y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                                    <use x="50" y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                                    <use x="100" y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                                    <use x="150" y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                                    <use x="200" y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                                </clipPath>
+                                <g stroke="#ED8A19" fill="#dedede" stroke-width="2px">
+                                    <use x=1 y="0" href="#star"  />
+                                    <use x="50" y="0" href="#star"  />
+                                    <use x="100" y="0" href="#star"  />
+                                    <use x="150" y="0" href="#star"  />
+                                    <use x="200" y="0" href="#star"  /></g>
+                                <rect clip-path="url(#star-coll)" class="star-slider" x="-200" y="0" width="200" height="50" fill="#ED8A19" />
+                            </svg>
+                        </div>
+                        <h2 class="font-bold text-primary">열정적이에요!</h2>
+                        <div>
+                            <svg height="0" width="0" xmlns="http://www.w3.org/2000/svg" viewBox="-4.79 -4.79 57.52 57.52">
+                                <g>
+                                    <path id="star" d="M26.285,2.486l5.407,10.956c0.376,0.762,1.103,1.29,1.944,1.412l12.091,1.757 c2.118,0.308,2.963,2.91,1.431,4.403l-8.749,8.528c-0.608,0.593-0.886,1.448-0.742,2.285l2.065,12.042 c0.362,2.109-1.852,3.717-3.746,2.722l-10.814-5.685c-0.752-0.395-1.651-0.395-2.403,0l-10.814,5.685 c-1.894,0.996-4.108-0.613-3.746-2.722l2.065-12.042c0.144-0.837-0.134-1.692-0.742-2.285l-8.749-8.528 c-1.532-1.494-0.687-4.096,1.431-4.403l12.091-1.757c0.841-0.122,1.568-0.65,1.944-1.412l5.407-10.956 C22.602,0.567,25.338,0.567,26.285,2.486z">
+
+                                    </path>
+                                </g>
+                            </svg>
+                            <svg id="star-collection" width="100%" viewBox="0 0 250 50" xmlns="http://www.w3.org/2000/svg">
+
+                                <clipPath id="star-coll">
+                                    <use x=0 y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                                    <use x="50" y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                                    <use x="100" y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                                    <use x="150" y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                                    <use x="200" y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                                </clipPath>
+                                <g stroke="#ED8A19" fill="#dedede" stroke-width="2px">
+                                    <use x=1 y="0" href="#star"  />
+                                    <use x="50" y="0" href="#star"  />
+                                    <use x="100" y="0" href="#star"  />
+                                    <use x="150" y="0" href="#star"  />
+                                    <use x="200" y="0" href="#star"  /></g>
+                                <rect clip-path="url(#star-coll)" class="star-slider" x="-200" y="0" width="200" height="50" fill="#ED8A19" />
+                            </svg>
+                        </div>
+
+                    </div>
+
+                    <!-- Close Button -->
+                    <button onclick="closeUserModal()" class="bg-gray-500 text-white font-bold py-2 px-4 rounded mt-4 w-full">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
     </main>
 </div>
 
@@ -827,6 +976,46 @@
             }
         });
     }
+
+    function viewMember(element) {
+        const memberId = element.closest("#memberOptionsModal").getAttribute('data-member-id');
+        const modal = document.getElementById('userRatingModal');
+        const memberNameLabel = modal.querySelector('#memberName');
+        const memberMajorLabel = modal.querySelector('#memberMajor');
+        const memberEmailLabel = modal.querySelector('#memberEmail');
+        const memberTempLabel = modal.querySelector('#memberTemp');
+        const memberRatings = modal.querySelectorAll('.star-slider');
+
+        // curl api
+        $.ajax(
+            {
+                url: baseURL + '/member/info/' + memberId,
+                type: 'GET',
+                success: function(data) {
+                    console.log(data);
+                    memberNameLabel.innerText = data.data.name + " " + data.data.studentId;
+                    memberMajorLabel.innerText = data.data.major;
+                    memberEmailLabel.innerText = data.data.email;
+                    memberTempLabel.innerText = data.data.temp + '°C';
+                    memberRatings[0].setAttribute('width', data.data.criteria1 * 50 + 200);
+                    memberRatings[1].setAttribute('width', data.data.criteria2 * 50 + 200);
+                    memberRatings[2].setAttribute('width', data.data.criteria3 * 50 + 200);
+                    memberRatings[3].setAttribute('width', data.data.criteria4 * 50 + 200);
+                    closeModal();
+                    document.getElementById('userRatingModal').classList.remove('hidden');
+                },
+                error: function(error) {
+                    console.log(error);
+                    alert('사용자 정보를 불러오는데 실패했습니다.')
+                }
+            }
+        )
+    }
+
+    function closeUserModal() {
+        document.getElementById('userRatingModal').classList.add('hidden');
+    }
+
 
 </script>
 </body>
