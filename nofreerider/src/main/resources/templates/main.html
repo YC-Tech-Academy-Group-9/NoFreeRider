@@ -288,7 +288,7 @@
                                 <div class="flex justify-between items-center mb-2">
                                     <div class="flex items-center">
                                         <i th:if="${project.statusCode().toString() == 'DONE'}" class="fas fa-check-circle mr-2 text-lg"></i>
-                                        <h3 class="text-lg font-bold font-inter">Project</h3>
+                                        <h3 th:text="${project.name()}" class="text-lg font-bold font-inter">Project</h3>
                                     </div>
                                     <span class="text-primary font-inter">2 명</span>
                                 </div>
@@ -307,17 +307,6 @@
                                     <span th:text="'End: ' + ${#dates.format(project.endDate(), 'yyyy-MM-dd')}"></span>
                                 </div>
                             </a>
-                        <!-- Divider -->
-<!--                        <div class="border-t border-shade"></div>-->
-                        <!-- More project items -->
-                        <template id="project">
-                            <button class="flex justify-between items-center py-2 w-full">
-                                <span class="text-lg font-bold font-inter">YC Tech</span>
-                                <span class="text-primary">4명</span>
-                            </button>
-                            <!-- Divider -->
-                            <div class="border-t border-shade"></div>
-                        </template>
                     </div>
                     <button id="projectAddButton" class="fixed bottom-8 right-8 bg-primary text-white px-6 py-4 rounded-full shadow-lg">
                         +
@@ -526,7 +515,7 @@
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function(data){
-                console.log(data);
+                alert("프로젝트가 생성되었습니다.")
                 window.location.reload();
             },
             failure: function(errMsg) {

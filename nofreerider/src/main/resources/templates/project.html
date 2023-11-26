@@ -177,7 +177,8 @@
                 <!-- ... -->
             </div>
             <button th:if="${project.statusCode().toString() == 'DOING'}" onclick="changeStatus()" class="mt-4 bg-accent text-white p-2 rounded w-full">작업 중</button>
-            <button th:if="${project.statusCode().toString() == 'DONE'}" onclick="changeStatus()" class="mt-4 bg-green-500 text-white p-2 rounded w-full">작업 완료</button>
+            <button th:if="${project.statusCode().toString() == 'DONE'}" onclick="" class="mt-4 bg-green-500 text-white p-2 rounded w-full">작업 완료</button>
+            <button th:if="${isLeader}" onclick="deleteProject()" class="mt-4 bg-red-500 text-white p-2 rounded w-full">프로젝트 삭제</button>
         </div>
         <!-- List of projects or classes -->
         <div class="bg-primary text-white p-4 rounded-2xl">
@@ -788,6 +789,36 @@
                 }
                 else {
                     alert('프로젝트 상태 변경에 실패했습니다.');
+                }
+            }
+        });
+    }
+
+    //delete project
+    function deleteProject() {
+        let deleteConfirm = confirm('프로젝트를 삭제하시겠습니까?');
+        if (!deleteConfirm) {
+            return;
+        }
+
+        const projectId = location.pathname.split('/')[2];
+        // curl api
+        // generate invite link
+        $.ajax({
+            url: baseURL + '/projects/' + projectId,
+            type: 'DELETE',
+            success: function(data) {
+                console.log(data);
+                alert('프로젝트가 삭제되었습니다.');
+                window.location.href = '/main';
+            },
+            error: function(error) {
+                console.log(error);
+                if (error.status === 403) {
+                    alert('권한이 없습니다.');
+                }
+                else {
+                    alert('프로젝트 삭제에 실패했습니다.');
                 }
             }
         });

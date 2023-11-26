@@ -328,6 +328,28 @@ public class ProjectApiController {
                 ));
     }
 
+    @DeleteMapping("/{projectId}")
+    public ResponseEntity<ResultDto<UUID>> deleteProject(
+            @PathVariable UUID projectId,
+            Principal principal
+    ) {
+        if (!isProjectLeader(principal.getName(), projectId)) {
+            return ResponseEntity.status(403)
+                    .body(new ResultDto<>(
+                            403,
+                            "access only project leader",
+                            null
+                    ));
+        }
+
+        return ResponseEntity.ok()
+                .body(new ResultDto<>(
+                        200,
+                        "",
+                        projectService.deleteProject(projectId)
+                ));
+    }
+
     private UUID getMemberUUID(String userName) {
         Member member = memberDetailService.loadUserByUsername(userName);
         return member.getId();
