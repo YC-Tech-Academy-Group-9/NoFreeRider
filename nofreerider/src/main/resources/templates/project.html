@@ -134,6 +134,7 @@
                 <div class="flex flex-col divide-y divide-gray-200">
                     <div th:each="notification : ${notificationList}" class="flex items-center hover:bg-gray-50 notification-item">
                         <a href="#"
+                           th:data-notif-id="${notification.notice_id()}"
                            th:data-notice-url="${notification.notice_url()}"
                            onclick="handleNotificationClick(this);"
                            class="block p-4">
@@ -265,7 +266,8 @@
             </div>
         </div>
         <!-- Button to add a new task -->
-        <button class="fixed bottom-8 right-8 bg-primary text-white p-4 rounded-full shadow-lg"
+        <button th:if="${project.statusCode().toString() == 'DOING'}"
+                class="fixed bottom-8 right-8 bg-primary text-white p-4 rounded-full shadow-lg"
                 onclick="document.getElementById('task-modal').style.display='block'">
             +
         </button>
@@ -558,9 +560,11 @@
             type: 'POST', // Adjust as needed
             success: function(data) {
                 if (data.code === 201) {
+                    handleDeleteNotification(element);
                     window.location.href = data.data;
                 }
                 else if (data.code === 202) {
+                    handleDeleteNotification(element);
                     alert("프로젝트 참여에 성공했습니다.");
                     window.location.reload();
                 }

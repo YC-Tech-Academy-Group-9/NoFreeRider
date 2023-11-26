@@ -96,6 +96,7 @@
                 <div class="flex flex-col divide-y divide-gray-200">
                     <div th:each="notification : ${notificationList}" class="flex items-center hover:bg-gray-50 notification-item">
                         <a href=""
+                           th:data-notif-id="${notification.notice_id()}"
                            th:data-notice-url="${notification.notice_url()}"
                            onclick="handleNotificationClick(this); return false;"
                            class="block p-4">
@@ -290,7 +291,7 @@
                                         <i th:if="${project.statusCode().toString() == 'DONE'}" class="fas fa-check-circle mr-2 text-lg"></i>
                                         <h3 th:text="${project.name()}" class="text-lg font-bold font-inter">Project</h3>
                                     </div>
-                                    <span class="text-primary font-inter">2 명</span>
+                                    <span th:text="${project.memberCount()} + ' 명'" class="text-primary font-inter">2 명</span>
                                 </div>
 
 
