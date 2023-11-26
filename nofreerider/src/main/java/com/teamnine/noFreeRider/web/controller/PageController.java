@@ -1,5 +1,9 @@
 package com.teamnine.noFreeRider.web.controller;
 
+import com.teamnine.noFreeRider.comments.domain.UserComment;
+import com.teamnine.noFreeRider.comments.dto.CommentDisplayDto;
+import com.teamnine.noFreeRider.comments.service.CommentService;
+import com.teamnine.noFreeRider.comments.service.RatingInviteService;
 import com.teamnine.noFreeRider.member.domain.Member;
 import com.teamnine.noFreeRider.member.dto.MemberDto;
 import com.teamnine.noFreeRider.member.service.MemberService;
@@ -22,8 +26,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Controller
@@ -35,9 +41,15 @@ public class PageController {
     private final ProjectService projectService;
     private final MemberProjectService memberProjectService;
     private final TaskService taskService;
+    private final RatingInviteService ratingInviteService;
+    private final CommentService commentService;
 
     @RequestMapping("/")
-    public String login() {
+    public String login(Authentication authentication) {
+        if (authentication != null) {
+            return "redirect:/main";
+        }
+
         return "home";
     }
 
@@ -73,10 +85,32 @@ public class PageController {
                     projectList.get(i).getClassName(),
                     projectList.get(i).getStarted_at(),
                     projectList.get(i).getEnded_at(),
+                    projectList.get(i).getStatusCode(),
                     memberCount
             );
         }
+        // sort by project status and then by project date
+        Arrays.sort(projectDtoList, (o1, o2) -> {
+            if (o1.statusCode() == o2.statusCode()) {
+                return o2.endDate().compareTo(o1.endDate());
+            }
+            return o1.statusCode().compareTo(o2.statusCode());
+        });
         model.addAttribute("projectList", projectDtoList);
+
+        //rating
+        UserComment comment = commentService.getCommentByMember(loginMember);
+        int count = comment.getNumUpdates();
+        if (count == 0) {
+            count = 1;
+        }
+        CommentDisplayDto commentDisplayDto = new CommentDisplayDto(
+                (double)comment.getCriteria1() / (double)count,
+                (double)comment.getCriteria2() / (double)count,
+                (double)comment.getCriteria3() / (double)count,
+                (double)comment.getCriteria4() / (double)count);
+        model.addAttribute("rating", commentDisplayDto);
+
 
         // tasks
         List<TaskDisplayDto> taskList = taskService.searchTasksByMemberId(loginMember.getId());
@@ -95,13 +129,13 @@ public class PageController {
 
         //project info
         Project project = projectService.getProjectInfo(projectId);
-        ProjectDto projectDto = new ProjectDto(project.getProjectName(), project.getProjectSummary(), project.getClassName(), project.getStarted_at(), project.getEnded_at());
+        ProjectDto projectDto = new ProjectDto(project.getProjectName(), project.getProjectSummary(), project.getClassName(), project.getStarted_at(), project.getEnded_at(), project.getStatusCode());
         model.addAttribute("project", projectDto);
 
         // Project members
         List<Member> memberList = memberProjectService.getMemberListByProject(project);
 
-        // Check if the logged-in member is part of the project
+        // Check if the logged-in memberId is part of the project
         boolean isMemberOfProject = memberList.contains(loginMember);
 
         if (!isMemberOfProject) {
@@ -137,17 +171,29 @@ public class PageController {
         return "project";
     }
 
-    @RequestMapping("/rating/{projectId}")
-    public String rating(Model model, Authentication authentication, @PathVariable UUID projectId) {
+    @RequestMapping("/rating/{ratingCode}")
+    public String rating(Model model, Authentication authentication, @PathVariable UUID ratingCode) {
     	String email = authentication.getName();
         Member loginMember = memberService.getMemberByEmail(email);
         model.addAttribute("name", loginMember.getMemberName());
 
-        //members
+        boolean isRated = ratingInviteService.isRated(ratingCode);
+
+        UUID projectId = ratingInviteService.getProjectId(ratingCode);
+
+        //check if the memberId is part of the project
         Project project = projectService.getProjectInfo(projectId);
         List<Member> memberList = memberProjectService.getMemberListByProject(project);
+        if(!memberList.contains(loginMember) || isRated) {
+        	return "redirect:/main";
+        }
+
+        //members
         MemberDto[] memberDtoList = new MemberDto[memberList.size()];
         for (int i = 0; i < memberList.size(); i++) {
+            if (memberList.get(i).getId() == loginMember.getId()) {
+                continue;
+            }
             memberDtoList[i] = new MemberDto(
                     memberList.get(i).getId(),
                     memberList.get(i).getMemberName(),
@@ -155,6 +201,10 @@ public class PageController {
                     memberList.get(i).getMemberStudentId(),
                     memberList.get(i).getMemberTemperature());
         }
+        //remove null elements
+        memberDtoList = Arrays.stream(memberDtoList)
+                .filter(Objects::nonNull)
+                .toArray(MemberDto[]::new);
         model.addAttribute("memberList", memberDtoList);
 
         //notifications

@@ -2,9 +2,11 @@ package com.teamnine.noFreeRider.task.service;
 
 import com.teamnine.noFreeRider.member.domain.Member;
 import com.teamnine.noFreeRider.member.domain.MemberTask;
+import com.teamnine.noFreeRider.member.repository.MemberProjectRepository;
 import com.teamnine.noFreeRider.member.repository.MemberRepository;
 import com.teamnine.noFreeRider.member.repository.MemberTaskRepository;
 import com.teamnine.noFreeRider.project.domain.Project;
+import com.teamnine.noFreeRider.project.repository.ProjectRepository;
 import com.teamnine.noFreeRider.project.service.ProjectService;
 import com.teamnine.noFreeRider.task.domain.Task;
 import com.teamnine.noFreeRider.task.dto.TaskCreateDto;
@@ -26,10 +28,10 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final MemberRepository memberRepository;
     private final MemberTaskRepository memberTaskRepository;
-    private final ProjectService projectService;
+    private final ProjectRepository projectRepository;
 
     public List<TaskDisplayDto> searchTasksByProjectId(UUID projectId) {
-        Project project = projectService.getProjectInfo(projectId);
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 프로젝트 입니다."));
         List<Task> tasks = taskRepository.findAllByProject(project);
         tasks.sort(Comparator.comparing(Task::getDue_date));
         return tasks.stream().map(task -> new TaskDisplayDto(
@@ -76,7 +78,7 @@ public class TaskService {
     }
 
     public Task createTask(TaskCreateDto taskDto) {
-        Project targetProject = projectService.getProjectInfo(taskDto.projectId());
+        Project targetProject = projectRepository.findById(taskDto.projectId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 프로젝트 입니다."));
         Task task = new Task(
                 targetProject,
                 taskDto.taskName(),
@@ -100,6 +102,13 @@ public class TaskService {
         Task taskToDelete = taskRepository.getById(taskId);
         memberTaskRepository.deleteAllByTask(taskToDelete);
         taskRepository.deleteById(taskId);
+    }
+
+    @Transactional
+    public void deleteAllByProject(Project project) {
+        List<Task> tasks = taskRepository.findAllByProject(project);
+        tasks.forEach(memberTaskRepository::deleteAllByTask);
+        taskRepository.deleteAllByProject(project);
     }
 
     public Project getProjectByTaskId(UUID taskId) {

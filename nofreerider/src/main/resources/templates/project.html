@@ -101,14 +101,14 @@
 
     <!-- Set Leader Button -->
     <button id="setLeaderButton" class="bg-green-500 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded min-w-fit"
-        th:if="${isLeader}"
+        th:if="${isLeader && project.statusCode().toString() == 'DOING'}"
         onclick="changeLeader(this)">
         Set Leader
     </button>
 
     <!-- Remove Member Button -->
     <button id="removeMemberButton" class="bg-red-500 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded min-w-fit"
-            th:if="${isLeader}"
+            th:if="${isLeader && project.statusCode().toString() == 'DOING'}"
             onclick="removeMember(this)">
         Remove Member
     </button>
@@ -134,6 +134,7 @@
                 <div class="flex flex-col divide-y divide-gray-200">
                     <div th:each="notification : ${notificationList}" class="flex items-center hover:bg-gray-50 notification-item">
                         <a href="#"
+                           th:data-notif-id="${notification.notice_id()}"
                            th:data-notice-url="${notification.notice_url()}"
                            onclick="handleNotificationClick(this);"
                            class="block p-4">
@@ -176,7 +177,9 @@
                 </div>
                 <!-- ... -->
             </div>
-            <button class="mt-4 bg-accent text-white p-2 rounded w-full">작업 중</button>
+            <button th:if="${project.statusCode().toString() == 'DOING'}" onclick="changeStatus()" class="mt-4 bg-accent text-white p-2 rounded w-full">작업 중</button>
+            <button th:if="${project.statusCode().toString() == 'DONE'}" onclick="" class="mt-4 bg-green-500 text-white p-2 rounded w-full">작업 완료</button>
+            <button th:if="${isLeader}" onclick="deleteProject()" class="mt-4 bg-red-500 text-white p-2 rounded w-full">프로젝트 삭제</button>
         </div>
         <!-- List of projects or classes -->
         <div class="bg-primary text-white p-4 rounded-2xl">
@@ -196,7 +199,7 @@
                     </div>
                 </div>
                 <!-- Add Member Button -->
-                <div th:if="${isLeader}" class="relative w-full">
+                <div th:if="${isLeader && project.statusCode().toString() == 'DOING'}" class="relative w-full">
                     <button id="addMemberButton" onclick="toggleTooltip()" class="w-full bg-white p-2 rounded flex items-center justify-center hover:bg-gray-100 transition duration-300 ease-in-out">
                         <span class="text-md text-black font-semibold flex items-center">
                             <i class="fas fa-plus mr-2"></i> Add Member
@@ -263,7 +266,8 @@
             </div>
         </div>
         <!-- Button to add a new task -->
-        <button class="fixed bottom-8 right-8 bg-primary text-white p-4 rounded-full shadow-lg"
+        <button th:if="${project.statusCode().toString() == 'DOING'}"
+                class="fixed bottom-8 right-8 bg-primary text-white p-4 rounded-full shadow-lg"
                 onclick="document.getElementById('task-modal').style.display='block'">
             +
         </button>
@@ -333,10 +337,22 @@
         integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
         crossorigin="anonymous"></script>
 <script>
+
+    const baseURL = window.location.origin;
+
     //signout button
     document.getElementById('signout-btn').addEventListener('click', function() {
-        document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        window.location.href = "http://localhost:8080/";
+        $.ajax({
+            url: baseURL + "/logout",
+            type: 'POST', // Adjust as needed
+            success: function(data) {
+                console.log(data);
+                window.location.href = '/';
+            },
+            error: function(error) {
+                console.log("Error: " + error);
+            }
+        });
     });
 
     //dropdown setup
@@ -386,7 +402,7 @@
             event.stopPropagation();
         });
 
-        // Add member button
+        // Add memberId button
         document.getElementById('addMemberADD').addEventListener('click', function(event) {
             event.preventDefault();
             var tooltip = document.getElementById('tooltip');
@@ -399,7 +415,7 @@
             // curl api
             // generate invite link
             $.ajax({
-                url: 'http://localhost:8080/projects/' + projectId + '/invite',
+                url: baseURL + '/projects/' + projectId + '/invite',
                 type: 'POST',
                 contentType: 'application/json; charset=utf-8',
                 dataType: 'json',
@@ -424,7 +440,7 @@
         });
     });
 
-    //remove member
+    //remove memberId
     function removeMember(element) {
         const projectId = location.pathname.split('/')[2];
         const memberId = element.closest("#memberOptionsModal").getAttribute('data-member-id');
@@ -432,7 +448,7 @@
         // curl api
         // generate invite link
         $.ajax({
-            url: 'http://localhost:8080/projects/' + projectId + '/member/' + memberId,
+            url: baseURL + '/projects/' + projectId + '/member/' + memberId,
             type: 'DELETE',
             success: function(data) {
                 console.log(data);
@@ -460,7 +476,7 @@
         // curl api
         // generate invite link
         $.ajax({
-            url: 'http://localhost:8080/projects/' + projectId + '/leader/' + memberId,
+            url: baseURL + '/projects/' + projectId + '/leader/' + memberId,
             type: 'PUT',
             success: function(data) {
                 console.log(data);
@@ -481,7 +497,7 @@
         });
     }
 
-    //member options modal
+    //memberId options modal
     function showMemberOptionsModal(event) {
         console.log('clicked member');
         const modal = document.getElementById('memberOptionsModal');
@@ -543,11 +559,31 @@
             url: noticeUrl,
             type: 'POST', // Adjust as needed
             success: function(data) {
-                window.location.reload();
+                if (data.code === 201) {
+                    handleDeleteNotification(element);
+                    window.location.href = data.data;
+                }
+                else if (data.code === 202) {
+                    handleDeleteNotification(element);
+                    alert("프로젝트 참여에 성공했습니다.");
+                    window.location.reload();
+                }
             },
             error: function(error) {
-                console.log("Error: " + error);
-                alert("API call failed.");
+                if (error.status === 403) {
+                    alert("권한이 없습니다.");
+                }
+                else if (error.status === 405) {
+                    alert("이미 평가 완료한 프로젝트입니다.");
+                }
+                else if (error.status === 500) {
+                    alert("Server error.");
+                    console.log(error);
+                }
+                else {
+                    alert("API call failed.");
+                    console.log(error);
+                }
             }
         });
     }
@@ -635,7 +671,7 @@
         taskStatus = TaskStatus[checkboxState];
 
         $.ajax({
-            url: 'http://localhost:8080/tasks/status/' + taskId + '/' + taskStatus,
+            url: baseURL + '/tasks/status/' + taskId + '/' + taskStatus,
             type: 'POST',
             success: function(data) {
                 console.log(data);
@@ -689,7 +725,7 @@
         // curl api
         // generate invite link
         $.ajax({
-            url: 'http://localhost:8080/tasks/create',
+            url: baseURL + '/tasks/create',
             type: 'POST',
             contentType: 'application/json; charset=utf-8',
             dataType: 'json',
@@ -712,7 +748,7 @@
         // curl api
         // generate invite link
         $.ajax({
-            url: 'http://localhost:8080/tasks/delete/' + taskId,
+            url: baseURL + '/tasks/delete/' + taskId,
             type: 'POST',
             success: function(data) {
                 console.log(data);
@@ -722,6 +758,72 @@
             error: function(error) {
                 console.log(error);
                 alert('Task 삭제에 실패했습니다.')
+            }
+        });
+    }
+
+    //change status
+    function changeStatus() {
+        let changeConfirm = confirm('프로젝트 상태를 변경하시겠습니까?');
+        if (!changeConfirm) {
+            return;
+        }
+
+        const projectId = location.pathname.split('/')[2];
+        // curl api
+        const sendData = {
+            statusCode: 'DONE'
+        }
+        // generate invite link
+        $.ajax({
+            url: baseURL + '/projects/' + projectId + '/status',
+            type: 'PUT',
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            data: JSON.stringify(sendData),
+            success: function(data) {
+                console.log(data);
+                alert('프로젝트 상태가 변경되었습니다.');
+                window.location.reload();
+            },
+            error: function(error) {
+                console.log(error);
+                if (error.status === 403) {
+                    alert('권한이 없습니다.');
+                }
+                else {
+                    alert('프로젝트 상태 변경에 실패했습니다.');
+                }
+            }
+        });
+    }
+
+    //delete project
+    function deleteProject() {
+        let deleteConfirm = confirm('프로젝트를 삭제하시겠습니까?');
+        if (!deleteConfirm) {
+            return;
+        }
+
+        const projectId = location.pathname.split('/')[2];
+        // curl api
+        // generate invite link
+        $.ajax({
+            url: baseURL + '/projects/' + projectId,
+            type: 'DELETE',
+            success: function(data) {
+                console.log(data);
+                alert('프로젝트가 삭제되었습니다.');
+                window.location.href = '/main';
+            },
+            error: function(error) {
+                console.log(error);
+                if (error.status === 403) {
+                    alert('권한이 없습니다.');
+                }
+                else {
+                    alert('프로젝트 삭제에 실패했습니다.');
+                }
             }
         });
     }

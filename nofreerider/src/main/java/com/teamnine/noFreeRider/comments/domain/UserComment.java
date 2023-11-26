@@ -80,10 +80,10 @@ public class UserComment {
 
     public void updateCommentCriteria(UpdateCommentDto updateCommentDto) {
         int incNumUpdates = this.numUpdates + 1;
-        this.criteria1 = (updateCommentDto.criteria1() + this.criteria1 * this.numUpdates) / incNumUpdates;
-        this.criteria2 = (updateCommentDto.criteria2() + this.criteria2 * this.numUpdates) / incNumUpdates;
-        this.criteria3 = (updateCommentDto.criteria3() + this.criteria3 * this.numUpdates) / incNumUpdates;
-        this.criteria4 = (updateCommentDto.criteria4() + this.criteria4 * this.numUpdates) / incNumUpdates;
+        this.criteria1 += updateCommentDto.criteria1();
+        this.criteria2 += updateCommentDto.criteria2();
+        this.criteria3 += updateCommentDto.criteria3();
+        this.criteria4 += updateCommentDto.criteria4();
         this.updatedAt = LocalDateTime.now();
         this.numUpdates = incNumUpdates;
     }

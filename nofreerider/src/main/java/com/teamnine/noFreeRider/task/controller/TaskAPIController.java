@@ -117,7 +117,7 @@ public class TaskAPIController {
     public ResponseEntity<ResultDto<TaskDto>> deleteTask(@PathVariable UUID taskId, Principal principal) {
         Member member = memberService.getMemberByEmail(principal.getName());
         Project project = taskService.getProjectByTaskId(taskId);
-        // if currentUser deleting task is a member of Project
+        // if currentUser deleting task is a memberId of Project
         if(projectService.isProjectLeader(member, project)) {
             try {
                 taskService.deleteTask(taskId);

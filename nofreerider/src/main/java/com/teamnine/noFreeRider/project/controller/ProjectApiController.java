@@ -235,7 +235,7 @@ public class ProjectApiController {
                 return ResponseEntity.status(409)
                         .body(new ResultDto<ContentDto>(
                                 409,
-                                "already member",
+                                "already memberId",
                                 null
                         ));
             }
@@ -249,7 +249,7 @@ public class ProjectApiController {
                             notificationService.postInviteMessage(postInviteDto)
                     ));
         } catch (Exception e) {
-            if (e.getMessage().equals("not found member")) {
+            if (e.getMessage().equals("not found memberId")) {
                 return ResponseEntity.status(404)
                         .body(new ResultDto<ContentDto>(
                                 404,
@@ -266,7 +266,7 @@ public class ProjectApiController {
         }
     }
     @PostMapping("/{projectId}/invite/{inviteCode}")
-    public ResponseEntity<ResultDto<Project>> addPartyMember(
+    public ResponseEntity<ResultDto<UUID>> addPartyMember(
             @PathVariable UUID projectId,
             @PathVariable UUID inviteCode,
             Principal principal
@@ -276,11 +276,11 @@ public class ProjectApiController {
                     getMemberUUID(principal.getName()),
                     inviteService.useCode(new AcceptInviteDto(projectId, inviteCode)));
 
-            return ResponseEntity.status(200)
+            return ResponseEntity.status(202)
                     .body(new ResultDto<>(
-                            200,
+                            202,
                             "",
-                            projectService.addMember(dto)
+                            projectService.addMember(dto).getId()
                     ));
         } catch (Exception e) { // 세분화 추가 작업 필요
            return ResponseEntity.status(400)
@@ -315,7 +315,7 @@ public class ProjectApiController {
             return ResponseEntity.status(404)
                     .body(new ResultDto<>(
                             404,
-                            "member not in the project",
+                            "memberId not in the project",
                             null
                     ));
         }
@@ -325,6 +325,28 @@ public class ProjectApiController {
                         200,
                         "",
                         memberProjectService.deleteMemberProject(dto)
+                ));
+    }
+
+    @DeleteMapping("/{projectId}")
+    public ResponseEntity<ResultDto<UUID>> deleteProject(
+            @PathVariable UUID projectId,
+            Principal principal
+    ) {
+        if (!isProjectLeader(principal.getName(), projectId)) {
+            return ResponseEntity.status(403)
+                    .body(new ResultDto<>(
+                            403,
+                            "access only project leader",
+                            null
+                    ));
+        }
+
+        return ResponseEntity.ok()
+                .body(new ResultDto<>(
+                        200,
+                        "",
+                        projectService.deleteProject(projectId)
                 ));
     }
 

@@ -95,32 +95,6 @@
         <h1>NoFreeRider</h1>
     </div>
     <div class="w-full h-full flex flex-row justify-end items-center px-[51px] space-x-2">
-        <div class="relative" id="dropdown-container">
-            <button type="button" id="dropdown-button" class="flex items-center justify-center w-12 h-12 text-gray-800 bg-gray-300 rounded-full focus:outline-none">
-                <span class="material-icons">notifications</span>
-                <span id="notification-count" th:if="${notificationList.length != 0}" th:text="${notificationList.length}" class="absolute top-0 right-0 flex items-center justify-center w-6 h-6 text-white bg-red-600 rounded-full"></span>
-            </button>
-            <div class="absolute hidden right-0 mt-2 w-64 bg-white rounded-md shadow-xl z-20 overflow-y-auto" style="max-height: 16rem;" id="dropdown-menu">
-                <div class="flex flex-col divide-y divide-gray-200">
-                    <div th:each="notification : ${notificationList}" class="flex items-center hover:bg-gray-50 notification-item">
-                        <a href="#"
-                           th:data-notice-url="${notification.notice_url()}"
-                           onclick="handleNotificationClick(this);"
-                           class="block p-4">
-                            <span th:text="${notification.notice_title()}" class="block text-lg font-medium text-gray-900"></span>
-                            <span th:text="${notification.notice_content()}" class="block text-sm text-gray-600"></span>
-                        </a>
-                        <!-- Delete Button -->
-                        <button th:data-notif-id="${notification.notice_id()}"
-                                onclick="handleDeleteNotification(this);"
-                                class="text-red-500 hover:text-red-700 p-4 ml-auto">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-
-                </div>
-            </div>
-        </div>
         <button id="signout-btn" class="button text-lg bg-shade text-center w-[170px] h-[60px]">Sign Out</button>
     </div>
 </nav>
@@ -175,6 +149,9 @@
         integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
         crossorigin="anonymous"></script>
 <script>
+
+    const baseUrl = window.location.origin;
+
     //signout button
     document.getElementById('signout-btn').addEventListener('click', function() {
         document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
@@ -250,8 +227,32 @@
             formDataList.push(formData);
         });
 
+        const sendData = {
+            comments: formDataList
+        }
+
         console.log(formDataList); // Here's your list of form data objects
+
+        const ratingCode = location.pathname.split('/')[2];
         // Now, you can do something with formDataList, like sending it to the server
+        $.ajax(
+            {
+                url: baseUrl + '/comments/submit/' + ratingCode,
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(sendData),
+                success: function (data) {
+                    console.log(data);
+                    alert("Rating Success!");
+                    window.location.href = "/";
+                },
+                error: function (data) {
+                    console.log(data);
+                    alert("Rating Failed!");
+                }
+            }
+
+        )
     });
 
     function getRatingValue(form, criterionNumber) {

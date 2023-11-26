@@ -5,6 +5,7 @@ import com.teamnine.noFreeRider.comments.dto.UpdateCommentDto;
 import com.teamnine.noFreeRider.comments.repository.CommentsRepository;
 import com.teamnine.noFreeRider.member.domain.Member;
 import lombok.RequiredArgsConstructor;
+import org.h2.engine.User;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -17,7 +18,7 @@ public class CommentService {
 
     @Transactional
     public UserComment createComment(Member member) {
-        System.out.println("save comment for member: "+member.getMemberEmail());
+        System.out.println("save comment for memberId: "+member.getMemberEmail());
         UserComment comment = UserComment.builder()
                 .member(member)
                 .criteria1(0)
@@ -34,7 +35,7 @@ public class CommentService {
     @Transactional
     public void update(UpdateCommentDto updateCommentDto, Member member) {
         UserComment comment = commentRepository.findByMember(member)
-                .orElseThrow(() -> new IllegalArgumentException("Comment not found for member"));
+                .orElseThrow(() -> new IllegalArgumentException("Comment not found for memberId"));
 
         comment.updateCommentCriteria(updateCommentDto);
     }
@@ -42,6 +43,10 @@ public class CommentService {
 
     public void deleteComment(UserComment userComment) {
 
+    }
+
+    public UserComment getCommentByMember(Member member) {
+        return commentRepository.findByMember(member).orElseThrow(() -> new IllegalArgumentException("Comment not found for memberId"));
     }
 
 }
