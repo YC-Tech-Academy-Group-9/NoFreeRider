@@ -20,12 +20,12 @@ public class memberController {
 
     private final MemberService memberService;
 
-    @PostMapping("/auth/signUp")
-    public ResponseEntity<ResultDto<Member>> signUp(@RequestBody SignupDto signupDto) {
-        Member newMember = memberService.addUser(signupDto.realName(), signupDto.email(), signupDto.studentId(), signupDto.major());
-
-        return ResponseEntity.ok(new ResultDto<>(200, "ok", newMember));
-    }
+//    @PostMapping("/auth/signUp")
+//    public ResponseEntity<ResultDto<Member>> signUp(@RequestBody SignupDto signupDto) {
+//        Member newMember = memberService.addUser(signupDto.realName(), signupDto.email(), signupDto.studentId(), signupDto.major());
+//
+//        return ResponseEntity.ok(new ResultDto<>(200, "ok", newMember));
+//    }
 
     @Autowired
     private MemberRepository memberRepository;
@@ -62,4 +62,8 @@ public class memberController {
         Member member = memberService.getMemberByEmail(email);
         return new ResultDto<>(200, "ok", member);
     }
+
+
+
+
 }

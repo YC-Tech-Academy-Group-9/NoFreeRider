@@ -22,6 +22,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -37,7 +38,11 @@ public class PageController {
     private final TaskService taskService;
 
     @RequestMapping("/")
-    public String login() {
+    public String login(Authentication authentication) {
+        if (authentication != null) {
+            return "redirect:/main";
+        }
+
         return "home";
     }
 
@@ -143,11 +148,19 @@ public class PageController {
         Member loginMember = memberService.getMemberByEmail(email);
         model.addAttribute("name", loginMember.getMemberName());
 
-        //members
+        //check if the member is part of the project
         Project project = projectService.getProjectInfo(projectId);
         List<Member> memberList = memberProjectService.getMemberListByProject(project);
+        if(!memberList.contains(loginMember)) {
+        	return "redirect:/main";
+        }
+
+        //members
         MemberDto[] memberDtoList = new MemberDto[memberList.size()];
         for (int i = 0; i < memberList.size(); i++) {
+            if (memberList.get(i).getId() == loginMember.getId()) {
+                continue;
+            }
             memberDtoList[i] = new MemberDto(
                     memberList.get(i).getId(),
                     memberList.get(i).getMemberName(),
