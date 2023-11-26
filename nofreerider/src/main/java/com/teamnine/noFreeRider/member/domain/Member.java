@@ -71,7 +71,6 @@ public class Member implements UserDetails {
         return memberName;
     }
 
-
     @Override
     public boolean isAccountNonExpired() {
         return true;
@@ -100,5 +99,9 @@ public class Member implements UserDetails {
         this.memberName = realName;
         this.memberStudentId = memberStudentId;
         this.memberMajor = major;
+    }
+
+    public UUID getMemberId() {
+        return this.id;
     }
 }

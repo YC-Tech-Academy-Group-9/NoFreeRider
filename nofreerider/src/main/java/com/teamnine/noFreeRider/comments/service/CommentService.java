@@ -1,33 +1,47 @@
 package com.teamnine.noFreeRider.comments.service;
 
 import com.teamnine.noFreeRider.comments.domain.UserComment;
+import com.teamnine.noFreeRider.comments.dto.UpdateCommentDto;
 import com.teamnine.noFreeRider.comments.repository.CommentsRepository;
 import com.teamnine.noFreeRider.member.domain.Member;
-import com.teamnine.noFreeRider.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
 public class CommentService {
-    private final MemberRepository memberRepository;
+
     private final CommentsRepository commentRepository;
-    public UserComment createComment(int userID) {
-        UserComment newComment = new UserComment(userID, 0, 0, 0, 0, null, null);
-        commentRepository.save(newComment);
-        return newComment;
+
+    @Transactional
+    public UserComment createComment(Member member) {
+        System.out.println("save comment for member: "+member.getMemberEmail());
+        UserComment comment = UserComment.builder()
+                .member(member)
+                .criteria1(0)
+                .criteria2(0)
+                .criteria3(0)
+                .criteria4(0)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .numUpdates(0)
+                .build();
+        return commentRepository.save(comment);
     }
 
-    public UserComment getCommentByUserId(int userID) {
-        return commentRepository.findByUserId(userID).orElseThrow(() -> new IllegalArgumentException("not found comment"));
+    @Transactional
+    public void update(UpdateCommentDto updateCommentDto, Member member) {
+        UserComment comment = commentRepository.findByMember(member)
+                .orElseThrow(() -> new IllegalArgumentException("Comment not found for member"));
+
+        comment.updateCommentCriteria(updateCommentDto);
     }
 
-    public UserComment updateComment(UserComment updatedComment) {
-        UserComment currComment = commentRepository.findByUserId(updatedComment.getUserId()).orElseThrow(() -> new IllegalArgumentException("not found comment"));
-        return currComment;
-    }
 
     public void deleteComment(UserComment userComment) {
 
     }
+
 }
