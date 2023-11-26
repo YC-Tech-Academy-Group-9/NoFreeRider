@@ -37,7 +37,7 @@ public class memberController {
             @RequestBody SignupDto signupDto
     ) {
         Member member = memberRepository
-                .findById(memberId).orElseThrow(() -> new IllegalArgumentException("not found member"));
+                .findById(memberId).orElseThrow(() -> new IllegalArgumentException("not found memberId"));
         member.updateMember(signupDto.realName(), signupDto.studentId(), signupDto.major());
         memberRepository.save(member);
 

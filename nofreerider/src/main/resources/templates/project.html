@@ -399,7 +399,7 @@
             event.stopPropagation();
         });
 
-        // Add member button
+        // Add memberId button
         document.getElementById('addMemberADD').addEventListener('click', function(event) {
             event.preventDefault();
             var tooltip = document.getElementById('tooltip');
@@ -437,7 +437,7 @@
         });
     });
 
-    //remove member
+    //remove memberId
     function removeMember(element) {
         const projectId = location.pathname.split('/')[2];
         const memberId = element.closest("#memberOptionsModal").getAttribute('data-member-id');
@@ -494,7 +494,7 @@
         });
     }
 
-    //member options modal
+    //memberId options modal
     function showMemberOptionsModal(event) {
         console.log('clicked member');
         const modal = document.getElementById('memberOptionsModal');
@@ -560,13 +560,25 @@
                     window.location.href = data.data;
                 }
                 else if (data.code === 202) {
-                    alert("Successfully joined the project.");
+                    alert("프로젝트 참여에 성공했습니다.");
                     window.location.reload();
                 }
             },
             error: function(error) {
-                console.log("Error: " + error);
-                alert("API call failed.");
+                if (error.status === 403) {
+                    alert("권한이 없습니다.");
+                }
+                else if (error.status === 405) {
+                    alert("이미 평가 완료한 프로젝트입니다.");
+                }
+                else if (error.status === 500) {
+                    alert("Server error.");
+                    console.log(error);
+                }
+                else {
+                    alert("API call failed.");
+                    console.log(error);
+                }
             }
         });
     }
@@ -771,7 +783,12 @@
             },
             error: function(error) {
                 console.log(error);
-                alert('프로젝트 상태 변경에 실패했습니다.')
+                if (error.status === 403) {
+                    alert('권한이 없습니다.');
+                }
+                else {
+                    alert('프로젝트 상태 변경에 실패했습니다.');
+                }
             }
         });
     }

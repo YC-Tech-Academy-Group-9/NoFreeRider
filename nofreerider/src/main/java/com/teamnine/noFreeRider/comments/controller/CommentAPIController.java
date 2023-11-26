@@ -9,15 +9,12 @@ import com.teamnine.noFreeRider.comments.repository.CommentsRepository;
 import com.teamnine.noFreeRider.comments.service.CommentService;
 import com.teamnine.noFreeRider.comments.service.RatingInviteService;
 import com.teamnine.noFreeRider.member.domain.Member;
-import com.teamnine.noFreeRider.member.repository.MemberRepository;
 import com.teamnine.noFreeRider.member.service.MemberService;
 import com.teamnine.noFreeRider.util.dto.ResultDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -41,18 +38,20 @@ public class CommentAPIController {
         return ResponseEntity.ok(comment);
     }
 
-    @PostMapping("/submit")
-    public ResponseEntity<ResultDto<CommentDto>> submitComment(@RequestBody CommentFormDto commentFormDto) {
-        // loop through commentFormDto and run the updateComment method for each member
+    @PostMapping("/submit/{ratingCode}")
+    public ResponseEntity<ResultDto<CommentDto>> submitComment(@PathVariable UUID ratingCode, @RequestBody CommentFormDto commentFormDto) {
+        // loop through commentFormDto and run the updateComment method for each memberId
         for (ReceiveCommentDto receiveCommentDto : commentFormDto.comments()) {
-            Member member = memberService.getMemberById(receiveCommentDto.member());
+            Member member = memberService.getMemberById(receiveCommentDto.memberId());
             commentService.update(new UpdateCommentDto(
                     receiveCommentDto.criteria1(),
                     receiveCommentDto.criteria2(),
                     receiveCommentDto.criteria3(),
-                    receiveCommentDto.criteria4()),member
+                    receiveCommentDto.criteria4()),
+                    member
                     );
         }
+        ratingInviteService.doneRating(ratingCode);
         return ResponseEntity.ok(new ResultDto<>(200, "ok", null));
     }
 

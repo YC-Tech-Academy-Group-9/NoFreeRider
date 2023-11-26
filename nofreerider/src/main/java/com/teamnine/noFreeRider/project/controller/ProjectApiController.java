@@ -235,7 +235,7 @@ public class ProjectApiController {
                 return ResponseEntity.status(409)
                         .body(new ResultDto<ContentDto>(
                                 409,
-                                "already member",
+                                "already memberId",
                                 null
                         ));
             }
@@ -249,7 +249,7 @@ public class ProjectApiController {
                             notificationService.postInviteMessage(postInviteDto)
                     ));
         } catch (Exception e) {
-            if (e.getMessage().equals("not found member")) {
+            if (e.getMessage().equals("not found memberId")) {
                 return ResponseEntity.status(404)
                         .body(new ResultDto<ContentDto>(
                                 404,
@@ -315,7 +315,7 @@ public class ProjectApiController {
             return ResponseEntity.status(404)
                     .body(new ResultDto<>(
                             404,
-                            "member not in the project",
+                            "memberId not in the project",
                             null
                     ));
         }

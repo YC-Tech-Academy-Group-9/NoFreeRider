@@ -175,6 +175,9 @@
         integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
         crossorigin="anonymous"></script>
 <script>
+
+    const baseUrl = window.location.origin;
+
     //signout button
     document.getElementById('signout-btn').addEventListener('click', function() {
         document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
@@ -250,8 +253,32 @@
             formDataList.push(formData);
         });
 
+        const sendData = {
+            comments: formDataList
+        }
+
         console.log(formDataList); // Here's your list of form data objects
+
+        const ratingCode = location.pathname.split('/')[2];
         // Now, you can do something with formDataList, like sending it to the server
+        $.ajax(
+            {
+                url: baseUrl + '/comments/submit/' + ratingCode,
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(sendData),
+                success: function (data) {
+                    console.log(data);
+                    alert("Rating Success!");
+                    window.location.href = "/";
+                },
+                error: function (data) {
+                    console.log(data);
+                    alert("Rating Failed!");
+                }
+            }
+
+        )
     });
 
     function getRatingValue(form, criterionNumber) {

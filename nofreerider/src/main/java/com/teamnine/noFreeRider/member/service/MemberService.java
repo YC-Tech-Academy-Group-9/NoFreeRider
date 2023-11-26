@@ -55,15 +55,15 @@ public class MemberService {
 //    }
 
     public Member getMemberById(UUID id) {
-        return memberRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("not found member"));
+        return memberRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("not found memberId"));
     }
 
     public Member getMemberByEmail(String email) {
-        return memberRepository.findByMemberEmail(email).orElseThrow(() -> new IllegalArgumentException("not found member"));
+        return memberRepository.findByMemberEmail(email).orElseThrow(() -> new IllegalArgumentException("not found memberId"));
     }
 
     public Member getMemberByStudentId(int studentId) {
-        return memberRepository.findByMemberStudentId(studentId).orElseThrow(() -> new IllegalArgumentException("not found member"));
+        return memberRepository.findByMemberStudentId(studentId).orElseThrow(() -> new IllegalArgumentException("not found memberId"));
     }
 
 //    @Transactional
@@ -80,20 +80,20 @@ public class MemberService {
 //        TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication, email);
 //
 //        // 4. email 로 사용자 조회
-//        Optional<Member> member = memberRepository.findByMemberEmail(email);
+//        Optional<Member> memberId = memberRepository.findByMemberEmail(email);
 //
 //        // 5. 사용자가 없는 경우 AccessDeniedException 발생
-//        if (member.isEmpty()) {
+//        if (memberId.isEmpty()) {
 //            throw new AccessDeniedException("not found user");
 //        }
 //
 //        // 6. refresh token 업데이트 or 생성
-//        refreshTokenRepository.findByMember_memberEmail(member.get().getMemberEmail())
+//        refreshTokenRepository.findByMember_memberEmail(memberId.get().getMemberEmail())
 //                .ifPresentOrElse(
 //                        refreshToken -> {
 //                            refreshToken.setRefreshToken(tokenInfo.refreshToken());
 //                            refreshTokenRepository.save(refreshToken);
-//                        }, () -> refreshTokenRepository.save(new RefreshToken(tokenInfo.refreshToken(), member.get()))
+//                        }, () -> refreshTokenRepository.save(new RefreshToken(tokenInfo.refreshToken(), memberId.get()))
 //                );
 //
 //        return tokenInfo;

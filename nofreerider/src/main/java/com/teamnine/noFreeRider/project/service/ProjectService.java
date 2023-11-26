@@ -41,7 +41,7 @@ public class ProjectService {
         }
 
         Member nLeader = memberRepository.findById(newLeaderId)
-                .orElseThrow(() -> new Exception("not found member"));
+                .orElseThrow(() -> new Exception("not found memberId"));
 
         project.updateLeaderNo(nLeader);
         projectRepository.save(project);

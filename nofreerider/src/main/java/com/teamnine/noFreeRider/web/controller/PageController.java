@@ -1,5 +1,8 @@
 package com.teamnine.noFreeRider.web.controller;
 
+import com.teamnine.noFreeRider.comments.domain.UserComment;
+import com.teamnine.noFreeRider.comments.dto.CommentDisplayDto;
+import com.teamnine.noFreeRider.comments.service.CommentService;
 import com.teamnine.noFreeRider.comments.service.RatingInviteService;
 import com.teamnine.noFreeRider.member.domain.Member;
 import com.teamnine.noFreeRider.member.dto.MemberDto;
@@ -39,6 +42,7 @@ public class PageController {
     private final MemberProjectService memberProjectService;
     private final TaskService taskService;
     private final RatingInviteService ratingInviteService;
+    private final CommentService commentService;
 
     @RequestMapping("/")
     public String login(Authentication authentication) {
@@ -81,10 +85,32 @@ public class PageController {
                     projectList.get(i).getClassName(),
                     projectList.get(i).getStarted_at(),
                     projectList.get(i).getEnded_at(),
+                    projectList.get(i).getStatusCode(),
                     memberCount
             );
         }
+        // sort by project status and then by project date
+        Arrays.sort(projectDtoList, (o1, o2) -> {
+            if (o1.statusCode() == o2.statusCode()) {
+                return o2.endDate().compareTo(o1.endDate());
+            }
+            return o1.statusCode().compareTo(o2.statusCode());
+        });
         model.addAttribute("projectList", projectDtoList);
+
+        //rating
+        UserComment comment = commentService.getCommentByMember(loginMember);
+        int count = comment.getNumUpdates();
+        if (count == 0) {
+            count = 1;
+        }
+        CommentDisplayDto commentDisplayDto = new CommentDisplayDto(
+                (double)comment.getCriteria1() / (double)count,
+                (double)comment.getCriteria2() / (double)count,
+                (double)comment.getCriteria3() / (double)count,
+                (double)comment.getCriteria4() / (double)count);
+        model.addAttribute("rating", commentDisplayDto);
+
 
         // tasks
         List<TaskDisplayDto> taskList = taskService.searchTasksByMemberId(loginMember.getId());
@@ -109,7 +135,7 @@ public class PageController {
         // Project members
         List<Member> memberList = memberProjectService.getMemberListByProject(project);
 
-        // Check if the logged-in member is part of the project
+        // Check if the logged-in memberId is part of the project
         boolean isMemberOfProject = memberList.contains(loginMember);
 
         if (!isMemberOfProject) {
@@ -155,7 +181,7 @@ public class PageController {
 
         UUID projectId = ratingInviteService.getProjectId(ratingCode);
 
-        //check if the member is part of the project
+        //check if the memberId is part of the project
         Project project = projectService.getProjectInfo(projectId);
         List<Member> memberList = memberProjectService.getMemberListByProject(project);
         if(!memberList.contains(loginMember) || isRated) {
