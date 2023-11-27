@@ -38,14 +38,17 @@ public class memberController {
             @PathVariable("memberId") UUID memberId,
             @RequestBody SignupDto signupDto
     ) {
-        Member member = memberRepository
-                .findById(memberId).orElseThrow(() -> new IllegalArgumentException("not found memberId"));
-        member.updateMember(signupDto.realName(), signupDto.studentId(), signupDto.major());
-        memberRepository.save(member);
+        try {
+            Member member = memberService.updateMember(memberId, signupDto);
 
-        commentService.createComment(member);
+            commentService.createComment(member);
 
-        return ResponseEntity.ok(new ResultDto<>(200, "ok", member));
+            return ResponseEntity.ok(new ResultDto<>(200, "ok", member));
+        } catch (Exception e) {
+            return ResponseEntity.status(404)
+                    .body(new ResultDto<>(404, e.getMessage(), null));
+        }
+
     }
 
     @GetMapping("/info/{memberId}")

@@ -10,6 +10,7 @@ import com.teamnine.noFreeRider.comments.service.CommentService;
 import com.teamnine.noFreeRider.member.domain.Member;
 import com.teamnine.noFreeRider.member.domain.MemberProject;
 import com.teamnine.noFreeRider.member.domain.RefreshToken;
+import com.teamnine.noFreeRider.member.dto.SignupDto;
 import com.teamnine.noFreeRider.member.repository.MemberRepository;
 import com.teamnine.noFreeRider.member.repository.RefreshTokenRepository;
 import com.teamnine.noFreeRider.project.service.MemberProjectService;
@@ -53,6 +54,23 @@ public class MemberService {
 //
 //        return newMember;
 //    }
+
+    @Transactional
+    public Member updateMember(UUID memberId, SignupDto signupDto) throws Exception {
+        Member member =  memberRepository
+                .findById(memberId).orElseThrow(() -> new IllegalArgumentException("not found memberId"));
+        checkStudentId(signupDto.studentId());
+        member.updateMember(signupDto.realName(), signupDto.studentId(), signupDto.major());
+        return member;
+    }
+
+    private void checkStudentId(Integer studentId) {
+        Optional<Member> member = memberRepository.findByMemberStudentId(studentId);
+        if (!member.isEmpty()) {
+            throw new IllegalArgumentException("존재하는 학번 입니다");
+        }
+    }
+
 
     public Member getMemberById(UUID id) {
         return memberRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("not found memberId"));
