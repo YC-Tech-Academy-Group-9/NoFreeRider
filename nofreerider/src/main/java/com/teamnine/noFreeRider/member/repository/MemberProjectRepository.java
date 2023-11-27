@@ -18,4 +18,6 @@ public interface MemberProjectRepository extends JpaRepository<MemberProject,Lon
     public Optional<List<MemberProject>> findAllByMemberId(UUID member_id);
 
     public Optional<List<MemberProject>> findAllByProjectId(UUID project_id);
+
+    public void deleteAllByProjectId(UUID project_id);
 }

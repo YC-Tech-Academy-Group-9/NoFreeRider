@@ -148,7 +148,7 @@
         });
     });
 
-    const baseURL = 'http://localhost:8080';
+    const baseURL = window.location.origin;
 
     buttons[2].addEventListener('click', () => {
         // sign up logic
@@ -162,7 +162,7 @@
         let major = document.getElementById('major');
         let memberId = "";
 
-        // Get the member id by email saved in Token
+        // Get the memberId id by email saved in Token
         await fetch(baseURL + '/member/info', {
             method: 'GET',
             headers: {

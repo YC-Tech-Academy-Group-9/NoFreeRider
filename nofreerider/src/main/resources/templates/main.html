@@ -95,7 +95,8 @@
             <div class="absolute hidden right-0 mt-2 w-72 bg-white rounded-md shadow-xl z-20 overflow-y-auto" style="max-height: 16rem;" id="dropdown-menu">
                 <div class="flex flex-col divide-y divide-gray-200">
                     <div th:each="notification : ${notificationList}" class="flex items-center hover:bg-gray-50 notification-item">
-                        <a href="#"
+                        <a href=""
+                           th:data-notif-id="${notification.notice_id()}"
                            th:data-notice-url="${notification.notice_url()}"
                            onclick="handleNotificationClick(this); return false;"
                            class="block p-4">
@@ -134,63 +135,120 @@
                 <!-- Temperature reading -->
                 <div class="flex flex-col">
                     <span class="font-inter text-lg text-text">나의 팀플 온도</span>
-                    <span th:text="${temp + '°C'}"class="font-inter text-lg text-primary"></span>
+                    <span th:text="${temp + '°C'}" class="font-inter text-lg text-primary"></span>
                 </div>
                 <br>
 
                 <!-- 유저 스텟 -->
-                <div class="space-y-1">
-                    <div class="flex justify-between items-center">
-                        <span class="font-inter text-sm text-text">프로젝트 진행률</span>
-                        <span class="font-inter text-sm text-primary">50%</span>
-                    </div>
-                    <div class="w-full bg-shade rounded-full h-2.5">
-                        <div class="bg-primary h-2.5 rounded-full" style="width: 50%"></div>
-                    </div>
+                <h2 class="font-bold text-primary">꼼꼼해요!</h2>
+                <div>
+                    <svg height="0" width="0" xmlns="http://www.w3.org/2000/svg" viewBox="-4.79 -4.79 57.52 57.52">
+                        <g>
+                            <path id="star" d="M26.285,2.486l5.407,10.956c0.376,0.762,1.103,1.29,1.944,1.412l12.091,1.757 c2.118,0.308,2.963,2.91,1.431,4.403l-8.749,8.528c-0.608,0.593-0.886,1.448-0.742,2.285l2.065,12.042 c0.362,2.109-1.852,3.717-3.746,2.722l-10.814-5.685c-0.752-0.395-1.651-0.395-2.403,0l-10.814,5.685 c-1.894,0.996-4.108-0.613-3.746-2.722l2.065-12.042c0.144-0.837-0.134-1.692-0.742-2.285l-8.749-8.528 c-1.532-1.494-0.687-4.096,1.431-4.403l12.091-1.757c0.841-0.122,1.568-0.65,1.944-1.412l5.407-10.956 C22.602,0.567,25.338,0.567,26.285,2.486z">
+
+                            </path>
+                        </g>
+                    </svg>
+                    <svg id="star-collection" width="100%" viewBox="0 0 250 50" xmlns="http://www.w3.org/2000/svg">
+
+                        <clipPath id="star-coll">
+                            <use x=0 y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                            <use x="50" y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                            <use x="100" y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                            <use x="150" y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                            <use x="200" y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                        </clipPath>
+                        <g stroke="#ED8A19" fill="#dedede" stroke-width="2px">
+                            <use x=1 y="0" href="#star"  />
+                            <use x="50" y="0" href="#star"  />
+                            <use x="100" y="0" href="#star"  />
+                            <use x="150" y="0" href="#star"  />
+                            <use x="200" y="0" href="#star"  /></g>
+                        <rect th:data-value="${rating.criteria1()}" clip-path="url(#star-coll)" class="star-slider" x="-200" y="0" width="200" height="50" fill="#ED8A19" />
+                    </svg>
                 </div>
+                <h2 class="font-bold text-primary">대화가 잘 통해요!</h2>
+                <div>
+                    <svg height="0" width="0" xmlns="http://www.w3.org/2000/svg" viewBox="-4.79 -4.79 57.52 57.52">
+                        <g>
+                            <path id="star" d="M26.285,2.486l5.407,10.956c0.376,0.762,1.103,1.29,1.944,1.412l12.091,1.757 c2.118,0.308,2.963,2.91,1.431,4.403l-8.749,8.528c-0.608,0.593-0.886,1.448-0.742,2.285l2.065,12.042 c0.362,2.109-1.852,3.717-3.746,2.722l-10.814-5.685c-0.752-0.395-1.651-0.395-2.403,0l-10.814,5.685 c-1.894,0.996-4.108-0.613-3.746-2.722l2.065-12.042c0.144-0.837-0.134-1.692-0.742-2.285l-8.749-8.528 c-1.532-1.494-0.687-4.096,1.431-4.403l12.091-1.757c0.841-0.122,1.568-0.65,1.944-1.412l5.407-10.956 C22.602,0.567,25.338,0.567,26.285,2.486z">
 
-                <div class="space-y-1">
-                    <div class="flex justify-between items-center">
-                        <span class="font-inter text-sm text-text">클리닝 작업</span>
-                        <span class="font-inter text-sm text-primary">20%</span>
-                    </div>
-                    <div class="w-full bg-shade rounded-full h-2.5">
-                        <div class="bg-accent h-2.5 rounded-full" style="width: 20%"></div>
-                    </div>
+                            </path>
+                        </g>
+                    </svg>
+                    <svg id="star-collection" width="100%" viewBox="0 0 250 50" xmlns="http://www.w3.org/2000/svg">
+
+                        <clipPath id="star-coll">
+                            <use x=0 y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                            <use x="50" y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                            <use x="100" y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                            <use x="150" y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                            <use x="200" y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                        </clipPath>
+                        <g stroke="#ED8A19" fill="#dedede" stroke-width="2px">
+                            <use x=1 y="0" href="#star"  />
+                            <use x="50" y="0" href="#star"  />
+                            <use x="100" y="0" href="#star"  />
+                            <use x="150" y="0" href="#star"  />
+                            <use x="200" y="0" href="#star"  /></g>
+                        <rect th:data-value="${rating.criteria2()}" clip-path="url(#star-coll)" class="star-slider" x="-200" y="0" width="200" height="50" fill="#ED8A19" />
+                    </svg>
                 </div>
+                <h2 class="font-bold text-primary">기한을 잘 지켜요!</h2>
+                <div>
+                    <svg height="0" width="0" xmlns="http://www.w3.org/2000/svg" viewBox="-4.79 -4.79 57.52 57.52">
+                        <g>
+                            <path id="star" d="M26.285,2.486l5.407,10.956c0.376,0.762,1.103,1.29,1.944,1.412l12.091,1.757 c2.118,0.308,2.963,2.91,1.431,4.403l-8.749,8.528c-0.608,0.593-0.886,1.448-0.742,2.285l2.065,12.042 c0.362,2.109-1.852,3.717-3.746,2.722l-10.814-5.685c-0.752-0.395-1.651-0.395-2.403,0l-10.814,5.685 c-1.894,0.996-4.108-0.613-3.746-2.722l2.065-12.042c0.144-0.837-0.134-1.692-0.742-2.285l-8.749-8.528 c-1.532-1.494-0.687-4.096,1.431-4.403l12.091-1.757c0.841-0.122,1.568-0.65,1.944-1.412l5.407-10.956 C22.602,0.567,25.338,0.567,26.285,2.486z">
 
-                <!-- Progress bar -->
-                <div class="flex items-center space-x-4">
-                    <!-- Label for the progress bar -->
-                    <span class="font-inter text-lg text-primary text-clip overflow-hidden break-keep line-clamp-1">프로젝트 abcded</span>
+                            </path>
+                        </g>
+                    </svg>
+                    <svg id="star-collection" width="100%" viewBox="0 0 250 50" xmlns="http://www.w3.org/2000/svg">
 
-                    <!-- Circular Progress Bar Container -->
-                    <div class="relative w-20 h-20">
-                        <svg viewBox="0 0 36 36" class="w-20 h-20">
-                            <path class="text-shade stroke-current"
-                                  d="M18 2.0845
-            a 15.9155 15.9155 0 0 1 0 31.831
-            a 15.9155 15.9155 0 0 1 0 -31.831"
-                                  fill="none" stroke-width="2.8" stroke-linecap="round" />
-                            <path class="text-primary stroke-current"
-                                  stroke-dasharray="100, 100"
-                                  stroke-dashoffset="25"
-                            d="M18 2.0845
-                            a 15.9155 15.9155 0 0 1 0 31.831
-                            a 15.9155 15.9155 0 0 1 0 -31.831"
-                            fill="none" stroke-width="2.8" stroke-linecap="round" />
-                            <!-- stroke-dashoffset is for 100-x completion -->
-                        </svg>
-                        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                            <span class="font-inter text-sm text-primary">75%</span>
-                        </div>
-                    </div>
+                        <clipPath id="star-coll">
+                            <use x=0 y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                            <use x="50" y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                            <use x="100" y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                            <use x="150" y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                            <use x="200" y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                        </clipPath>
+                        <g stroke="#ED8A19" fill="#dedede" stroke-width="2px">
+                            <use x=1 y="0" href="#star"  />
+                            <use x="50" y="0" href="#star"  />
+                            <use x="100" y="0" href="#star"  />
+                            <use x="150" y="0" href="#star"  />
+                            <use x="200" y="0" href="#star"  /></g>
+                        <rect th:data-value="${rating.criteria3()}" clip-path="url(#star-coll)" class="star-slider" x="-200" y="0" width="200" height="50" fill="#ED8A19" />
+                    </svg>
                 </div>
+                <h2 class="font-bold text-primary">열정적이에요!</h2>
+                <div>
+                    <svg height="0" width="0" xmlns="http://www.w3.org/2000/svg" viewBox="-4.79 -4.79 57.52 57.52">
+                        <g>
+                            <path id="star" d="M26.285,2.486l5.407,10.956c0.376,0.762,1.103,1.29,1.944,1.412l12.091,1.757 c2.118,0.308,2.963,2.91,1.431,4.403l-8.749,8.528c-0.608,0.593-0.886,1.448-0.742,2.285l2.065,12.042 c0.362,2.109-1.852,3.717-3.746,2.722l-10.814-5.685c-0.752-0.395-1.651-0.395-2.403,0l-10.814,5.685 c-1.894,0.996-4.108-0.613-3.746-2.722l2.065-12.042c0.144-0.837-0.134-1.692-0.742-2.285l-8.749-8.528 c-1.532-1.494-0.687-4.096,1.431-4.403l12.091-1.757c0.841-0.122,1.568-0.65,1.944-1.412l5.407-10.956 C22.602,0.567,25.338,0.567,26.285,2.486z">
 
+                            </path>
+                        </g>
+                    </svg>
+                    <svg id="star-collection" width="100%" viewBox="0 0 250 50" xmlns="http://www.w3.org/2000/svg">
+
+                        <clipPath id="star-coll">
+                            <use x=0 y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                            <use x="50" y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                            <use x="100" y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                            <use x="150" y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                            <use x="200" y="0" href="#star" stroke="#ED8A19" fill="#ED8A19" />
+                        </clipPath>
+                        <g stroke="#ED8A19" fill="#dedede" stroke-width="2px">
+                            <use x=1 y="0" href="#star"  />
+                            <use x="50" y="0" href="#star"  />
+                            <use x="100" y="0" href="#star"  />
+                            <use x="150" y="0" href="#star"  />
+                            <use x="200" y="0" href="#star"  /></g>
+                        <rect th:data-value="${rating.criteria4()}" clip-path="url(#star-coll)" class="star-slider" x="-200" y="0" width="200" height="50" fill="#ED8A19" />
+                    </svg>
+                </div>
             </div>
-
-            <!-- Additional user information or stats -->
-            <!-- ... -->
         </div>
     </div>
 
@@ -229,9 +287,13 @@
                                class="block mb-4 p-4 bg-white shadow rounded-lg hover:bg-gray-100 transition duration-300 ease-in-out">
 
                                 <div class="flex justify-between items-center mb-2">
-                                    <h3 class="text-lg font-bold font-inter" th:text="${project.name()}"></h3>
-                                    <span class="text-primary font-inter" th:text="${project.memberCount() + ' 명'}"></span>
+                                    <div class="flex items-center">
+                                        <i th:if="${project.statusCode().toString() == 'DONE'}" class="fas fa-check-circle mr-2 text-lg"></i>
+                                        <h3 th:text="${project.name()}" class="text-lg font-bold font-inter">Project</h3>
+                                    </div>
+                                    <span th:text="${project.memberCount()} + ' 명'" class="text-primary font-inter">2 명</span>
                                 </div>
+
 
                                 <p class="text-sm font-inter mb-2" th:text="${project.summary()}">
                                     <!-- Summary will be inserted here by Thymeleaf -->
@@ -246,17 +308,6 @@
                                     <span th:text="'End: ' + ${#dates.format(project.endDate(), 'yyyy-MM-dd')}"></span>
                                 </div>
                             </a>
-                        <!-- Divider -->
-<!--                        <div class="border-t border-shade"></div>-->
-                        <!-- More project items -->
-                        <template id="project">
-                            <button class="flex justify-between items-center py-2 w-full">
-                                <span class="text-lg font-bold font-inter">YC Tech</span>
-                                <span class="text-primary">4명</span>
-                            </button>
-                            <!-- Divider -->
-                            <div class="border-t border-shade"></div>
-                        </template>
                     </div>
                     <button id="projectAddButton" class="fixed bottom-8 right-8 bg-primary text-white px-6 py-4 rounded-full shadow-lg">
                         +
@@ -375,6 +426,9 @@
         integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
         crossorigin="anonymous"></script>
 <script>
+
+    const baseURL = window.location.origin;
+
     //dropdown setup
     document.getElementById('dropdown-button').addEventListener('click', function() {
         var dropdownMenu = document.getElementById('dropdown-menu');
@@ -416,10 +470,20 @@
         });
     });
 
+
     //signout button
     document.getElementById('signout-btn').addEventListener('click', function() {
-        document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        window.location.href = "http://localhost:8080/";
+        $.ajax({
+            url: baseURL + "/logout",
+            type: 'POST', // Adjust as needed
+            success: function(data) {
+                console.log(data);
+                window.location.href = '/';
+            },
+            error: function(error) {
+                console.log("Error: " + error);
+            }
+        });
     });
 
     //project modal
@@ -447,12 +511,12 @@
         };
         $.ajax({
             type: "POST",
-            url: "http://localhost:8080/projects",
+            url: baseURL + "/projects",
             data: JSON.stringify(data),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function(data){
-                console.log(data);
+                alert("프로젝트가 생성되었습니다.")
                 window.location.reload();
             },
             failure: function(errMsg) {
@@ -461,6 +525,7 @@
         });
     });
 
+    //notification
     function handleNotificationClick(element) {
         var noticeUrl = element.getAttribute('data-notice-url');
         console.log(noticeUrl);
@@ -468,12 +533,29 @@
             url: noticeUrl,
             type: 'POST', // Adjust as needed
             success: function(data) {
-                alert("Successfully joined the project.");
-                window.location.reload();
+                if (data.code === 201) {
+                    window.location.href = data.data;
+                }
+                else if (data.code === 202) {
+                    alert("프로젝트 참여에 성공했습니다.");
+                    window.location.reload();
+                }
             },
             error: function(error) {
-                console.log("Error: " + error);
-                alert("API call failed.");
+                if (error.status === 403) {
+                    alert("권한이 없습니다.");
+                }
+                else if (error.status === 405) {
+                    alert("이미 평가 완료한 프로젝트입니다.");
+                }
+                else if (error.status === 500) {
+                    alert("Server error.");
+                    console.log(error);
+                }
+                else {
+                    alert("API call failed.");
+                    console.log(error);
+                }
             }
         });
     }
@@ -508,7 +590,7 @@
             error: function(error) {
                 // Handle error
                 console.log(error);
-                alert('Failed to delete notification');
+                alert('알림 삭제에 실패했습니다.');
             }
         });
     }
@@ -565,6 +647,14 @@
                 break;
         }
     }
+
+    //star slider
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const sliders = document.getElementsByClassName('star-slider')
+        for (let i = 0; i < sliders.length; i++) {
+            sliders[i].setAttribute("width", parseFloat(sliders[i].getAttribute("data-value")) * 50 + 200);
+        }
+    });
 
 
 </script>

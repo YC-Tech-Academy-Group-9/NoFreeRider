@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>Spring Security Example</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- fonts-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Jua&family=Nanum+Gothic+Coding:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'text': '#10181e',
+                        'background': '#ffffff',
+                        'shade': '#D9D9D9',
+                        'primary': '#18517b',
+                        'secondary': '#aad1ee',
+                        'tertiary': '#226faa',
+                        'accent': '#4e4ea2',
+                    },
+                    fontFamily: {
+                        'sans': ['Open Sans', 'sans-serif'],
+                        'inter': ['Inter', 'sans-serif'],
+                        'jua': ['Jua', 'sans-serif'],
+                        'nanum': ['Nanum Gothic Coding', 'sans-serif'],
+                    },
+                    fontSize: {
+                        'base': '16px',
+                        'lg': '25.8px',
+                        'xl': '41.8px',
+                        '2xl': '67.8px',
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        @tailwind base;
+        @tailwind components;
+        @tailwind utilities;
+
+        :root {
+            font-family: 'nanum', sans-serif;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #10181e;
+            background-color: #ffffff;
+        }
+
+        @layer base {
+
+            h1 {
+                @apply text-2xl;
+            }
+            h2 {
+                @apply text-xl;
+            }
+            h3 {
+                @apply text-lg;
+            }
+        }
+
+        nav .title {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-weight: bold;
+            font-family: 'Inter', sans-serif;
+        }
+
+        #tooltip::before {
+            content: '';
+            position: absolute;
+            left: -15px; /* Adjust based on the size of the triangle */
+            top: 25%; /* Adjust if necessary to align with the input field */
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-right: 15px solid white; /* Color of the triangle should match the tooltip background */
+            transform: translateY(-50%);
+        }
+
+    </style>
+</head>
+<body>
+<!-- nav -->
+<nav class="bg-primary h-[10vh]">
+    <div class="w-[434px] mx-auto text-2xl title">
+        <h1>NoFreeRider</h1>
+    </div>
+    <div class="w-full h-full flex flex-row justify-end items-center px-[51px] space-x-2">
+        <button id="signout-btn" class="button text-lg bg-shade text-center w-[170px] h-[60px]">Sign Out</button>
+    </div>
+</nav>
+
+<!-- main -->
+<div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <h2 class="text-2xl font-bold mb-4">Rating Member</h2>
+    <!-- Submit Button -->
+    <button type="submit" id="submitRating" class="bg-gray-400 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" disabled>
+        Submit All
+    </button>
+    <div class="flex flex-wrap justify-center space-x-4">
+        <div th:each="member : ${memberList}" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" style="width: 300px;">
+            <h2 class="text-2xl font-bold mb-4" th:text="${member.name()}">Member Name</h2>
+            <form th:id="'ratingForm' + ${memberStat.index}" class="ratingForm" th:data-member-id="${member.id()}">
+                <!-- Criterion 1 -->
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Criterion 1:</label>
+                    <div class="star-rating" data-criterion="1"></div>
+                </div>
+
+                <!-- Criterion 2 -->
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Criterion 2:</label>
+                    <div class="star-rating" data-criterion="2"></div>
+                </div>
+
+                <!-- Criterion 3 -->
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Criterion 3:</label>
+                    <div class="star-rating" data-criterion="3"></div>
+                </div>
+
+                <!-- Criterion 4 -->
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Criterion 4:</label>
+                    <div class="star-rating" data-criterion="4"></div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+<script
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+<script>
+
+    const baseUrl = window.location.origin;
+
+    //signout button
+    document.getElementById('signout-btn').addEventListener('click', function() {
+        document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        window.location.href = "http://localhost:8080/";
+    });
+
+
+    // star rating
+    document.addEventListener('DOMContentLoaded', function () {
+        // Initialize star ratings for each criterion
+        document.querySelectorAll('.star-rating').forEach(initStarRating);
+
+        function initStarRating(ratingDiv) {
+            for (let i = 1; i <= 5; i++) {
+                const star = document.createElement('i');
+                star.classList.add('far', 'fa-star', 'text-yellow-500', 'cursor-pointer');
+                star.dataset.value = i;
+                star.onclick = () => {
+                    setRating(ratingDiv, i);
+                    checkAllRatingsDone();
+                };
+                ratingDiv.appendChild(star);
+            }
+        }
+
+        function setRating(ratingDiv, value) {
+            const stars = ratingDiv.querySelectorAll('i');
+            stars.forEach((star, index) => {
+                if (index < value) {
+                    star.classList.remove('far');
+                    star.classList.add('fas');
+                } else {
+                    star.classList.add('far');
+                    star.classList.remove('fas');
+                }
+            });
+        }
+
+        function checkAllRatingsDone() {
+            const allRatings = document.querySelectorAll('.star-rating');
+            const allDone = Array.from(allRatings).every(ratingDiv => {
+                return ratingDiv.querySelectorAll('.fas.fa-star').length > 0;
+            });
+
+            const submitButton = document.getElementById('submitRating');
+            if (allDone) {
+                submitButton.disabled = false;
+                submitButton.classList.remove('bg-gray-400');
+                submitButton.classList.add('bg-primary');
+            } else {
+                submitButton.disabled = true;
+                submitButton.classList.add('bg-gray-400');
+                submitButton.classList.remove('bg-primary');
+            }
+        }
+
+    });
+
+    document.getElementById('submitRating').addEventListener('click', function(e) {
+        e.preventDefault(); // Prevent actual form submission
+
+        let formDataList = [];
+
+        document.querySelectorAll('.ratingForm').forEach(form => {
+            let memberId = form.getAttribute('data-member-id');
+            let formData = {
+                memberId: memberId,
+                criteria1: getRatingValue(form, 1),
+                criteria2: getRatingValue(form, 2),
+                criteria3: getRatingValue(form, 3),
+                criteria4: getRatingValue(form, 4)
+            };
+            formDataList.push(formData);
+        });
+
+        const sendData = {
+            comments: formDataList
+        }
+
+        console.log(formDataList); // Here's your list of form data objects
+
+        const ratingCode = location.pathname.split('/')[2];
+        // Now, you can do something with formDataList, like sending it to the server
+        $.ajax(
+            {
+                url: baseUrl + '/comments/submit/' + ratingCode,
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(sendData),
+                success: function (data) {
+                    console.log(data);
+                    alert("Rating Success!");
+                    window.location.href = "/";
+                },
+                error: function (data) {
+                    console.log(data);
+                    alert("Rating Failed!");
+                }
+            }
+
+        )
+    });
+
+    function getRatingValue(form, criterionNumber) {
+        let ratingDiv = form.querySelector('.star-rating[data-criterion="' + criterionNumber + '"]');
+        return ratingDiv.querySelectorAll('.fas.fa-star').length;
+    }
+
+
+</script>
+</body>
+</html>

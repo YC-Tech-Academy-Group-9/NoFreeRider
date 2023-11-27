@@ -4,11 +4,14 @@ import com.teamnine.noFreeRider.member.domain.Member;
 import com.teamnine.noFreeRider.member.repository.MemberRepository;
 import com.teamnine.noFreeRider.member.domain.MemberProject;
 import com.teamnine.noFreeRider.member.repository.MemberProjectRepository;
+import com.teamnine.noFreeRider.notification.repository.NotificationRepository;
 import com.teamnine.noFreeRider.notification.service.NotificationService;
 import com.teamnine.noFreeRider.project.domain.Project;
 import com.teamnine.noFreeRider.project.domain.ProjectStatusCode;
 import com.teamnine.noFreeRider.project.dto.*;
 import com.teamnine.noFreeRider.project.repository.ProjectRepository;
+import com.teamnine.noFreeRider.task.repository.TaskRepository;
+import com.teamnine.noFreeRider.task.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +27,8 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
     private final MemberRepository memberRepository;
     private final MemberProjectRepository memberProjectRepository;
+    private final TaskService taskService;
+    private final NotificationRepository notificationRepository;
 
     public Project save(AddProjectDto addProjectDto) {
         Project project = projectRepository.save(addProjectDto.toEntity());
@@ -41,7 +46,7 @@ public class ProjectService {
         }
 
         Member nLeader = memberRepository.findById(newLeaderId)
-                .orElseThrow(() -> new Exception("not found member"));
+                .orElseThrow(() -> new Exception("not found memberId"));
 
         project.updateLeaderNo(nLeader);
         projectRepository.save(project);
@@ -113,5 +118,20 @@ public class ProjectService {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(IllegalArgumentException::new);
         project.end();
+    }
+
+    @Transactional
+    public UUID deleteProject(UUID projectId) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new IllegalArgumentException("not found project"));
+        //delete all memberProject
+        memberProjectRepository.deleteAllByProjectId(projectId);
+        //delete all tasks in project
+        taskService.deleteAllByProject(project);
+        //delete all notification in project
+        notificationRepository.deleteAllByProject(project);
+
+        projectRepository.delete(project);
+        return projectId;
     }
 }

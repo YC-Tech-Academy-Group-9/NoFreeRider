@@ -1,5 +1,7 @@
 package com.teamnine.noFreeRider.project.dto;
 
+import com.teamnine.noFreeRider.project.domain.ProjectStatusCode;
+
 import java.util.Date;
 import java.util.UUID;
 
@@ -10,6 +12,7 @@ public record GetProjectDto(
         String className,
         Date startDate,
         Date endDate,
+        ProjectStatusCode statusCode,
         int memberCount
 ) {
 }

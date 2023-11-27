@@ -43,7 +43,12 @@ public class MemberProjectService {
 
     public List<Member> getMemberListByProject(Project project) {
         List<MemberProject> memberProjects = memberProjectRepository.findAllByProjectId(project.getId()).orElseThrow();
+        //reorder so that leader is first
+        Member leader = memberProjects.stream().filter(memberProject -> memberProject.getMember().getId().equals(project.getLeader().getId())).findFirst().orElseThrow().getMember();
+        memberProjects.removeIf(memberProject -> memberProject.getMember().getId().equals(project.getLeader().getId()));
+        memberProjects.add(0, new MemberProject(leader, project));
         return memberProjects.stream().map(MemberProject::getMember).toList();
+
     }
 
     public List<MemberProject> getMemberProjectListByProject(Project project) {
