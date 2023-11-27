@@ -45,6 +45,16 @@ public class ProjectApiController {
             Principal principal
             ) {
         try {
+            // 날짜 nullpointer 처리
+            if (projectDto.startDate() == null || projectDto.endDate() == null) {
+                return ResponseEntity.status(400)
+                        .body(new ResultDto<>(
+                                400,
+                                "not allow null date",
+                                null
+                        ));
+            }
+
             String userName = principal.getName();
             Member leader = memberDetailService.loadUserByUsername(userName);
             AddProjectDto addProjectDto = new AddProjectDto(
@@ -54,12 +64,11 @@ public class ProjectApiController {
                     projectDto.startDate(),
                     projectDto.endDate(),
                     leader);
-
-        return ResponseEntity.status(200)
-                .body(new ResultDto<>(
-                        200,
-                        "",
-                        projectService.save(addProjectDto)));
+            return ResponseEntity.status(200)
+                    .body(new ResultDto<>(
+                            200,
+                            "",
+                            projectService.save(addProjectDto)));
         } catch (Exception e) {
             return ResponseEntity.status(400)
                     .body(new ResultDto<>(
