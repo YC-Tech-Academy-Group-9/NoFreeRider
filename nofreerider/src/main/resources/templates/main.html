@@ -502,6 +502,14 @@
         let className = document.getElementById('className').value;
         let startDate = document.getElementById('startDate').value;
         let endDate = document.getElementById('endDate').value;
+
+        // 시작일 및 종료일 확인
+        if (!startDate || !endDate) {
+            alert("시작일 또는 종료일을 입력해주세요.");
+            modal.classList.remove('hidden');
+            return; // 둘 중 하나라도 비어 있으면 실행 중지
+        }
+
         let data = {
             "name": projectName,
             "summary": projectSummary,
