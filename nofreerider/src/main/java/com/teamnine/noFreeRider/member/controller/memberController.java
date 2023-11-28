@@ -10,6 +10,7 @@ import com.teamnine.noFreeRider.member.service.MemberService;
 import com.teamnine.noFreeRider.util.dto.ResultDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,10 +41,12 @@ public class memberController {
     ) {
         try {
             Member member = memberService.updateMember(memberId, signupDto);
-
             commentService.createComment(member);
-
             return ResponseEntity.ok(new ResultDto<>(200, "ok", member));
+
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(409)
+                    .body(new ResultDto<>(409, e.getMessage(), null));
         } catch (Exception e) {
             return ResponseEntity.status(404)
                     .body(new ResultDto<>(404, e.getMessage(), null));

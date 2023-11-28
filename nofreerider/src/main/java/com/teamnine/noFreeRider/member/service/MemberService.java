@@ -15,6 +15,7 @@ import com.teamnine.noFreeRider.member.repository.MemberRepository;
 import com.teamnine.noFreeRider.member.repository.RefreshTokenRepository;
 import com.teamnine.noFreeRider.project.service.MemberProjectService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -67,7 +68,7 @@ public class MemberService {
     private void checkStudentId(Integer studentId) {
         Optional<Member> member = memberRepository.findByMemberStudentId(studentId);
         if (!member.isEmpty()) {
-            throw new IllegalArgumentException("존재하는 학번 입니다");
+            throw new DataIntegrityViolationException("존재하는 학번 입니다");
         }
     }
 

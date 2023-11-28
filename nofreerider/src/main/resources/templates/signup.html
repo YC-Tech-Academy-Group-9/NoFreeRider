@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
 <head>
-    <title>Spring Security Example</title>
+    <title>NoFreeRider</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- fonts-->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -162,38 +162,51 @@
         let major = document.getElementById('major');
         let memberId = "";
 
-        // Get the memberId id by email saved in Token
-        await fetch(baseURL + '/member/info', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        }).then((response) => response.json())
-            .then((data) => {
-                memberId = data.data.id;
-            })
-            .then(() => {
-                // PUT request
-                fetch(baseURL + '/member/info/update/' + memberId, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        realName: realName.value,
-                        studentId: studentId.value,
-                        major: major.value,
-                    }),
-                }).catch((error) => {
-                        console.error('Error:', error);
-                    });
-            })
-            .catch((error) => {
-                console.error('Error:', error);
+        try {
+            // Get the memberId id by email saved in Token
+            const response = await fetch(baseURL + '/member/info', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
             });
-        alert("Sign up done")
-        // redirect to main page
-        window.location.href = baseURL + "/main";
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch member information');
+            }
+
+            const data = await response.json();
+            memberId = data.data.id;
+
+            // PUT request
+            const putResponse = await fetch(baseURL + '/member/info/update/' + memberId, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    realName: realName.value,
+                    studentId: studentId.value,
+                    major: major.value,
+                }),
+            });
+
+            if (putResponse.status === 404) {
+                throw new Error('Member not found');
+            } else if (putResponse.status === 409) {
+                const errorData = await putResponse.json();
+                throw new Error(`${errorData.message}`);
+            } else if (!putResponse.ok) {
+                throw new Error('Failed to update member information');
+            }
+
+            alert("Sign up done");
+            // Redirect to the main page
+            window.location.href = baseURL + "/main";
+        } catch (error) {
+            console.error('Error:', error.message);
+            alert(error.message);
+        }
     }
 
 </script>
