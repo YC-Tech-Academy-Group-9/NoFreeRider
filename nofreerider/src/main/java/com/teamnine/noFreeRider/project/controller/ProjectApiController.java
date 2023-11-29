@@ -20,9 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 
@@ -51,6 +49,15 @@ public class ProjectApiController {
                         .body(new ResultDto<>(
                                 400,
                                 "not allow null date",
+                                null
+                        ));
+            }
+            // 날짜 범위 오류 처리
+            if (projectDto.startDate().after(projectDto.endDate())) {
+                return ResponseEntity.status(406)
+                        .body(new ResultDto<>(
+                                406,
+                                "not allow to set startDate after endDate",
                                 null
                         ));
             }
