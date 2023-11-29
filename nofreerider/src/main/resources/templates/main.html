@@ -510,6 +510,12 @@
             return; // 둘 중 하나라도 비어 있으면 실행 중지
         }
 
+        if (startDate > endDate) {
+            alert("시작일이 종료일보다 늦습니다. 다시 입력해주세요.");
+            modal.classList.remove('hidden');
+            return;
+        }
+
         let data = {
             "name": projectName,
             "summary": projectSummary,
