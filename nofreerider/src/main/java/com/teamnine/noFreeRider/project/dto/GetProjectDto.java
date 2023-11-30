@@ -13,6 +13,7 @@ public record GetProjectDto(
         Date startDate,
         Date endDate,
         ProjectStatusCode statusCode,
-        int memberCount
+        int memberCount,
+        boolean isLeader
 ) {
 }

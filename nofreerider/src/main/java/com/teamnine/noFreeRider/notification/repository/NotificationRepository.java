@@ -12,6 +12,6 @@ import java.util.UUID;
 
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, UUID> {
-    List<Notification> findAllByMember(Member member);
+    List<Notification> findAllByMemberOrderByCreatedAt(Member member);
     void deleteAllByProject(Project project);
 }

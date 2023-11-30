@@ -20,6 +20,7 @@ import javax.transaction.Transactional;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -33,7 +34,8 @@ public class TaskService {
     public List<TaskDisplayDto> searchTasksByProjectId(UUID projectId) {
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 프로젝트 입니다."));
         List<Task> tasks = taskRepository.findAllByProject(project);
-        tasks.sort(Comparator.comparing(Task::getDue_date));
+        tasks.sort(Comparator.comparing(Task::getStatus_code)
+                .thenComparing(Task::getDue_date));
         return tasks.stream().map(task -> new TaskDisplayDto(
                 task.getId(),
                 task.getTaskName(),
@@ -48,8 +50,11 @@ public class TaskService {
     public List<TaskDisplayDto> searchTasksByMemberId(UUID memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 멤버 입니다."));
         List<MemberTask> memberTasks = memberTaskRepository.findAllByMember(member);
-        List<Task> tasks = new java.util.ArrayList<>(memberTasks.stream().map(MemberTask::getTask).toList());
-        tasks.sort(Comparator.comparing(Task::getDue_date));
+        List<Task> tasks = memberTasks.stream()
+                .map(MemberTask::getTask)
+                .sorted(Comparator.comparing(Task::getStatus_code)
+                        .thenComparing(Task::getDue_date))
+                .toList();
         return tasks.stream().map(task -> new TaskDisplayDto(
                 task.getId(),
                 task.getTaskName(),

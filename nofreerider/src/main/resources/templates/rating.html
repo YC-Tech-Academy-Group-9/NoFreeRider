@@ -243,6 +243,7 @@
                 data: JSON.stringify(sendData),
                 success: function (data) {
                     console.log(data);
+                    handleDeleteNotification();
                     alert("Rating Success!");
                     window.location.href = "/";
                 },
@@ -258,6 +259,26 @@
     function getRatingValue(form, criterionNumber) {
         let ratingDiv = form.querySelector('.star-rating[data-criterion="' + criterionNumber + '"]');
         return ratingDiv.querySelectorAll('.fas.fa-star').length;
+    }
+
+    function handleDeleteNotification() {
+        // Add your AJAX call or other logic to delete the notification
+        var notificationId = localStorage.getItem('notif-to-delete');
+        // For example, using jQuery AJAX:
+        $.ajax({
+            url: '/notification/delete/' + notificationId, // Modify with your actual endpoint
+            type: 'POST',
+            success: function(response) {
+                // Handle successful deletion
+                // Optionally, remove the notification from the DOM
+                localStorage.removeItem('notif-to-delete');
+            },
+            error: function(error) {
+                // Handle error
+                console.log(error);
+                alert('Failed to delete notification');
+            }
+        });
     }
 
 
