@@ -809,6 +809,7 @@
             type: 'POST', // Adjust as needed
             success: function(data) {
                 if (data.code === 201) {
+                    localStorage.setItem('notif-to-delete', element.getAttribute('data-notif-id'));
                     window.location.href = data.data;
                 }
                 else if (data.code === 202) {
