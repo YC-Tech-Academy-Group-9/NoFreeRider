@@ -47,7 +47,7 @@ public class NotificationService {
     }
 
     public Notification[] getNotificationListByMember(Member member) {
-        List<Notification> notificationList = notificationRepository.findAllByMember(member);
+        List<Notification> notificationList = notificationRepository.findAllByMemberOrderByCreatedAt(member);
         Notification[] notificationArray = new Notification[notificationList.size()];
         for (int i = 0; i < notificationList.size(); i++) {
             notificationArray[i] = notificationList.get(i);
