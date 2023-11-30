@@ -87,7 +87,7 @@ public class ProjectApiController {
     }
 
     @GetMapping("/{projectId}")
-    public ResponseEntity<ResultDto<Project>> projectInfo(
+    public ResponseEntity<ResultDto<ProjectDto>> projectInfo(
             @PathVariable UUID projectId
     ) {
         if (!isExistProject(projectId)) {
@@ -98,11 +98,20 @@ public class ProjectApiController {
                             null
                     ));
         }
+        Project project = projectService.getProjectInfo(projectId);
+        ProjectDto projectDto = new ProjectDto(
+                project.getProjectName(),
+                project.getProjectSummary(),
+                project.getClassName(),
+                project.getStarted_at(),
+                project.getEnded_at(),
+                project.getStatusCode()
+        );
         return ResponseEntity.status(200)
                 .body(new ResultDto<>(
                         200,
                         "",
-                        projectService.getProjectInfo(projectId)
+                        projectDto
                 ));
     }
 
