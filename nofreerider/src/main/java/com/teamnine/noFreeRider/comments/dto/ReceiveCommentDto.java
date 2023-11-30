@@ -9,4 +9,7 @@ public record ReceiveCommentDto(
         int criteria3,
         int criteria4
 ) {
+    public int getTemperatureDiff() {
+        return this.criteria1 + this.criteria2 + this.criteria3 + this.criteria4 - 12;
+    }
 }

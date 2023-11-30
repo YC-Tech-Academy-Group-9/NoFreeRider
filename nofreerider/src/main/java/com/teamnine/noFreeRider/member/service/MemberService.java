@@ -4,6 +4,7 @@ import com.teamnine.noFreeRider.auth.JwtTokenProvider;
 import com.teamnine.noFreeRider.auth.TokenInfo;
 
 import com.teamnine.noFreeRider.comments.domain.UserComment;
+import com.teamnine.noFreeRider.comments.dto.ReceiveCommentDto;
 import com.teamnine.noFreeRider.comments.repository.CommentsRepository;
 
 import com.teamnine.noFreeRider.comments.service.CommentService;
@@ -120,5 +121,13 @@ public class MemberService {
 
     public String getCurrentMemberEmailFromToken(String token) {
         return jwtTokenProvider.getUserEmailFromToken(token);
+    }
+
+    @Transactional
+    public void updateTemperature(ReceiveCommentDto receiveCommentDto) {
+        int diff = receiveCommentDto.getTemperatureDiff();
+        Member member = memberRepository.findById(receiveCommentDto.memberId())
+                .orElseThrow(IllegalArgumentException::new);
+        member.updateTemperature(diff);
     }
 }
