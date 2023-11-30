@@ -79,7 +79,7 @@
             content: '';
             position: absolute;
             left: -15px; /* Adjust based on the size of the triangle */
-            top: 25%; /* Adjust if necessary to align with the input field */
+            bottom: 5%; /* Adjust if necessary to align with the input field */
             border-top: 8px solid transparent;
             border-bottom: 8px solid transparent;
             border-right: 15px solid white; /* Color of the triangle should match the tooltip background */
@@ -207,8 +207,9 @@
                         </span>
                     </button>
                     <!-- Tooltip -->
-                    <div id="tooltip" class="absolute left-full top-[-50%] mt-2 w-64 bg-white rounded-md shadow-xl z-20 p-4 ml-4 hidden">
+                    <div id="tooltip" class="absolute left-full bottom-0 mt-2 w-64 bg-white rounded-md shadow-xl z-20 p-4 ml-4 hidden">
                         <input id="newMemberEmail" type="email" class="border border-gray-300 p-2 rounded w-full mb-2 text-black" placeholder="Member Email">
+                        <button id="checkMember" class="bg-secondary text-white p-2 rounded w-full">VIEW MEMBER</button>
                         <button id="addMemberADD" class="bg-primary text-white p-2 rounded w-full">ADD</button>
                     </div>
                 </div>
@@ -551,6 +552,46 @@
             event.stopPropagation();
         });
 
+        //check member button
+        document.getElementById('checkMember').addEventListener('click', function(event) {
+            event.preventDefault();
+            var tooltip = document.getElementById('tooltip');
+            tooltip.classList.add('hidden');
+            var newMemberEmail = document.getElementById('newMemberEmail').value;
+
+            const modal = document.getElementById('userRatingModal');
+            const memberNameLabel = modal.querySelector('#memberName');
+            const memberMajorLabel = modal.querySelector('#memberMajor');
+            const memberEmailLabel = modal.querySelector('#memberEmail');
+            const memberTempLabel = modal.querySelector('#memberTemp');
+            const memberRatings = modal.querySelectorAll('.star-slider');
+
+            $.ajax(
+                {
+                    url: baseURL + '/member/info/email/' + newMemberEmail,
+                    type: 'GET',
+                    success: function (data) {
+                        console.log(data);
+                        memberNameLabel.innerText = data.data.name + " " + data.data.studentId;
+                        memberMajorLabel.innerText = data.data.major;
+                        memberEmailLabel.innerText = data.data.email;
+                        memberTempLabel.innerText = data.data.temp + '°C';
+                        memberRatings[0].setAttribute('width', data.data.criteria1 * 50 + 200);
+                        memberRatings[1].setAttribute('width', data.data.criteria2 * 50 + 200);
+                        memberRatings[2].setAttribute('width', data.data.criteria3 * 50 + 200);
+                        memberRatings[3].setAttribute('width', data.data.criteria4 * 50 + 200);
+                        document.getElementById('userRatingModal').classList.remove('hidden');
+                    },
+                    error: function(error) {
+                        console.log(error);
+                        if(error.status === 404)
+                            alert('존재하지 않는 사용자입니다.');
+                        else
+                            alert('사용자 정보를 불러오는데 실패했습니다.');
+                    }
+                });
+        });
+
         // Add memberId button
         document.getElementById('addMemberADD').addEventListener('click', function(event) {
             event.preventDefault();
@@ -671,8 +712,8 @@
         var mouseY = event.clientY;
 
         // Get scrolling offset
-        var scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
-        var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        var scrollLeft = window.scrollX || document.documentElement.scrollLeft;
+        var scrollTop = window.scrollY || document.documentElement.scrollTop;
 
 
         // Set modal position
@@ -1006,7 +1047,10 @@
                 },
                 error: function(error) {
                     console.log(error);
-                    alert('사용자 정보를 불러오는데 실패했습니다.')
+                    if(error.status === 404)
+                        alert('존재하지 않는 사용자입니다.');
+                    else
+                        alert('사용자 정보를 불러오는데 실패했습니다.');
                 }
             }
         )

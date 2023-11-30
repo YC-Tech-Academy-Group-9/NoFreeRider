@@ -59,28 +59,56 @@ public class memberController {
             @PathVariable("memberId") UUID memberId
     ) {
         try {
-            Member member = memberRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("not found memberId"));
-            UserComment userComment = commentService.getCommentByMember(member);
-            double[] criteria = userComment.calculateCriteria();
-            MemberDisplayDto memberDisplayDto = new MemberDisplayDto(
-                    member.getMemberName(),
-                    member.getMemberEmail(),
-                    member.getMemberStudentId(),
-                    member.getMemberMajor(),
-                    member.getMemberTemperature(),
-                    criteria[0],
-                    criteria[1],
-                    criteria[2],
-                    criteria[3]
-            );
-            return ResponseEntity.ok().body(
-                    new ResultDto<>(200, "ok", memberDisplayDto)
-            );
+            return getResultDtoResponseEntity(memberId);
         } catch (IllegalArgumentException e) {
+            if (e.getMessage().equals("not found memberId")) {
+                return ResponseEntity.status(404).body(
+                        new ResultDto<>(404, "not found memberId", null)
+                );
+            }
             return ResponseEntity.badRequest().body(
                     new ResultDto<>(400, e.getMessage(), null)
             );
         }
+    }
+
+    @GetMapping("/info/email/{email}")
+    public ResponseEntity<ResultDto<MemberDisplayDto>> getMemberByEmail(
+            @PathVariable("email") String memberEmail
+    ) {
+        try {
+            UUID memberId = memberRepository.findByMemberEmail(memberEmail).orElseThrow(() -> new IllegalArgumentException("not found memberId")).getMemberId();
+            return getResultDtoResponseEntity(memberId);
+        } catch (IllegalArgumentException e) {
+            if (e.getMessage().equals("not found memberId")) {
+                return ResponseEntity.status(404).body(
+                        new ResultDto<>(404, "not found memberId", null)
+                );
+            }
+            return ResponseEntity.badRequest().body(
+                    new ResultDto<>(400, e.getMessage(), null)
+            );
+        }
+    }
+
+    private ResponseEntity<ResultDto<MemberDisplayDto>> getResultDtoResponseEntity(UUID memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("not found memberId"));
+        UserComment userComment = commentService.getCommentByMember(member);
+        double[] criteria = userComment.calculateCriteria();
+        MemberDisplayDto memberDisplayDto = new MemberDisplayDto(
+                member.getMemberName(),
+                member.getMemberEmail(),
+                member.getMemberStudentId(),
+                member.getMemberMajor(),
+                member.getMemberTemperature(),
+                criteria[0],
+                criteria[1],
+                criteria[2],
+                criteria[3]
+        );
+        return ResponseEntity.ok().body(
+                new ResultDto<>(200, "ok", memberDisplayDto)
+        );
     }
 
     @GetMapping("/info")
