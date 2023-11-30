@@ -16,7 +16,6 @@ import com.teamnine.noFreeRider.project.dto.MemberProjectDto;
 import com.teamnine.noFreeRider.project.dto.ProjectDto;
 import com.teamnine.noFreeRider.project.service.MemberProjectService;
 import com.teamnine.noFreeRider.project.service.ProjectService;
-import com.teamnine.noFreeRider.task.domain.Task;
 import com.teamnine.noFreeRider.task.dto.TaskDisplayDto;
 import com.teamnine.noFreeRider.task.service.TaskService;
 import lombok.RequiredArgsConstructor;
@@ -86,7 +85,8 @@ public class PageController {
                     projectList.get(i).getStarted_at(),
                     projectList.get(i).getEnded_at(),
                     projectList.get(i).getStatusCode(),
-                    memberCount
+                    memberCount,
+                    projectService.isProjectLeader(loginMember, projectList.get(i))
             );
         }
         // sort by project status and then by project date

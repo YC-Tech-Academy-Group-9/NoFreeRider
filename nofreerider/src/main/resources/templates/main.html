@@ -291,7 +291,13 @@
                                         <i th:if="${project.statusCode().toString() == 'DONE'}" class="fas fa-check-circle mr-2 text-lg"></i>
                                         <h3 th:text="${project.name()}" class="text-lg font-bold font-inter">Project</h3>
                                     </div>
-                                    <span th:text="${project.memberCount()} + ' 명'" class="text-primary font-inter">2 명</span>
+                                    <div>
+                                        <span th:text="${project.memberCount()} + ' 명'" class="text-primary font-inter">2 명</span>
+                                        <!-- Edit Icon Button -->
+                                        <button th:if="${project.isLeader()}" onclick="editProject(event, this)" th:data-project-id="${project.id()}" class="ml-2 text-blue-500 hover:text-blue-700">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </button>
+                                    </div>
                                 </div>
 
 
@@ -409,8 +415,63 @@
 
                         <!-- Modal Footer -->
                         <div class="flex justify-end pt-2">
-                            <button id="projectModalSubmit" type="submit" class="px-4 bg-primary text-white p-3 rounded-lg hover:bg-primary-dark focus:outline-none focus:shadow-outline">Create</button>
+                            <button id="projectModalSubmit" type="submit" class="px-4 bg-gray-400 text-white p-3 rounded-lg hover:bg-gray-400 focus:outline-none focus:shadow-outline" disabled>Create</button>
                             <button type="button" class="ml-2 px-4 bg-gray-500 text-white p-3 rounded-lg hover:bg-gray-600 focus:outline-none focus:shadow-outline" onclick="document.getElementById('projectModal').classList.add('hidden')">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- modal -->
+        <div id="projectEditModal" class="hidden">
+            <!-- Modal Background -->
+            <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full" id="my-edit-modal"></div>
+
+            <!-- Modal Main -->
+            <div class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-md shadow-lg w-1/3 min-w-[352px]">
+                <!-- Modal Header -->
+                <div class="bg-primary text-white text-xl font-bold py-4 px-6 rounded-t-md">
+                    Edit Project Info
+                </div>
+
+                <!-- Modal Body -->
+                <div class="p-6">
+                    <form id="editProjectForm">
+                        <!-- Project Name -->
+                        <div class="mb-4">
+                            <label for="editProjectName" class="block text-gray-700 text-sm font-bold mb-2">Name of the Project:</label>
+                            <input type="text" id="editProjectName" name="projectName" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                        </div>
+
+                        <!-- Project Summary -->
+                        <div class="mb-4">
+                            <label for="editProjectSummary" class="block text-gray-700 text-sm font-bold mb-2">Project Summary:</label>
+                            <textarea id="editProjectSummary" name="projectSummary" rows="3" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required></textarea>
+                        </div>
+
+                        <!-- Class Name -->
+                        <div class="mb-4">
+                            <label for="editClassName" class="block text-gray-700 text-sm font-bold mb-2">Class Name of the Project:</label>
+                            <input type="text" id="editClassName" name="className" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                        </div>
+
+                        <!-- Project Start Date -->
+                        <div class="mb-4">
+                            <label for="editStartDate" class="block text-gray-700 text-sm font-bold mb-2">Start Date:</label>
+                            <input type="date" id="editStartDate" name="startDate" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                        </div>
+
+                        <!-- Project End Date -->
+                        <div class="mb-4">
+                            <label for="editEndDate" class="block text-gray-700 text-sm font-bold mb-2">End Date:</label>
+                            <input type="date" id="editEndDate" name="endDate" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                        </div>
+
+                        <!-- Modal Footer -->
+                        <div class="flex justify-end pt-2">
+                            <button onclick="editProjectSubmit(this)" id="editProjectModalSubmit" type="submit" class="px-4 bg-gray-400 text-white p-3 rounded-lg hover:bg-gray-400 focus:outline-none focus:shadow-outline" disabled>Edit</button>
+                            <button type="button" class="ml-2 px-4 bg-gray-500 text-white p-3 rounded-lg hover:bg-gray-600 focus:outline-none focus:shadow-outline" onclick="document.getElementById('projectEditModal').classList.add('hidden')">Cancel</button>
                         </div>
                     </form>
                 </div>
@@ -551,6 +612,7 @@
                     window.location.href = data.data;
                 }
                 else if (data.code === 202) {
+                    handleDeleteNotification(element);
                     alert("프로젝트 참여에 성공했습니다.");
                     window.location.reload();
                 }
@@ -623,6 +685,110 @@
 
     function gotoProject(projectId) {
         window.location.href = '/project/' + projectId;
+    }
+
+    // project modal check input
+    document.addEventListener('DOMContentLoaded', function () {
+        const editForm = document.getElementById('editProjectForm');
+        const submitButton = document.getElementById('editProjectModalSubmit');
+
+        editForm.addEventListener('input', function () {
+            let allFilled = true;
+            document.querySelectorAll('#editProjectForm input[type="text"], #editProjectForm textarea, #editProjectForm input[type="date"]').forEach(function(input) {
+                if (!input.value) {
+                    allFilled = false;
+                }
+            });
+
+            submitButton.disabled = !allFilled;
+
+            if (allFilled) {
+                submitButton.classList.remove('bg-gray-400', 'hover:bg-gray-400');
+                submitButton.classList.add('bg-primary', 'hover:bg-primary-dark');
+            } else {
+                submitButton.classList.add('bg-gray-400', 'hover:bg-gray-400');
+                submitButton.classList.remove('bg-primary', 'hover:bg-primary-dark');
+            }
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const editForm = document.getElementById('newProjectForm');
+        const submitButton = document.getElementById('projectModalSubmit');
+
+        editForm.addEventListener('input', function () {
+            let allFilled = true;
+            document.querySelectorAll('#newProjectForm input[type="text"], #newProjectForm textarea, #newProjectForm input[type="date"]').forEach(function(input) {
+                if (!input.value) {
+                    allFilled = false;
+                }
+            });
+
+            submitButton.disabled = !allFilled;
+
+            if (allFilled) {
+                submitButton.classList.remove('bg-gray-400', 'hover:bg-gray-400');
+                submitButton.classList.add('bg-primary', 'hover:bg-primary-dark');
+            } else {
+                submitButton.classList.add('bg-gray-400', 'hover:bg-gray-400');
+                submitButton.classList.remove('bg-primary', 'hover:bg-primary-dark');
+            }
+        });
+    });
+
+    //edit project
+    function editProject(event, element) {
+        event.preventDefault();
+        const projectId = element.getAttribute('data-project-id');
+        $.ajax({
+            url: baseURL + "/projects/" + projectId,
+            type: 'GET',
+            success: function (rawData) {
+                console.log(rawData);
+                const data = rawData.data;
+                let modal = document.getElementById('projectEditModal');
+                modal.classList.remove('hidden');
+                document.getElementById('editProjectName').value = data.name;
+                document.getElementById('editProjectSummary').value = data.summary;
+                document.getElementById('editClassName').value = data.className;
+                document.getElementById('editStartDate').value = data.startDate.slice(0, 10);
+                document.getElementById('editEndDate').value = data.endDate.slice(0, 10);
+                document.getElementById('editProjectModalSubmit').setAttribute('data-project-id', projectId);
+            },
+        });
+    }
+
+    function editProjectSubmit(element) {
+        let projectId = element.getAttribute('data-project-id');
+        let modal = document.getElementById('projectEditModal');
+        // call api to add project
+        let projectName = document.getElementById('editProjectName').value;
+        let projectSummary = document.getElementById('editProjectSummary').value;
+        let className = document.getElementById('editClassName').value;
+        let startDate = document.getElementById('editStartDate').value;
+        let endDate = document.getElementById('editEndDate').value;
+
+        $.ajax({
+            type: "PUT",
+            url: baseURL + "/projects/" + projectId,
+            data: JSON.stringify({
+                "name": projectName,
+                "summary": projectSummary,
+                "className": className,
+                "startDate": startDate,
+                "endDate": endDate,
+                "statusCode": "DOING"
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(data){
+                alert("프로젝트가 수정되었습니다.")
+                window.location.reload();
+            },
+            failure: function(errMsg) {
+                alert(errMsg);
+            }
+        });
     }
 
     //task checkbox
