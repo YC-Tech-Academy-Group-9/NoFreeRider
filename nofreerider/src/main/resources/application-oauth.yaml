@@ -7,6 +7,6 @@ spring:
             # 생성한 google app 의  정보로 대체
             client-id: 262765637791-537tv1ga55jvbj9gngedraq6gfnbpmis.apps.googleusercontent.com
             client-secret: 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
-            redirect-uri: "http://localhost:8080/login/oauth2/code/google"
+            redirect_uri=http://localhost:8080/login/oauth2/code/google
             authorization-grant-type: authorization_code
             scope: email
