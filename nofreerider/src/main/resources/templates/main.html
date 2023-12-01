@@ -693,7 +693,8 @@
         const editForm = document.getElementById('editProjectForm');
         const submitButton = document.getElementById('editProjectModalSubmit');
 
-        editForm.addEventListener('input', function () {
+        editForm.addEventListener('input', function (event) {
+            event.preventDefault();
             let allFilled = true;
             document.querySelectorAll('#editProjectForm input[type="text"], #editProjectForm textarea, #editProjectForm input[type="date"]').forEach(function(input) {
                 if (!input.value) {
@@ -717,7 +718,8 @@
         const editForm = document.getElementById('newProjectForm');
         const submitButton = document.getElementById('projectModalSubmit');
 
-        editForm.addEventListener('input', function () {
+        editForm.addEventListener('input', function (event) {
+            event.preventDefault();
             let allFilled = true;
             document.querySelectorAll('#newProjectForm input[type="text"], #newProjectForm textarea, #newProjectForm input[type="date"]').forEach(function(input) {
                 if (!input.value) {
