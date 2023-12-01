@@ -9,6 +9,10 @@ spring:
     charset: UTF-8
     enabled: true
 
+server:
+  servlet:
+    context-path: /
+
 security:
   basic:
     enabled: false
