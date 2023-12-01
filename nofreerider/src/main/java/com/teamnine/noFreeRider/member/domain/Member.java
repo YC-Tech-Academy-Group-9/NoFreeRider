@@ -106,4 +106,14 @@ public class Member implements UserDetails {
     public UUID getMemberId() {
         return this.id;
     }
+
+    public void updateTemperature(int diff) {
+        this.memberTemperature += diff;
+        if (this.memberTemperature < 0) {
+            this.memberTemperature = 0;
+        }
+        if (this.memberTemperature > 99) {
+            this.memberTemperature = 99;
+        }
+    }
 }

@@ -50,6 +50,8 @@ public class CommentAPIController {
                     receiveCommentDto.criteria4()),
                     member
                     );
+            // 온도 반영 파트
+            memberService.updateTemperature(receiveCommentDto);
         }
         ratingInviteService.doneRating(ratingCode);
         return ResponseEntity.ok(new ResultDto<>(200, "ok", null));
