@@ -89,6 +89,7 @@ public class PageController {
                     projectService.isProjectLeader(loginMember, projectList.get(i))
             );
         }
+
         // sort by project status and then by project date
         Arrays.sort(projectDtoList, (o1, o2) -> {
             if (o1.statusCode() == o2.statusCode()) {
